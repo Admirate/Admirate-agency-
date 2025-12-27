@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+
+[build.environment]
+  # Next.js 15 requires Node >= 20.9.0; use a modern LTS on Netlify
+  NODE_VERSION = "22"
+
+# Global security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Content-Type-Options   = "nosniff"
+    X-Frame-Options          = "DENY"
+    Referrer-Policy          = "strict-origin-when-cross-origin"
+    Content-Security-Policy  = "default-src 'self'; script-src 'self' https://www.clarity.ms 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://www.clarity.ms; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
