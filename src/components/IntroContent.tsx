@@ -88,7 +88,7 @@ export default function IntroContent() {
 
   return (
     <motion.main
-      className="h-[100svh] min-h-[100svh] md:min-h-[80vh] md:h-[95vh] bg-white relative overflow-hidden py-0 md:py-12"
+      className="min-h-screen h-auto md:min-h-[100vh] md:h-[100vh] bg-white relative overflow-hidden py-0 md:py-12"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -111,7 +111,7 @@ export default function IntroContent() {
 
       {/* ADMIRATE Logo - Tablet only */}
       <motion.div
-        className="hidden md:block lg:hidden absolute top-2 left-1/2 transform -translate-x-1/2 z-20"
+        className="hidden md:block lg:hidden absolute top-0 left-1/2 transform -translate-x-1/2 z-20"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5 }}
@@ -150,7 +150,7 @@ export default function IntroContent() {
         {/* Background */}
         <div
           ref={bgRef}
-          className="absolute inset-0 z-0 opacity-[0.1] pointer-events-none"
+          className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"
         >
           <Image
             src="/line-wave.jpg"
@@ -162,7 +162,7 @@ export default function IntroContent() {
         </div>
 
         {/* Content */}
-        <motion.div className="relative z-10 max-w-6xl mx-auto px-6 text-center pt-24 md:pt-0">
+        <motion.div className="relative z-10 max-w-6xl mx-auto px-6 text-center pt-24 md:pt-0 pb-6">
           <h1
             ref={titleRef}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-red-500 mb-10"

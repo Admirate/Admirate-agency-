@@ -152,7 +152,7 @@ export default function MainContent() {
       </motion.div>
 
 
-      {/* ADMIRATE Logo at top center - Desktop */}
+      {/* ADMIRATE Logo at top center - Desktop
       <motion.div
         className="hidden md:block absolute top-12 left-1/2 transform -translate-x-1/2"
         initial={{ opacity: 0, y: -30 }}
@@ -168,7 +168,7 @@ export default function MainContent() {
         />
       </motion.div>
 
-      {/* ADMIRATE Logo at top center - Mobile */}
+      ADMIRATE Logo at top center - Mobile
       <motion.div
         className="block md:hidden absolute top-12 left-1/2 transform -translate-x-1/2"
         initial={{ opacity: 0, y: -30 }}
@@ -182,7 +182,7 @@ export default function MainContent() {
           height={30}
           className="object-contain"
         />
-      </motion.div>
+      </motion.div> */}
 
       {/* Main Content - Center with sequential intro */}
       <div ref={heroRef} className="flex items-center justify-center min-h-screen py-2 md:py-0 md:h-screen">
