@@ -93,6 +93,56 @@ export default function IntroContent() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
+      {/* Desktop Logo */}
+      <motion.div
+        className="hidden lg:block absolute top-12 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        <Image
+          src="/redadmiratelogo.png"
+          alt="ADMIRATE"
+          width={300}
+          height={90}
+          className="lg:w-[350px] lg:h-[105px] xl:w-[400px] xl:h-[120px] object-contain"
+        />
+      </motion.div>
+
+      {/* ADMIRATE Logo - Tablet only */}
+      <motion.div
+        className="hidden md:block lg:hidden absolute top-2 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
+        <Image
+          src="/redadmiratelogo.png"
+          alt="ADMIRATE"
+          width={160}
+          height={48}
+          className="w-[160px] h-auto object-contain"
+          priority
+        />
+      </motion.div>
+
+      {/* ADMIRATE Logo at top center - Mobile */}
+      <motion.div
+        className="block md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        <Image
+          src="/redadmiratelogo.png"
+          alt="ADMIRATE"
+          width={100}
+          height={30}
+          className="object-contain"
+          priority
+        />
+      </motion.div>
+
       <div
         ref={heroRef}
         className="relative flex items-center justify-center min-h-screen "
@@ -100,7 +150,7 @@ export default function IntroContent() {
         {/* Background */}
         <div
           ref={bgRef}
-          className="absolute inset-0 z-0 opacity-[0.08] pointer-events-none"
+          className="absolute inset-0 z-0 opacity-[0.1] pointer-events-none"
         >
           <Image
             src="/line-wave.jpg"
@@ -112,7 +162,7 @@ export default function IntroContent() {
         </div>
 
         {/* Content */}
-        <motion.div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
+        <motion.div className="relative z-10 max-w-6xl mx-auto px-6 text-center pt-24 md:pt-0">
           <h1
             ref={titleRef}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-red-500 mb-10"
