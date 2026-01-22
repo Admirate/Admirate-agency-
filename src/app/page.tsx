@@ -1,6 +1,7 @@
  
 import dynamic from 'next/dynamic'
 import MainContent from '@/components/MainContent'
+import IntroContent from '@/components/IntroContent'
 
 const AdvertisingSection = dynamic(() => import('@/components/AdvertisingSection'))
 const DesignSection = dynamic(() => import('@/components/DesignSection'))
@@ -14,6 +15,7 @@ const ContactSection = dynamic(() => import('@/components/ContactSection'))
 export default function Home() {
   return (
     <>
+      <IntroContent />
       <MainContent />
       <AdvertisingSection />
       <DesignSection />
@@ -24,5 +26,5 @@ export default function Home() {
       <ClientsSection />
       <ContactSection />
     </>
-  )
+  );
 }
