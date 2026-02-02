@@ -5,14 +5,21 @@ import Image from 'next/image'
 import { useRef } from 'react'
 
 const gridImages = [
-  { src: '/pic2.jpg', alt: 'Social media design 1' },
-  { src: '/pic7.jpg', alt: 'Social media design 2' },
-  { src: '/pic4.jpg', alt: 'Social media design 3' },
-  { src: '/pic5.png', alt: 'Social media design 4' },
-  { src: '/pic8.jpg', alt: 'Social media design 5' },
-  { src: '/pic9.jpg', alt: 'Social media design 6' },
-  { src: '/pic10.jpg', alt: 'Social media design 7' },
-  { src: '/pic11.png', alt: 'Social media design 8' },
+  { src: '/pic1.png', alt: 'Social media design 1' },
+  { src: '/pic2.jpg', alt: 'Social media design 2' },
+  { src: '/pic3.png', alt: 'Social media design 3' },
+  { src: '/pic4.jpg', alt: 'Social media design 4' },
+  { src: '/pic5.jpg', alt: 'Social media design 5' },
+  { src: '/pic6.png', alt: 'Social media design 6' },
+  { src: '/pic7.png', alt: 'Social media design 7' },
+  { src: '/pic8.jpg', alt: 'Social media design 8' },
+  { src: '/pic9.png', alt: 'Social media design 9' },
+  { src: '/pic10.jpg', alt: 'Social media design 10' },
+  { src: '/pic11.png', alt: 'Social media design 11' },
+  { src: '/pic12.png', alt: 'Social media design 12' },
+  { src: '/pic13.png', alt: 'Social media design 13' },
+  { src: '/pic14.jpg', alt: 'Social media design 14' },
+  { src: '/pic15.jpg', alt: 'Social media design 15' },
 ]
 
 export default function SocialsSection() {
@@ -25,7 +32,7 @@ export default function SocialsSection() {
   const yMobileImage = useTransform(scrollYProgress, [0, 1], [60, -60])
 
   return (
-    <section ref={sectionRef} className="min-h-[55svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-hidden py-2 md:py-12 mt-0 md:mt-0 mb-0 md:mb-0">
+    <section ref={sectionRef} className="min-h-fit bg-white relative overflow-visible py-8 md:py-16 lg:py-20">
 
       {/* Background Long Design Element */}
       <motion.div
@@ -63,11 +70,11 @@ export default function SocialsSection() {
 
         {/* Desktop Content Container */}
         <div className="relative z-20">
-          <div className="flex justify-between items-start h-screen pt-10 px-16 gap-12">
+          <div className="flex justify-between items-center px-12 lg:px-16 xl:px-20 gap-8 lg:gap-12">
             {/* Left Side - Grid of social images */}
             <motion.div
               style={{ y: yLeftImage, willChange: 'transform' }}
-              className="w-1/2 grid grid-cols-3 gap-3"
+              className="flex-1 grid grid-cols-5 gap-3 lg:gap-4 xl:gap-5"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -76,21 +83,21 @@ export default function SocialsSection() {
               {gridImages.map((image) => (
                 <div
                   key={image.src}
-                  className="relative w-full h-36 sm:h-40 rounded overflow-hidden"
+                  className="relative w-full aspect-square rounded-lg overflow-hidden"
                 >
                   <Image
                     src={image.src}
                     alt={image.alt}
                     fill
                     className="object-contain"
-                    sizes="(max-width: 768px) 45vw, 240px"
+                    sizes="(max-width: 1024px) 20vw, 180px"
                   />
                 </div>
               ))}
             </motion.div>
 
             {/* Right Side - Text Content */}
-            <div className="w-1/2 pr-4 space-y-8">
+            <div className="flex-shrink-0 w-auto pr-4">
               {/* Main Title */}
               <motion.div
                 style={{ y: yTitle, willChange: 'transform' }}
@@ -99,7 +106,7 @@ export default function SocialsSection() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <h2 className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-tight text-black whitespace-nowrap" style={{ fontFamily: "'Inter', sans-serif" }}>
                   <span className="text-red-500">SOCIALS</span>
                   <br />
                   THAT CREATE
@@ -113,10 +120,10 @@ export default function SocialsSection() {
       </div>
 
       {/* Mobile/Tablet Layout - Centered with Image Below */}
-      <div className="lg:hidden flex flex-col justify-start items-center min-h-[55svh] py-2 md:py-0 px-4 md:px-8 pt-2">
+      <div className="lg:hidden flex flex-col justify-start items-center py-4 px-4 md:px-8">
         {/* Mobile Title */}
         <motion.div
-          className="text-center mb-4"
+          className="text-center mb-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -129,10 +136,10 @@ export default function SocialsSection() {
           </h2>
         </motion.div>
 
-        {/* Mobile Grid of images (2 per row) */}
+        {/* Mobile Grid of images (3 per row on mobile, 5 on tablet) */}
         <motion.div
           style={{ y: yMobileImage, willChange: 'transform' }}
-          className="w-full max-w-xl mx-auto grid grid-cols-2 gap-3 sm:gap-3"
+          className="w-full max-w-5xl mx-auto grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
@@ -141,14 +148,14 @@ export default function SocialsSection() {
           {gridImages.map((image) => (
             <div
               key={image.src}
-              className="relative w-full h-36 sm:h-40 rounded overflow-hidden"
+              className="relative w-full aspect-square rounded-lg overflow-hidden"
             >
               <Image
                 src={image.src}
                 alt={image.alt}
                 fill
-                className="object-cover"
-                sizes="(max-width: 768px) 45vw, 240px"
+                className="object-contain"
+                sizes="(max-width: 640px) 33vw, 20vw"
               />
             </div>
           ))}
