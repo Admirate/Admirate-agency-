@@ -71,7 +71,7 @@ export default function DesignSection() {
         {/* Headline */}
         <h2
           ref={titleRef}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-black text-red-500 uppercase leading-none text-center"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl font-black text-red-500 uppercase leading-none text-center"
           style={{ willChange: 'transform', fontFamily: "'Integral CF', sans-serif" }}
         >
           DESIGN
@@ -79,7 +79,7 @@ export default function DesignSection() {
         {/* Subhead */}
         <p
           ref={subRef}
-          className="mt-2 sm:mt-3 text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl italic uppercase tracking-wide text-black text-center"
+          className="mt-2 sm:mt-3 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl italic uppercase tracking-wide text-black text-center"
           style={{ willChange: 'transform', fontFamily: "'Instrument Serif', serif" }}
         >
           THAT MOVES WITH YOU

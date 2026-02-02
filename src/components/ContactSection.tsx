@@ -28,7 +28,7 @@ export default function ContactSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <h2 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
                 DO YOU WANT
                 <br />
                 TO <span className="text-red-500">TRUST US</span>

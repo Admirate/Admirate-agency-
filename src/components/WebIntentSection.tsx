@@ -56,7 +56,7 @@ export default function WebIntentSection() {
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>
                 <span className="text-red-500">WEB</span> WITH
                 <br />
                 INTENT
@@ -75,9 +75,10 @@ export default function WebIntentSection() {
                 <button
                   key={index}
                   onClick={() => setCurrentSetIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                  className={`w-3 h-3 sm:w-3 sm:h-3 md:w-3 md:h-3 rounded-full transition-colors duration-300 ${
                     currentSetIndex === index ? 'bg-red-500' : 'bg-red-300'
                   }`}
+                  style={{ minWidth: '12px', minHeight: '12px' }}
                   suppressHydrationWarning
                 />
               ))}

@@ -32,12 +32,12 @@ export default function SocialsSection() {
   const yMobileImage = useTransform(scrollYProgress, [0, 1], [60, -60])
 
   return (
-    <section ref={sectionRef} className="min-h-fit bg-white relative overflow-visible py-8 md:py-16 lg:py-20">
+    <section ref={sectionRef} className="min-h-fit bg-white relative overflow-hidden py-8 md:py-16 lg:py-20 z-10">
 
       {/* Background Long Design Element */}
       <motion.div
         style={{ y: yBackground, willChange: 'transform', width: '1400px', height: '100%', right: '480px' }}
-        className="absolute top-0 z-0 opacity-100 rotate-180"
+        className="absolute top-0 z-0 opacity-100 rotate-180 pointer-events-none"
         initial={{ opacity: 0, x: 100 }}
         whileInView={{ opacity: 0.8, x: 0 }}
         transition={{ duration: 1.2, delay: 0.3 }}
@@ -106,7 +106,7 @@ export default function SocialsSection() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-tight text-black whitespace-nowrap" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <h2 className="text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black whitespace-nowrap" style={{ fontFamily: "'Inter', sans-serif" }}>
                   <span className="text-red-500">SOCIALS</span>
                   <br />
                   THAT CREATE
@@ -129,7 +129,7 @@ export default function SocialsSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+          <h2 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
             <span className="text-red-500">SOCIALS</span> THAT
             <br />
             CREATE IMPACT

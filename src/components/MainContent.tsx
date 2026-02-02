@@ -215,7 +215,7 @@ export default function MainContent() {
           <h1 
             ref={h1Ref}
             style={{ fontFamily: "'Instrument Serif', serif", willChange: 'transform' }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-800 mb-2 sm:mb-3 md:mb-4"
+            className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-800 mb-2 sm:mb-3 md:mb-4"
           >
             More than ideas
           </h1>
@@ -224,7 +224,7 @@ export default function MainContent() {
           <h2 
             ref={h2Ref}
             style={{ fontFamily: "'Integral CF', sans-serif", willChange: 'transform' }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-black mb-3 sm:mb-4 md:mb-6 leading-tight font-black"
+            className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl text-black mb-3 sm:mb-4 md:mb-6 leading-tight font-black"
           >
             SOMETHING MORE
           </h2>
@@ -235,15 +235,15 @@ export default function MainContent() {
             className="flex items-center justify-center space-x-3 sm:space-x-4 md:space-x-8"
             style={{ willChange: 'transform' }}
           >
-            <div ref={lineLeftRef} className="h-px bg-black flex-1 max-w-8 sm:max-w-12 md:max-w-32" />
+            <div ref={lineLeftRef} className="h-px bg-black flex-1 max-w-10 sm:max-w-12 md:max-w-32" />
             <h3 
               ref={labelRef}
-              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light text-gray-800 italic whitespace-nowrap"
+              className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-light text-gray-800 italic whitespace-nowrap"
               style={{ fontFamily: "'Instrument Serif', serif" }}
             >
               deliberate
             </h3>
-            <div ref={lineRightRef} className="h-px bg-black flex-1 max-w-8 sm:max-w-12 md:max-w-32" />
+            <div ref={lineRightRef} className="h-px bg-black flex-1 max-w-10 sm:max-w-12 md:max-w-32" />
           </div>
         </motion.div>
       </div>

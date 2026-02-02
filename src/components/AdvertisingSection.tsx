@@ -27,20 +27,20 @@ export default function AdvertisingSection() {
           once: true,
           invalidateOnRefresh: true,
         },
-        // Slightly quicker than the hero so it feels snappy when scrolled into view
-        defaults: { ease: 'power1.out', duration: 0.7 }
+        // Faster, snappier animation
+        defaults: { ease: 'power2.out', duration: 0.4 }
       })
 
       // Sequential, soft fade/slide-in like the hero texts
-      tl.from(headlineRef.current, { y: 24, autoAlpha: 0 })
-        .from(subRef.current, { y: 28, autoAlpha: 0 }, '>-0.1')
+      tl.from(headlineRef.current, { y: 20, autoAlpha: 0 })
+        .from(subRef.current, { y: 20, autoAlpha: 0 }, '>-0.15')
         .from(lineRef.current, {
           scaleX: 0,
           transformOrigin: 'center center',
-          duration: 0.6,
-        }, '>-0.1')
-        .from(weWorkRef.current, { y: 18, autoAlpha: 0 }, '>-0.05')
-        .from(edgeRef.current, { y: 18, autoAlpha: 0 }, '>-0.05')
+          duration: 0.35,
+        }, '>-0.15')
+        .from(weWorkRef.current, { y: 15, autoAlpha: 0 }, '>-0.1')
+        .from(edgeRef.current, { y: 15, autoAlpha: 0 }, '>-0.1')
     }, sectionRef)
 
     return () => ctx.revert()
@@ -88,7 +88,7 @@ export default function AdvertisingSection() {
         {/* ADVERTISING IS */}
         <h1 
           ref={headlineRef}
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-red-500 mb-1 sm:mb-2"
+          className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-red-500 mb-1 sm:mb-2"
           style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           ADVERTISING IS
@@ -97,7 +97,7 @@ export default function AdvertisingSection() {
         {/* PART BUSINESS, PART INSTINCT. */}
         <h2 
           ref={subRef}
-          className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-red-500 mb-4 sm:mb-6 md:mb-8"
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-red-500 mb-4 sm:mb-6 md:mb-8"
           style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           PART BUSINESS, PART INSTINCT.
@@ -106,14 +106,14 @@ export default function AdvertisingSection() {
         {/* Horizontal Line */}
         <div
           ref={lineRef}
-          className="w-24 sm:w-32 md:w-48 h-px bg-black mx-auto mb-4 sm:mb-6 md:mb-8"
+          className="w-28 sm:w-32 md:w-48 h-px bg-black mx-auto mb-4 sm:mb-6 md:mb-8"
           style={{ transformOrigin: 'center' }}
         />
 
         {/* WE WORK */}
         <h3 
           ref={weWorkRef}
-          className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 mb-1 sm:mb-2"
+          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 mb-1 sm:mb-2"
           style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           WE WORK
@@ -122,7 +122,7 @@ export default function AdvertisingSection() {
         {/* AT THAT EDGE */}
         <h4 
           ref={edgeRef}
-          className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900"
+          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900"
           style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           AT THAT EDGE

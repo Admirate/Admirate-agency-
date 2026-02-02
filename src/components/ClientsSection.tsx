@@ -43,7 +43,7 @@ export default function ClientsSection() {
             viewport={{ once: true }}
           >
             <h2
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-white mb-2 sm:mb-3 md:mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-white mb-2 sm:mb-3 md:mb-4"
               style={{
                 fontFamily:
                   'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -52,7 +52,7 @@ export default function ClientsSection() {
               THOSE WE&apos;VE BUILT FOR
             </h2>
             <p
-              className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-red-500 font-medium"
+              className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-red-500 font-medium"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               People who believe in thoughtful work.

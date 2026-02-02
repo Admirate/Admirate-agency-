@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import BlurText from '@/components/ui/BlurText'
 
 const SERVICES = [
   "Social media management.",
@@ -37,7 +36,7 @@ export default function ServicesIntro() {
             viewport={{ once: true }}
           >
             <h2 
-              className="leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
+              className="leading-tight text-4xl sm:text-5xl md:text-5xl lg:text-6xl"
               style={{ 
                 fontFamily: "'Integral CF', sans-serif",
                 fontWeight: 400,
@@ -53,9 +52,9 @@ export default function ServicesIntro() {
             </h2>
           </motion.div>
 
-          {/* Right Side - Services List with BlurText Animation */}
+          {/* Right Side - Services List with Fade-in Animation */}
           <div 
-            className="space-y-1 sm:space-y-2 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl"
+            className="space-y-1 sm:space-y-2 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
@@ -64,21 +63,19 @@ export default function ServicesIntro() {
             }}
           >
             {SERVICES.map((service, index) => (
-              <BlurText
+              <motion.p
                 key={index}
-                text={service}
-                delay={80}
-                animateBy="words"
-                direction="top"
-                threshold={0.2}
-                stepDuration={0.3}
-                className=""
-                animationFrom={{ filter: 'blur(8px)', opacity: 0, y: -20 }}
-                animationTo={[
-                  { filter: 'blur(4px)', opacity: 0.5, y: -5 },
-                  { filter: 'blur(0px)', opacity: 1, y: 0 }
-                ]}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: index * 0.1,
+                  ease: 'easeOut'
+                }}
+                viewport={{ once: true, margin: '-50px' }}
+              >
+                {service}
+              </motion.p>
             ))}
           </div>
         </div>
