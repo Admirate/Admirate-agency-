@@ -84,11 +84,12 @@ export default function AdvertisingSection() {
       </motion.div>
 
       {/* Main Content */}
-      <div className="text-center max-w-4xl px-4 md:px-8 z-10">
+      <div className="text-center max-w-4xl px-4 sm:px-6 md:px-8 z-10">
         {/* ADVERTISING IS */}
         <h1 
           ref={headlineRef}
-          className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-red-500 mb-2"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-red-500 mb-1 sm:mb-2"
+          style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           ADVERTISING IS
         </h1>
@@ -96,7 +97,8 @@ export default function AdvertisingSection() {
         {/* PART BUSINESS, PART INSTINCT. */}
         <h2 
           ref={subRef}
-          className="text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-red-500 mb-6 md:mb-8"
+          className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-red-500 mb-4 sm:mb-6 md:mb-8"
+          style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           PART BUSINESS, PART INSTINCT.
         </h2>
@@ -104,14 +106,15 @@ export default function AdvertisingSection() {
         {/* Horizontal Line */}
         <div
           ref={lineRef}
-          className="w-48 h-px bg-black mx-auto mb-8"
+          className="w-24 sm:w-32 md:w-48 h-px bg-black mx-auto mb-4 sm:mb-6 md:mb-8"
           style={{ transformOrigin: 'center' }}
         />
 
         {/* WE WORK */}
         <h3 
           ref={weWorkRef}
-          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 mb-2"
+          className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 mb-1 sm:mb-2"
+          style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           WE WORK
         </h3>
@@ -119,7 +122,8 @@ export default function AdvertisingSection() {
         {/* AT THAT EDGE */}
         <h4 
           ref={edgeRef}
-          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900"
+          className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900"
+          style={{ fontFamily: "'Integral CF', sans-serif" }}
         >
           AT THAT EDGE
         </h4>

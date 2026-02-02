@@ -61,6 +61,57 @@ export default function MainContent() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
+      {/* ADMIRATE Logo at top center - Desktop */}
+      <motion.div
+        className="hidden lg:block absolute top-12 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        <Image
+          src="/redadmiratelogo.png"
+          alt="ADMIRATE"
+          width={300}
+          height={90}
+          className="lg:w-[350px] lg:h-[105px] xl:w-[400px] xl:h-[120px] object-contain"
+          priority
+        />
+      </motion.div>
+
+      {/* ADMIRATE Logo - Tablet only */}
+      <motion.div
+        className="hidden md:block lg:hidden absolute top-6 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
+        <Image
+          src="/redadmiratelogo.png"
+          alt="ADMIRATE"
+          width={160}
+          height={48}
+          className="w-[160px] h-auto object-contain"
+          priority
+        />
+      </motion.div>
+
+      {/* ADMIRATE Logo at top center - Mobile */}
+      <motion.div
+        className="block md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        <Image
+          src="/redadmiratelogo.png"
+          alt="ADMIRATE"
+          width={100}
+          height={30}
+          className="object-contain"
+          priority
+        />
+      </motion.div>
+
       {/* Top Left Decorative Element - Desktop Only */}
       <motion.div
         className="hidden md:block absolute top-0 left-0 z-10"
@@ -152,38 +203,6 @@ export default function MainContent() {
       </motion.div>
 
 
-      {/* ADMIRATE Logo at top center - Desktop
-      <motion.div
-        className="hidden md:block absolute top-12 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        <Image
-          src="/redadmiratelogo.png"
-          alt="ADMIRATE"
-          width={300}
-          height={90}
-          className="lg:w-[350px] lg:h-[105px] xl:w-[400px] xl:h-[120px] object-contain"
-        />
-      </motion.div>
-
-      ADMIRATE Logo at top center - Mobile
-      <motion.div
-        className="block md:hidden absolute top-12 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        <Image
-          src="/redadmiratelogo.png"
-          alt="ADMIRATE"
-          width={100}
-          height={30}
-          className="object-contain"
-        />
-      </motion.div> */}
-
       {/* Main Content - Center with sequential intro */}
       <div ref={heroRef} className="flex items-center justify-center min-h-screen py-2 md:py-0 md:h-screen">
         <motion.div
@@ -196,7 +215,7 @@ export default function MainContent() {
           <h1 
             ref={h1Ref}
             style={{ fontFamily: "'Instrument Serif', serif", willChange: 'transform' }}
-            className="text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-800 mb-3 md:mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-800 mb-2 sm:mb-3 md:mb-4"
           >
             More than ideas
           </h1>
@@ -205,7 +224,7 @@ export default function MainContent() {
           <h2 
             ref={h2Ref}
             style={{ fontFamily: "'Integral CF', sans-serif", willChange: 'transform' }}
-            className="text-5xl md:text-5xl lg:text-6xl xl:text-7xl text-black mb-5 md:mb-6 leading-tight font-black"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-black mb-3 sm:mb-4 md:mb-6 leading-tight font-black"
           >
             SOMETHING MORE
           </h2>
@@ -213,18 +232,18 @@ export default function MainContent() {
           {/* deliberate with lines */}
           <div
             ref={linesGroupRef}
-            className="flex items-center justify-center space-x-4 md:space-x-8"
+            className="flex items-center justify-center space-x-3 sm:space-x-4 md:space-x-8"
             style={{ willChange: 'transform' }}
           >
-            <div ref={lineLeftRef} className="h-px bg-black flex-1 max-w-10 md:max-w-32" />
+            <div ref={lineLeftRef} className="h-px bg-black flex-1 max-w-8 sm:max-w-12 md:max-w-32" />
             <h3 
               ref={labelRef}
-              className="text-2xl md:text-3xl lg:text-4xl font-light text-gray-800 italic whitespace-nowrap"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light text-gray-800 italic whitespace-nowrap"
               style={{ fontFamily: "'Instrument Serif', serif" }}
             >
               deliberate
             </h3>
-            <div ref={lineRightRef} className="h-px bg-black flex-1 max-w-10 md:max-w-32" />
+            <div ref={lineRightRef} className="h-px bg-black flex-1 max-w-8 sm:max-w-12 md:max-w-32" />
           </div>
         </motion.div>
       </div>
