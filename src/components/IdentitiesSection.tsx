@@ -105,7 +105,7 @@ export default function IdentitiesSection() {
           >
             <div className="relative h-[350px] lg:h-[600px] w-full overflow-visible">
               <Image
-                src="/artboard.png"
+                src="/artboard-1.png"
                 alt="3D Identity Design Showcase"
                 fill
                 className="object-contain rotate-0 scale-80 translate-x-4"

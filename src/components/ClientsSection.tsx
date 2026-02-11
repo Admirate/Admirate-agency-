@@ -4,16 +4,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 const clients = [
-  { src: '/logo1.png', alt: 'Client Logo 1' },
-  { src: '/logo2.png', alt: 'Client Logo 2' },
-  { src: '/logo3.png', alt: 'Client Logo 3' },
-  { src: '/logo4.png', alt: 'Client Logo 4' },
-  { src: '/logo5.png', alt: 'Client Logo 5' },
-  { src: '/logo6.png', alt: 'Client Logo 6' },
-  { src: '/logo7.png', alt: 'Client Logo 7' },
-  { src: '/logo8.png', alt: 'Client Logo 8' },
-  { src: '/logo9.png', alt: 'Client Logo 9' },
-]
+  { src: "/logo1.png", alt: "Client Logo 1" },
+  { src: "/logo2.png", alt: "Client Logo 2" },
+  { src: "/logo3.png", alt: "Client Logo 3" },
+  { src: "/logo4.png", alt: "Client Logo 4" },
+  { src: "/logo5.png", alt: "Client Logo 5" },
+  { src: "/logo6.png", alt: "Client Logo 6" },
+  { src: "/logo7.png", alt: "Client Logo 7" },
+  { src: "/logo8.png", alt: "Client Logo 8" },
+  { src: "/logo9.png", alt: "Client Logo 9" },
+  { src: "/logo10.png", alt: "Client Logo 10" },
+  { src: "/logo11.png", alt: "Client Logo 11" },
+];
 
 // Duplicate clients for seamless looping in the marquee (desktop / tablet)
 const marqueeClients = [...clients, ...clients]
@@ -26,7 +28,7 @@ export default function ClientsSection() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % clients.length)
-    }, 1500)
+    }, 3000)
 
     return () => clearInterval(intervalId)
   }, [])
@@ -64,17 +66,22 @@ export default function ClientsSection() {
             <div className="overflow-hidden">
               <div className="clients-marquee flex items-center gap-4 sm:gap-6 md:gap-8 whitespace-nowrap">
                 {marqueeClients.map((client, index) => {
-                  const isEnlarged = enlargedLogos.includes(client.src)
+                  const isEnlarged = enlargedLogos.includes(client.src);
                   return (
                     <motion.div
                       key={`${client.src}-${index}`}
-                      className="relative flex-shrink-0 w-32 h-20 sm:w-36 sm:h-22 md:w-40 md:h-24 lg:w-48 lg:h-28 xl:w-52 xl:h-32 bg-black rounded-xl border border-gray-700/80 shadow-[0_0_18px_rgba(0,0,0,0.8)] flex items-center justify-center"
+                      className="relative flex-shrink-0 w-36 h-24 sm:w-40 sm:h-26 md:w-44 md:h-28 lg:w-52 lg:h-32 xl:w-56 xl:h-36 bg-black rounded-xl border border-gray-700/80 shadow-[0_0_18px_rgba(0,0,0,0.8)] flex items-center justify-center"
                       whileHover={{ scale: 1.05 }}
-                      transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20,
+                      }}
                     >
                       <div
                         className={
-                          'relative ' + (isEnlarged ? 'w-[96%] h-[88%]' : 'w-[80%] h-[70%]')
+                          "relative " +
+                          (isEnlarged ? "w-[96%] h-[90%]" : "w-[85%] h-[75%]")
                         }
                       >
                         <Image
@@ -86,7 +93,7 @@ export default function ClientsSection() {
                         />
                       </div>
                     </motion.div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -94,22 +101,22 @@ export default function ClientsSection() {
 
           {/* Mobile: single centered logo auto-carousel so every logo is visible */}
           <div className="mt-4 md:mt-6 block md:hidden">
-            <div className="relative mx-auto w-40 h-24 sm:w-48 sm:h-28">
+            <div className="relative mx-auto w-48 h-28 sm:w-56 sm:h-32">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={clients[currentIndex].src}
                   initial={{ opacity: 0, scale: 0.9, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                  transition={{ duration: 0.35 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="absolute inset-0 bg-black rounded-xl border border-gray-700/80 shadow-[0_0_18px_rgba(0,0,0,0.8)] flex items-center justify-center"
                 >
                   <div
                     className={
-                      'relative w-[90%] h-[80%]' +
+                      "relative w-[90%] h-[80%]" +
                       (enlargedLogos.includes(clients[currentIndex].src)
-                        ? ' md:w-[96%] md:h-[88%]'
-                        : '')
+                        ? " md:w-[96%] md:h-[88%]"
+                        : "")
                     }
                   >
                     <Image
@@ -136,5 +143,5 @@ export default function ClientsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
