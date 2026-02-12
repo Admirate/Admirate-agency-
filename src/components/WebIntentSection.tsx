@@ -1,129 +1,247 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-const collagesSets = [
-  [
-    { src: '/collage1.png', alt: 'Web Design 1', link: 'https://patilgroup.com' },
-    { src: '/collage2.png', alt: 'Web Design 2', link: 'https://patilgroup.com' },
-    { src: '/collage3.png', alt: 'Web Design 3', link: 'https://patilgroup.com' },
-  ],
-  [
-    { src: '/collage4.png', alt: 'Web Design 4', link: 'https://southglass.in' },
-    { src: '/collage5.jpg', alt: 'Web Design 5', link: 'https://southglass.in' },
-    { src: '/collage6.png', alt: 'Web Design 6', link: 'https://southglass.in' },
-  ]
+gsap.registerPlugin(ScrollTrigger)
+
+const projectImages = [
+  { 
+    src: '/patilgroup1.jpeg', 
+    alt: 'Patil Group', 
+    link: 'https://patilgroup.com',
+    title: 'Patil Group',
+    category: 'Website'
+  },
+  { 
+    src: '/southglass1.jpeg', 
+    alt: 'Web Design Project 2', 
+    link: 'https://southglass.in',
+    title: 'South Glass',
+    category: 'Web Design'
+  },
+  { 
+    src: '/oss1.jpeg', 
+    alt: 'Web Design Project 3', 
+    link: 'https://oursacredspace.netlify.app',
+    title: 'Our Sacred Space',
+    category: 'Website'
+  },
+  { 
+    src: '/sportex1.jpeg', 
+    alt: 'Sportex Website', 
+    link: 'https://sportex.in',
+    title: 'Sportex',
+    category: 'Website'
+  },
+  { 
+    src: '/hopetrust1.jpeg', 
+    alt: 'Web Design Project 5', 
+    link: 'https://hopetrust.netlify.app',
+    title: 'Hope Trust',
+    category: 'Website'
+  },
 ]
 
 export default function WebIntentSection() {
-  const [currentSetIndex, setCurrentSetIndex] = useState(0)
+  const sectionRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSetIndex((prev) => (prev + 1) % collagesSets.length)
-    }, 4000) // Change every 4 seconds
+    const section = sectionRef.current
+    const content = contentRef.current
+    const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[]
 
-    return () => clearInterval(interval)
+    if (!section || !content || cards.length === 0) return
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
+
+    // Get stacked position for each card (slight offset)
+    const getStackedTop = (index: number) => 5 + (index * 1.5)
+    
+    // Set initial positions
+    cards.forEach((card, index) => {
+      card.style.top = index === 0 ? `${getStackedTop(0)}%` : '120%'
+    })
+
+    // Add extra scroll distance: cards animation + 1 extra screen to hold last card
+    const scrollDistance = (cards.length + 1) * window.innerHeight
+
+    let ctx = gsap.context(() => {
+      // Create the ScrollTrigger without using pin
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${scrollDistance}`,
+        onUpdate: (self) => {
+          const progress = self.progress
+          
+          // Manual fixed positioning logic
+          if (progress > 0 && progress < 1) {
+            // During scroll - fixed
+            content.style.position = 'fixed'
+            content.style.top = '0'
+            content.style.bottom = 'auto'
+          } else if (progress <= 0) {
+            // Before section - absolute at top
+            content.style.position = 'absolute'
+            content.style.top = '0'
+            content.style.bottom = 'auto'
+          } else {
+            // After section - absolute at bottom
+            content.style.position = 'absolute'
+            content.style.top = 'auto'
+            content.style.bottom = '0'
+          }
+
+          // Scale progress so card animations finish at 85%, leaving 15% for last card to stay visible
+          const animationProgress = Math.min(progress / 0.85, 1)
+
+          // Animate cards based on progress
+          cards.forEach((card, index) => {
+            if (index === 0) {
+              card.style.top = `${getStackedTop(0)}%`
+              return
+            }
+
+            const cardStart = (index - 1) / (cards.length - 1)
+            const cardEnd = index / (cards.length - 1)
+
+            let cardTop: number
+            if (animationProgress < cardStart) {
+              cardTop = 120
+            } else if (animationProgress >= cardEnd) {
+              cardTop = getStackedTop(index)
+            } else {
+              const cardProgress = (animationProgress - cardStart) / (cardEnd - cardStart)
+              // Smooth easing
+              const eased = 1 - Math.pow(1 - cardProgress, 3)
+              cardTop = 120 - (eased * (120 - getStackedTop(index)))
+            }
+            
+            card.style.top = `${cardTop}%`
+          })
+        },
+      })
+    }, section)
+
+    // Refresh after a short delay
+    const timer = setTimeout(() => ScrollTrigger.refresh(), 100)
+
+    return () => {
+      clearTimeout(timer)
+      ctx.revert()
+    }
   }, [])
 
+  // Extra 100vh added so last card stays visible before next section
+  const scrollHeight = (projectImages.length + 1) * 100
+
   return (
-    <section className="h-[100svh] min-h-[100svh] md:min-h-[70vh] md:h-[70vh] bg-gray-200 relative overflow-hidden py-4 md:py-12 mt-0 md:mt-0 mb-0 md:mb-0">
-
-      <div className="container mx-auto px-4 md:px-8 py-4 md:py-6">
-        <div className="grid lg:grid-cols-2 gap-4 md:gap-8 lg:gap-16 items-center md:items-start min-h-[50vh] md:min-h-[calc(100vh-4rem)] md:h-full">
+    <section 
+      ref={sectionRef} 
+      className="relative bg-[#e8e8e8]"
+      style={{ height: `${scrollHeight}vh` }}
+    >
+      {/* Content - manually positioned */}
+      <div 
+        ref={contentRef}
+        className="w-full h-screen left-0 right-0"
+        style={{ position: 'absolute', top: 0 }}
+      >
+        <div className="h-full w-full flex flex-col lg:flex-row">
           
-          {/* Left Side - Text Content */}
-          <div className="space-y-4 md:space-y-8">
-            {/* WEB WITH INTENT text on left side */}
-            <motion.div
-              className="hidden lg:block absolute left-8 top-1/2 transform -translate-y-1/2 -rotate-90 origin-center"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-sm text-black tracking-[0.3em]" style={{ fontFamily: "'Integral CF', sans-serif", fontWeight: 700 }}>
-                WEB INTENT
+          {/* Left Side - Text */}
+          <div className="lg:w-[40%] xl:w-[35%] h-auto lg:h-full flex flex-col justify-center px-6 md:px-12 lg:px-16 py-8 lg:py-0 relative z-10">
+            
+            {/* Vertical text */}
+            <div className="hidden lg:block absolute left-6 top-1/2 transform -translate-y-1/2 -rotate-90 origin-center">
+              <span 
+                className="text-xs tracking-[0.3em] text-black/60 uppercase"
+                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500 }}
+              >
+                Web Intent
               </span>
-            </motion.div>
+            </div>
 
-            {/* Main Title */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>
-                <span className="text-red-500">WEB</span> WITH
+            <div className="lg:pl-8">
+              <h2 
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[0.95] tracking-tight"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                <span className="text-red-500">WEB</span>{' '}
+                <span className="text-black">WITH</span>
                 <br />
-                INTENT
+                <span className="text-black">INTENT</span>
               </h2>
-            </motion.div>
 
-            {/* Carousel indicators */}
-            <motion.div
-              className="flex space-x-2"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              {collagesSets.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSetIndex(index)}
-                  className={`w-3 h-3 sm:w-3 sm:h-3 md:w-3 md:h-3 rounded-full transition-colors duration-300 ${
-                    currentSetIndex === index ? 'bg-red-500' : 'bg-red-300'
-                  }`}
-                  style={{ minWidth: '12px', minHeight: '12px' }}
-                  suppressHydrationWarning
-                />
-              ))}
-            </motion.div>
+              <div className="flex space-x-2 mt-6 lg:mt-8">
+                {projectImages.map((_, index) => (
+                  <div key={index} className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                ))}
+              </div>
+
+              <p 
+                className="mt-6 lg:mt-8 text-sm md:text-base text-black/60 max-w-sm leading-relaxed"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Crafting digital experiences that drive results. Scroll to explore our work.
+              </p>
+            </div>
           </div>
 
-          {/* Right Side - Carousel */}
-          <motion.div
-            className="relative h-[400px] md:h-[900px] w-full"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSetIndex}
-                className="absolute inset-0 flex justify-center items-center gap-6"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-              >
-                {collagesSets[currentSetIndex].map((collage, index) => (
-                  <motion.div
-                    key={collage.src}
-                    className="relative flex-1 h-full min-w-[200px] md:min-w-[250px] cursor-pointer"
-                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => window.open(collage.link, '_blank')}
-              >
-                <Image
-                      src={collage.src}
-                      alt={collage.alt}
-                  fill
-                      className="object-cover"
-                      sizes="(max-width: 900px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
+          {/* Right Side - Cards */}
+          <div className="lg:w-[60%] xl:w-[65%] h-[60vh] lg:h-full relative overflow-hidden">
+            <div className="absolute inset-4 lg:inset-8">
+              {projectImages.map((project, index) => (
+                <div
+                  key={project.src}
+                  ref={(el) => { cardsRef.current[index] = el }}
+                  className="absolute left-0 right-0 h-[88%] rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
+                  onClick={() => window.open(project.link, '_blank')}
+                  style={{ zIndex: index + 1 }}
+                >
+                  <Image
+                    src={project.src}
+                    alt={project.alt}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 65vw"
+                    priority={index < 2}
+                  />
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-white text-xl lg:text-2xl font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          {project.title}
+                        </h3>
+                        <span className="text-white/70 text-sm mt-1 inline-block">{project.category}</span>
+                      </div>
+                      <div className="text-white text-sm font-medium flex items-center gap-2 uppercase tracking-wider">
+                        View Project
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute top-4 right-4 lg:top-6 lg:right-6">
+                    <span className="bg-white/90 backdrop-blur-sm text-black text-xs px-3 py-1.5 rounded-full font-medium">
+                      {project.category}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
