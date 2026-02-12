@@ -60,85 +60,110 @@ export default function WebIntentSection() {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReducedMotion) return
 
-    // Get stacked position for each card (slight offset)
-    const getStackedTop = (index: number) => 5 + (index * 1.5)
-    
-    // Set initial positions
-    cards.forEach((card, index) => {
-      card.style.top = index === 0 ? `${getStackedTop(0)}%` : '120%'
-    })
+    let ctx: gsap.Context
+    let resizeTimeout: NodeJS.Timeout
 
-    // Add extra scroll distance: cards animation + 1 extra screen to hold last card
-    const scrollDistance = (cards.length + 1) * window.innerHeight
-
-    let ctx = gsap.context(() => {
-      // Create the ScrollTrigger without using pin
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: () => `+=${scrollDistance}`,
-        onUpdate: (self) => {
-          const progress = self.progress
-          
-          // Manual fixed positioning logic
-          if (progress > 0 && progress < 1) {
-            // During scroll - fixed
-            content.style.position = 'fixed'
-            content.style.top = '0'
-            content.style.bottom = 'auto'
-          } else if (progress <= 0) {
-            // Before section - absolute at top
-            content.style.position = 'absolute'
-            content.style.top = '0'
-            content.style.bottom = 'auto'
-          } else {
-            // After section - absolute at bottom
-            content.style.position = 'absolute'
-            content.style.top = 'auto'
-            content.style.bottom = '0'
-          }
-
-          // Scale progress so card animations finish at 85%, leaving 15% for last card to stay visible
-          const animationProgress = Math.min(progress / 0.85, 1)
-
-          // Animate cards based on progress
-          cards.forEach((card, index) => {
-            if (index === 0) {
-              card.style.top = `${getStackedTop(0)}%`
-              return
-            }
-
-            const cardStart = (index - 1) / (cards.length - 1)
-            const cardEnd = index / (cards.length - 1)
-
-            let cardTop: number
-            if (animationProgress < cardStart) {
-              cardTop = 120
-            } else if (animationProgress >= cardEnd) {
-              cardTop = getStackedTop(index)
-            } else {
-              const cardProgress = (animationProgress - cardStart) / (cardEnd - cardStart)
-              // Smooth easing
-              const eased = 1 - Math.pow(1 - cardProgress, 3)
-              cardTop = 120 - (eased * (120 - getStackedTop(index)))
-            }
-            
-            card.style.top = `${cardTop}%`
-          })
-        },
+    const setupAnimation = () => {
+      // Kill existing ScrollTriggers for this section
+      ScrollTrigger.getAll().forEach(st => {
+        if (st.vars.trigger === section) st.kill()
       })
-    }, section)
 
-    // Refresh after a short delay
-    const timer = setTimeout(() => ScrollTrigger.refresh(), 100)
+      const isSmallScreen = window.innerWidth < 1024
+
+      // Get stacked position - different for mobile/desktop
+      const getStackedTop = (index: number) => {
+        if (isSmallScreen) {
+          return 1 + (index * 0.8) // Tighter stacking on mobile
+        }
+        return 5 + (index * 1.5) // More spacing on desktop
+      }
+      
+      // Set initial positions
+      cards.forEach((card, index) => {
+        card.style.top = index === 0 ? `${getStackedTop(0)}%` : '120%'
+      })
+
+      // Scroll distance
+      const scrollDistance = (cards.length + 1) * window.innerHeight
+
+      ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${scrollDistance}`,
+          onUpdate: (self) => {
+            const progress = self.progress
+            
+            // Fixed positioning
+            if (progress > 0 && progress < 1) {
+              content.style.position = 'fixed'
+              content.style.top = '0'
+              content.style.bottom = 'auto'
+            } else if (progress <= 0) {
+              content.style.position = 'absolute'
+              content.style.top = '0'
+              content.style.bottom = 'auto'
+            } else {
+              content.style.position = 'absolute'
+              content.style.top = 'auto'
+              content.style.bottom = '0'
+            }
+
+            // Animation progress (finish at 85%)
+            const animationProgress = Math.min(progress / 0.85, 1)
+
+            // Animate cards
+            cards.forEach((card, index) => {
+              if (index === 0) {
+                card.style.top = `${getStackedTop(0)}%`
+                return
+              }
+
+              const cardStart = (index - 1) / (cards.length - 1)
+              const cardEnd = index / (cards.length - 1)
+
+              let cardTop: number
+              if (animationProgress < cardStart) {
+                cardTop = 120
+              } else if (animationProgress >= cardEnd) {
+                cardTop = getStackedTop(index)
+              } else {
+                const cardProgress = (animationProgress - cardStart) / (cardEnd - cardStart)
+                const eased = 1 - Math.pow(1 - cardProgress, 3)
+                cardTop = 120 - (eased * (120 - getStackedTop(index)))
+              }
+              
+              card.style.top = `${cardTop}%`
+            })
+          },
+        })
+      }, section)
+
+      ScrollTrigger.refresh()
+    }
+
+    // Initial setup with delay
+    const initTimer = setTimeout(setupAnimation, 100)
+
+    // Handle resize
+    const handleResize = () => {
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        ctx?.revert()
+        setupAnimation()
+      }, 200)
+    }
+    window.addEventListener('resize', handleResize)
 
     return () => {
-      clearTimeout(timer)
-      ctx.revert()
+      clearTimeout(initTimer)
+      clearTimeout(resizeTimeout)
+      window.removeEventListener('resize', handleResize)
+      ctx?.revert()
     }
   }, [])
 
-  // Extra 100vh added so last card stays visible before next section
   const scrollHeight = (projectImages.length + 1) * 100
 
   return (
@@ -147,18 +172,18 @@ export default function WebIntentSection() {
       className="relative bg-[#e8e8e8]"
       style={{ height: `${scrollHeight}vh` }}
     >
-      {/* Content - manually positioned */}
+      {/* Content wrapper */}
       <div 
         ref={contentRef}
-        className="w-full h-screen left-0 right-0"
+        className="w-full h-[100svh] left-0 right-0"
         style={{ position: 'absolute', top: 0 }}
       >
         <div className="h-full w-full flex flex-col lg:flex-row">
           
-          {/* Left Side - Text */}
-          <div className="lg:w-[40%] xl:w-[35%] h-auto lg:h-full flex flex-col justify-center px-6 md:px-12 lg:px-16 py-8 lg:py-0 relative z-10">
+          {/* Text Section */}
+          <div className="flex-shrink-0 lg:flex-shrink lg:w-[40%] xl:w-[35%] flex flex-col justify-start lg:justify-center px-4 sm:px-6 lg:px-12 xl:px-16 pt-4 pb-2 lg:py-0 relative z-10">
             
-            {/* Vertical text */}
+            {/* Vertical text - desktop only */}
             <div className="hidden lg:block absolute left-6 top-1/2 transform -translate-y-1/2 -rotate-90 origin-center">
               <span 
                 className="text-xs tracking-[0.3em] text-black/60 uppercase"
@@ -169,24 +194,28 @@ export default function WebIntentSection() {
             </div>
 
             <div className="lg:pl-8">
+              {/* Title - responsive sizing */}
               <h2 
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[0.95] tracking-tight"
+                className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[0.95] tracking-tight"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 <span className="text-red-500">WEB</span>{' '}
-                <span className="text-black">WITH</span>
-                <br />
-                <span className="text-black">INTENT</span>
+                <span className="text-black lg:hidden">WITH INTENT</span>
+                <span className="text-black hidden lg:inline">WITH</span>
+                <br className="hidden lg:block" />
+                <span className="text-black hidden lg:inline">INTENT</span>
               </h2>
 
-              <div className="flex space-x-2 mt-6 lg:mt-8">
+              {/* Dots */}
+              <div className="flex space-x-1.5 lg:space-x-2 mt-3 lg:mt-8">
                 {projectImages.map((_, index) => (
-                  <div key={index} className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                  <div key={index} className="w-2 h-2 lg:w-2.5 lg:h-2.5 rounded-full bg-red-500" />
                 ))}
               </div>
 
+              {/* Subtitle - desktop only */}
               <p 
-                className="mt-6 lg:mt-8 text-sm md:text-base text-black/60 max-w-sm leading-relaxed"
+                className="hidden lg:block mt-8 text-base text-black/60 max-w-sm leading-relaxed"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Crafting digital experiences that drive results. Scroll to explore our work.
@@ -194,14 +223,14 @@ export default function WebIntentSection() {
             </div>
           </div>
 
-          {/* Right Side - Cards */}
-          <div className="lg:w-[60%] xl:w-[65%] h-[60vh] lg:h-full relative overflow-hidden">
-            <div className="absolute inset-4 lg:inset-8">
+          {/* Cards Section */}
+          <div className="flex-1 lg:w-[60%] xl:w-[65%] relative overflow-hidden">
+            <div className="absolute inset-2 sm:inset-3 lg:inset-8">
               {projectImages.map((project, index) => (
                 <div
                   key={project.src}
                   ref={(el) => { cardsRef.current[index] = el }}
-                  className="absolute left-0 right-0 h-[88%] rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
+                  className="absolute left-0 right-0 h-[94%] lg:h-[88%] rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl cursor-pointer group"
                   onClick={() => window.open(project.link, '_blank')}
                   style={{ zIndex: index + 1 }}
                 >
@@ -209,32 +238,44 @@ export default function WebIntentSection() {
                     src={project.src}
                     alt={project.alt}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover lg:transition-transform lg:duration-700 lg:group-hover:scale-105"
                     sizes="(max-width: 1024px) 100vw, 65vw"
                     priority={index < 2}
                   />
                   
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Gradient overlay - always visible on mobile, hover on desktop */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:from-black/70 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity lg:duration-500" />
                   
-                  <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="flex items-center justify-between">
+                  {/* Project info - always visible on mobile, hover on desktop */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-8 lg:translate-y-full lg:group-hover:translate-y-0 lg:transition-transform lg:duration-500">
+                    <div className="flex items-end lg:items-center justify-between">
                       <div>
-                        <h3 className="text-white text-xl lg:text-2xl font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <h3 
+                          className="text-white text-base sm:text-lg lg:text-2xl font-semibold"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {project.title}
                         </h3>
-                        <span className="text-white/70 text-sm mt-1 inline-block">{project.category}</span>
+                        <span className="text-white/70 text-xs lg:text-sm mt-0.5 lg:mt-1 inline-block">
+                          {project.category}
+                        </span>
                       </div>
-                      <div className="text-white text-sm font-medium flex items-center gap-2 uppercase tracking-wider">
-                        View Project
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      
+                      {/* View button */}
+                      <div className="text-white text-xs lg:text-sm font-medium flex items-center gap-1 lg:gap-2 bg-white/20 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none px-3 py-1.5 lg:px-0 lg:py-0 rounded-full lg:rounded-none uppercase tracking-wider">
+                        <span className="lg:inline">View</span>
+                        <span className="hidden lg:inline"> Project</span>
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" className="lg:hidden" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" className="hidden lg:block" />
                         </svg>
                       </div>
                     </div>
                   </div>
 
-                  <div className="absolute top-4 right-4 lg:top-6 lg:right-6">
-                    <span className="bg-white/90 backdrop-blur-sm text-black text-xs px-3 py-1.5 rounded-full font-medium">
+                  {/* Category tag */}
+                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 lg:top-6 lg:right-6">
+                    <span className="bg-white/90 backdrop-blur-sm text-black text-[10px] sm:text-xs px-2 py-1 lg:px-3 lg:py-1.5 rounded-full font-medium">
                       {project.category}
                     </span>
                   </div>
