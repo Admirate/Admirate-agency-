@@ -51,7 +51,7 @@ export default function ServicesIntro() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              lineHeight: 1.4,
+              lineHeight: 1.2,
             }}
           >
             {SERVICES.map((service, index) => (

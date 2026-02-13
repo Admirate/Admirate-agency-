@@ -33,7 +33,10 @@ export default function DesignSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="min-h-[70svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-hidden flex items-center justify-center py-4 md:py-0 mt-0 md:mt-0 mb-0 md:mb-0">
+    <section
+      ref={sectionRef}
+      className="min-h-[70svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-hidden flex items-center justify-center py-4 md:py-0 mt-0 md:mt-0 mb-0 md:mb-0"
+    >
       {/* Background video */}
       <video
         autoPlay
@@ -44,7 +47,10 @@ export default function DesignSection() {
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover z-0"
       >
-        <source src="/design%20that%20moves%20with%20you.mp4" type="video/mp4" />
+        <source
+          src="/design%20that%20moves%20with%20you.mp4"
+          type="video/mp4"
+        />
         Your browser does not support the video tag.
       </video>
 
@@ -54,7 +60,7 @@ export default function DesignSection() {
         <span
           ref={sideLeftRef}
           className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] sm:text-xs tracking-[0.3em] text-black select-none"
-          style={{ willChange: 'transform' }}
+          style={{ willChange: "transform" }}
           aria-hidden="true"
         >
           DESIGN
@@ -62,7 +68,7 @@ export default function DesignSection() {
         <span
           ref={sideRightRef}
           className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 rotate-90 text-[10px] sm:text-xs tracking-[0.3em] text-black select-none"
-          style={{ willChange: 'transform' }}
+          style={{ willChange: "transform" }}
           aria-hidden="true"
         >
           DESIGN
@@ -71,8 +77,8 @@ export default function DesignSection() {
         {/* Headline */}
         <h2
           ref={titleRef}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl font-black text-red-500 uppercase leading-none text-center"
-          style={{ willChange: 'transform', fontFamily: "'Integral CF', sans-serif" }}
+          className="font-inter text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl font-black text-red-500 uppercase leading-none text-center"
+          style={{ willChange: "transform" }}
         >
           DESIGN
         </h2>
@@ -80,11 +86,14 @@ export default function DesignSection() {
         <p
           ref={subRef}
           className="mt-2 sm:mt-3 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl italic uppercase tracking-wide text-black text-center"
-          style={{ willChange: 'transform', fontFamily: "'Instrument Serif', serif" }}
+          style={{
+            willChange: "transform",
+            fontFamily: "'Instrument Serif', serif",
+          }}
         >
           THAT MOVES WITH YOU
         </p>
       </div>
     </section>
-  )
+  );
 }

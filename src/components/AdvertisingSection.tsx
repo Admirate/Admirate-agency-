@@ -47,7 +47,7 @@ export default function AdvertisingSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="min-h-[70svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-hidden flex items-center justify-center py-2 md:py-12 mt-0 md:mt-0 mb-24 md:mb-32">
+    <section ref={sectionRef} className="min-h-[70svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-visible flex items-center justify-center py-2 md:py-12 mt-0 md:mt-0 mb-24 md:mb-32">
 
       {/* Left Side Decorative Element */}
       <motion.div
@@ -60,8 +60,8 @@ export default function AdvertisingSection() {
         <Image
           src="/left@72x.png"
           alt="Left Decoration"
-          width={1000}
-          height={1100}
+          width={800}
+          height={1000}
           className="object-contain -rotate-3 md:rotate-0"
         />
       </motion.div>
@@ -77,8 +77,8 @@ export default function AdvertisingSection() {
         <Image
           src="/left@72x.png"
           alt="Right Decoration"
-          width={1000}
-          height={1100}
+          width={800}
+          height={1000}
           className="object-contain scale-x-[-1] rotate-3 md:rotate-0"
         />
       </motion.div>

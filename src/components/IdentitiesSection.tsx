@@ -12,36 +12,43 @@ export default function IdentitiesSection() {
   const yImage = useTransform(scrollYProgress, [0, 0.85, 1], [40, -40, -40])
 
   return (
-    <section ref={sectionRef} className="min-h-[70svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-hidden md:overflow-hidden py-2 md:py-12 mt-0 md:mt-0">
-
+    <section
+      ref={sectionRef}
+      className="min-h-[70svh] md:min-h-[70vh] md:h-[70vh] bg-white relative overflow-hidden md:overflow-hidden py-2 md:py-12 mt-0 md:mt-0"
+    >
       {/* IDENTITIES text on left side - vertical (desktop only) */}
       <motion.div
-        style={{ y: ySide, willChange: 'transform' }}
+        style={{ y: ySide, willChange: "transform" }}
         className="hidden lg:block absolute left-8 top-1/2 transform -translate-y-1/2 -rotate-90 origin-center"
         initial={{ opacity: 0, x: -50 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
         viewport={{ once: true }}
       >
-        <span className="text-sm text-black tracking-[0.3em]" style={{ fontFamily: "'Integral CF', sans-serif", fontWeight: 700 }}>
+        <span
+          className="text-sm text-black tracking-[0.3em]"
+          style={{ fontFamily: "'Integral CF', sans-serif", fontWeight: 700 }}
+        >
           IDENTITIES
         </span>
       </motion.div>
 
       <div className="container mx-auto px-4 md:px-8 py-0 md:py-6 overflow-visible md:overflow-visible">
-        
         {/* Mobile Layout - Text Left, Image Right */}
         <div className="block md:hidden relative h-[400px] pt-4">
           {/* Text Content - Left Side */}
           <motion.div
-            style={{ y: yTitle, willChange: 'transform' }}
+            style={{ y: yTitle, willChange: "transform" }}
             className="absolute left-4 -top-4 z-10"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <h2
+              className="text-3xl sm:text-4xl font-bold leading-tight text-black"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
               <span className="text-red-500">IDENTITIES</span>
               <br />
               BUILT TO
@@ -52,7 +59,7 @@ export default function IdentitiesSection() {
 
           {/* Image on Right Edge */}
           <motion.div
-            style={{ y: yImage, willChange: 'transform' }}
+            style={{ y: yImage, willChange: "transform" }}
             className="absolute right-0 top-1/2 transform -translate-y-1/2"
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -73,18 +80,20 @@ export default function IdentitiesSection() {
 
         {/* Desktop Layout - Side by Side */}
         <div className="hidden md:grid grid-cols-2 gap-8 lg:gap-16 items-start h-full pt-6 overflow-visible">
-          
           {/* Left Side - Text Content */}
-          <div className="space-y-8">
+          <div className="space-y-8 md:pl-24 lg:pl-32">
             {/* Main Title */}
             <motion.div
-              style={{ y: yTitle, willChange: 'transform' }}
+              style={{ y: yTitle, willChange: "transform" }}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <h2
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
                 <span className="text-red-500">IDENTITIES</span>
                 <br />
                 BUILT TO
@@ -96,7 +105,7 @@ export default function IdentitiesSection() {
 
           {/* Right Side - Artboard Image */}
           <motion.div
-            style={{ y: yImage, willChange: 'transform' }}
+            style={{ y: yImage, willChange: "transform" }}
             className="relative overflow-visible"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -116,7 +125,7 @@ export default function IdentitiesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 
