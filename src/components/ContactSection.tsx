@@ -55,7 +55,7 @@ export default function ContactSection() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="flex-1 px-4 md:px-6 py-3 md:py-4 text-base md:text-lg text-gray-700 placeholder-gray-400 bg-transparent outline-none"
-                  onKeyPress={(e) => {
+                  onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       handleWhatsAppClick()
                     }

@@ -169,7 +169,7 @@ export default function WebIntentSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#e8e8e8]"
+      className="relative overflow-hidden bg-[#e8e8e8]"
       style={{ height: `${scrollHeight}vh` }}
     >
       {/* Content wrapper */}
