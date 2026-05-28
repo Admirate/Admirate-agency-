@@ -5,8 +5,6 @@ import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
-
 const projectImages = [
   {
     desktopSrc: "/Hitex@72x-100.jpg",
@@ -19,7 +17,7 @@ const projectImages = [
     desktopSrc: "/hope-trust.jpg",
     mobileSrc: "/Hope-mobile@72x-100.jpg",
     title: "Hope Trust",
-    link: "https://hopetrust.netlify.app",
+    link: "https://hopetrustindia.com",
     category: "Website",
   },
   {
@@ -33,7 +31,7 @@ const projectImages = [
     desktopSrc: "/Sacred-space@72x-100.jpg",
     mobileSrc: "/Sacred-mobile@72x-100.jpg",
     title: "Our Sacred Space",
-    link: "https://oursacredspace.netlify.app",
+    link: "https://oursacredspace.in",
     category: "Website",
   },
   {
@@ -48,12 +46,12 @@ const projectImages = [
 export default function WebIntentSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([])
+  const cardsRef = useRef<(HTMLAnchorElement | null)[]>([])
 
   useEffect(() => {
     const section = sectionRef.current
     const content = contentRef.current
-    const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[]
+    const cards = cardsRef.current.filter(Boolean) as HTMLAnchorElement[]
 
     if (!section || !content || cards.length === 0) return
 
@@ -184,8 +182,7 @@ export default function WebIntentSection() {
             {/* Vertical text - desktop only */}
             <div className="hidden lg:block absolute left-6 top-1/2 transform -translate-y-1/2 -rotate-90 origin-center">
               <span
-                className="text-xs tracking-[0.3em] text-black/60 uppercase"
-                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500 }}
+                className="text-xs tracking-[0.3em] text-black/60 uppercase font-inter font-medium"
               >
                 Web Intent
               </span>
@@ -194,10 +191,9 @@ export default function WebIntentSection() {
             <div className="lg:pl-8">
               {/* Title - responsive sizing */}
               <h2
-                className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[0.95] tracking-tight"
-                style={{ fontFamily: "'Inter', sans-serif" }}
+                className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[0.95] tracking-tight font-inter"
               >
-                <span className="text-red-500">WEB</span>{" "}
+                <span className="text-red-600">WEB</span>{" "}
                 <span className="text-black lg:hidden">WITH INTENT</span>
                 <span className="text-black hidden lg:inline">WITH</span>
                 <br className="hidden lg:block" />
@@ -216,8 +212,7 @@ export default function WebIntentSection() {
 
               {/* Subtitle - desktop only */}
               <p
-                className="hidden lg:block mt-8 text-base text-black/60 max-w-sm leading-relaxed"
-                style={{ fontFamily: "'Inter', sans-serif" }}
+                className="hidden lg:block mt-8 text-base text-black/60 max-w-sm leading-relaxed font-inter"
               >
                 Crafting digital experiences that drive results. Scroll to
                 explore our work.
@@ -229,13 +224,15 @@ export default function WebIntentSection() {
           <div className="flex-1 lg:w-[60%] xl:w-[65%] relative overflow-hidden">
             <div className="absolute inset-2 sm:inset-3 lg:inset-8">
               {projectImages.map((project, index) => (
-                <div
+                <a
                   key={project.desktopSrc}
                   ref={(el) => {
                     cardsRef.current[index] = el;
                   }}
-                  className="absolute left-0 right-0 aspect-[2/3] lg:aspect-[16/10] rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl cursor-pointer group"
-                  onClick={() => window.open(project.link, "_blank")}
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute left-0 right-0 aspect-[2/3] lg:aspect-[16/10] rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl cursor-pointer group block"
                   style={{ zIndex: index + 1 }}
                 >
                   <picture>
@@ -264,8 +261,7 @@ export default function WebIntentSection() {
                     <div className="flex items-end lg:items-center justify-between">
                       <div>
                         <h3
-                          className="text-white text-base sm:text-lg lg:text-2xl font-semibold"
-                          style={{ fontFamily: "'Inter', sans-serif" }}
+                          className="text-white text-base sm:text-lg lg:text-2xl font-semibold font-inter"
                         >
                           {project.title}
                         </h3>
@@ -309,7 +305,7 @@ export default function WebIntentSection() {
                       {project.category}
                     </span>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>

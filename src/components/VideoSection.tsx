@@ -33,8 +33,8 @@ export default function VideoSection() {
           viewport={{ once: true }}
         >
           {/* Main Title */}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-5xl font-bold leading-tight text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
-            <span className="text-red-500">VIDEOS</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-5xl font-bold leading-tight text-white font-inter">
+            <span className="text-red-600">VIDEOS</span>
             <br />
             THAT TELL
             <br />

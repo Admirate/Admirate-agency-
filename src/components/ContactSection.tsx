@@ -28,10 +28,10 @@ export default function ContactSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-                <h2 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <h2 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium leading-tight text-black font-inter">
                 DO YOU WANT
                 <br />
-                TO <span className="text-red-500">TRUST US</span>
+                TO <span className="text-red-600">TRUST US</span>
                 <br />
                 WITH YOURS?
               </h2>
@@ -75,13 +75,7 @@ export default function ContactSection() {
             <div className="block md:hidden">
               <div className="bg-red-500 rounded-xl py-3 mt-3">
                 <p 
-                  className="text-white text-xs font-medium text-center"
-                  style={{ 
-                    textTransform: 'none',
-                    fontVariant: 'normal',
-                    fontFeatureSettings: 'normal',
-                    fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-                  }}
+                  className="text-white text-xs font-medium text-center font-inter normal-case"
                 >
                   you won&apos;t get a bot named Alex.
                 </p>
@@ -103,13 +97,7 @@ export default function ContactSection() {
         <div className="container mx-auto px-8">
           <div className="flex justify-center items-center">
             <p 
-              className="text-white text-lg font-medium text-center normal-case" 
-              style={{ 
-                textTransform: 'none',
-                fontVariant: 'normal',
-                fontFeatureSettings: 'normal',
-                fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-              }}
+              className="text-white text-lg font-medium text-center normal-case font-inter"
             >
               you won&apos;t get a bot named Alex.
             </p>

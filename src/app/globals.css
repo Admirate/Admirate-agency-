@@ -183,6 +183,14 @@ body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
+.font-integral {
+  font-family: 'Integral CF', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.font-instrument {
+  font-family: 'Instrument Serif', serif !important;
+}
+
 /* Ensure all text elements use Integral CF */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Integral CF', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -268,4 +276,29 @@ h1, h2, h3, h4, h5, h6 {
     min-height: 44px;
     min-width: 44px;
   }
+}
+
+/* Accessible focus styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove focus outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

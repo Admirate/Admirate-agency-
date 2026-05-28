@@ -15,8 +15,6 @@ export default function AdvertisingSection() {
   const edgeRef = useRef<HTMLHeadingElement>(null)
 
   useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         // Match the feel of the hero ("More than ideas / SOMETHING MORE / deliberate")
@@ -86,22 +84,20 @@ export default function AdvertisingSection() {
       {/* Main Content */}
       <div className="text-center max-w-4xl px-4 sm:px-6 md:px-8 z-10">
         {/* ADVERTISING IS */}
-        <h1 
+        <h2 
           ref={headlineRef}
-          className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-red-500 mb-1 sm:mb-2"
-          style={{ fontFamily: "'Integral CF', sans-serif" }}
+          className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-red-600 mb-1 sm:mb-2 font-integral"
         >
           ADVERTISING IS
-        </h1>
+        </h2>
 
         {/* PART BUSINESS, PART INSTINCT. */}
-        <h2 
+        <h3 
           ref={subRef}
-          className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-red-500 mb-4 sm:mb-6 md:mb-8"
-          style={{ fontFamily: "'Integral CF', sans-serif" }}
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-red-600 mb-4 sm:mb-6 md:mb-8 font-integral"
         >
           PART BUSINESS, PART INSTINCT.
-        </h2>
+        </h3>
 
         {/* Horizontal Line */}
         <div
@@ -111,22 +107,20 @@ export default function AdvertisingSection() {
         />
 
         {/* WE WORK */}
-        <h3 
+        <h4 
           ref={weWorkRef}
-          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 mb-1 sm:mb-2"
-          style={{ fontFamily: "'Integral CF', sans-serif" }}
+          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 mb-1 sm:mb-2 font-integral"
         >
           WE WORK
-        </h3>
+        </h4>
 
         {/* AT THAT EDGE */}
-        <h4 
+        <h5 
           ref={edgeRef}
-          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900"
-          style={{ fontFamily: "'Integral CF', sans-serif" }}
+          className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-medium text-gray-900 font-integral"
         >
           AT THAT EDGE
-        </h4>
+        </h5>
       </div>
     </section>
   )

@@ -5,21 +5,21 @@ import Image from 'next/image'
 import { useRef } from 'react'
 
 const gridImages = [
-  { src: '/pic1.png', alt: 'Social media design 1' },
-  { src: '/pic2.jpg', alt: 'Social media design 2' },
-  { src: '/pic3.png', alt: 'Social media design 3' },
-  { src: '/pic4.jpg', alt: 'Social media design 4' },
-  { src: '/pic5.jpg', alt: 'Social media design 5' },
-  { src: '/pic6.png', alt: 'Social media design 6' },
-  { src: '/pic7.png', alt: 'Social media design 7' },
-  { src: '/pic8.jpg', alt: 'Social media design 8' },
-  { src: '/pic9.png', alt: 'Social media design 9' },
-  { src: '/pic10.jpg', alt: 'Social media design 10' },
-  { src: '/pic11.png', alt: 'Social media design 11' },
-  { src: '/pic12.png', alt: 'Social media design 12' },
-  { src: '/pic13.png', alt: 'Social media design 13' },
-  { src: '/pic14.jpg', alt: 'Social media design 14' },
-  { src: '/pic15.jpg', alt: 'Social media design 15' },
+  { src: '/pic1.png', alt: 'Social media creative for brand campaign' },
+  { src: '/pic2.jpg', alt: 'Instagram post design for client' },
+  { src: '/pic3.png', alt: 'Social media carousel design' },
+  { src: '/pic4.jpg', alt: 'Brand storytelling social post' },
+  { src: '/pic5.jpg', alt: 'Product launch social campaign' },
+  { src: '/pic6.png', alt: 'Festival campaign creative' },
+  { src: '/pic7.png', alt: 'Corporate social media design' },
+  { src: '/pic8.jpg', alt: 'Engagement post creative' },
+  { src: '/pic9.png', alt: 'Brand awareness social design' },
+  { src: '/pic10.jpg', alt: 'Client testimonial social post' },
+  { src: '/pic11.png', alt: 'Event promotion creative' },
+  { src: '/pic12.png', alt: 'Social media ad creative' },
+  { src: '/pic13.png', alt: 'Video thumbnail design' },
+  { src: '/pic14.jpg', alt: 'Seasonal campaign post' },
+  { src: '/pic15.jpg', alt: 'Brand identity social creative' },
 ]
 
 export default function SocialsSection() {
@@ -63,7 +63,7 @@ export default function SocialsSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
         >
-          <span className="text-sm text-black tracking-[0.3em]" style={{ fontFamily: "'Integral CF', sans-serif", fontWeight: 700 }}>
+          <span className="text-sm text-black tracking-[0.3em] font-integral font-bold">
             CREATIVES
           </span>
         </motion.div>
@@ -106,8 +106,8 @@ export default function SocialsSection() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black whitespace-nowrap" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  <span className="text-red-500">SOCIALS</span>
+                <h2 className="text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black whitespace-nowrap font-inter">
+                  <span className="text-red-600">SOCIALS</span>
                   <br />
                   THAT CREATE
                   <br />
@@ -129,8 +129,8 @@ export default function SocialsSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-black" style={{ fontFamily: "'Inter', sans-serif" }}>
-            <span className="text-red-500">SOCIALS</span> THAT
+          <h2 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-black font-inter">
+            <span className="text-red-600">SOCIALS</span> THAT
             <br />
             CREATE IMPACT
           </h2>

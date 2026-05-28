@@ -4,17 +4,17 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 const clients = [
-  { src: "/logo1.png", alt: "Client Logo 1" },
-  { src: "/logo2.png", alt: "Client Logo 2" },
-  { src: "/logo3.png", alt: "Client Logo 3" },
-  { src: "/logo4.png", alt: "Client Logo 4" },
-  { src: "/logo5.png", alt: "Client Logo 5" },
-  { src: "/logo6.png", alt: "Client Logo 6" },
-  { src: "/logo7.png", alt: "Client Logo 7" },
-  { src: "/logo8.png", alt: "Client Logo 8" },
-  { src: "/logo9.png", alt: "Client Logo 9" },
-  { src: "/logo10.png", alt: "Client Logo 10" },
-  { src: "/logo11.png", alt: "Client Logo 11" },
+  { src: "/logo1.png", alt: "Hitex logo" },
+  { src: "/logo2.png", alt: "Hope Trust logo" },
+  { src: "/logo3.png", alt: "Patil Group logo" },
+  { src: "/logo4.png", alt: "Our Sacred Space logo" },
+  { src: "/logo5.png", alt: "South Glass logo" },
+  { src: "/logo6.png", alt: "Sportex logo" },
+  { src: "/logo7.png", alt: "OSS logo" },
+  { src: "/logo8.png", alt: "Client partner logo" },
+  { src: "/logo9.png", alt: "Client partner logo" },
+  { src: "/logo10.png", alt: "Client partner logo" },
+  { src: "/logo11.png", alt: "Client partner logo" },
 ];
 
 // Duplicate clients for seamless looping in the marquee (desktop / tablet)
@@ -45,17 +45,12 @@ export default function ClientsSection() {
             viewport={{ once: true }}
           >
             <h2
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-white mb-2 sm:mb-3 md:mb-4"
-              style={{
-                fontFamily:
-                  'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              }}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-white mb-2 sm:mb-3 md:mb-4 font-inter"
             >
               THOSE WE&apos;VE BUILT FOR
             </h2>
             <p
-              className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-red-500 font-medium"
-              style={{ fontFamily: "'Inter', sans-serif" }}
+              className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-red-600 font-medium font-inter"
             >
               People who believe in thoughtful work.
             </p>

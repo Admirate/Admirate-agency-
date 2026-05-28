@@ -12,8 +12,6 @@ export default function DesignSection() {
   const sideRightRef = useRef<HTMLSpanElement>(null)
 
   useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-
     const ctx = gsap.context(() => {
       const base: gsap.plugins.ScrollTriggerInstanceVars = {
         trigger: sectionRef.current as Element,
@@ -77,7 +75,7 @@ export default function DesignSection() {
         {/* Headline */}
         <h2
           ref={titleRef}
-          className="font-inter text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl font-black text-red-500 uppercase leading-none text-center"
+          className="font-inter text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl font-black text-red-600 uppercase leading-none text-center"
           style={{ willChange: "transform" }}
         >
           DESIGN
@@ -85,11 +83,8 @@ export default function DesignSection() {
         {/* Subhead */}
         <p
           ref={subRef}
-          className="mt-2 sm:mt-3 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl italic uppercase tracking-wide text-black text-center"
-          style={{
-            willChange: "transform",
-            fontFamily: "'Instrument Serif', serif",
-          }}
+          className="mt-2 sm:mt-3 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl italic uppercase tracking-wide text-black text-center font-instrument"
+          style={{ willChange: "transform" }}
         >
           THAT MOVES WITH YOU
         </p>

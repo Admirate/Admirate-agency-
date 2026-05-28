@@ -31,28 +31,19 @@ export default function ServicesIntro() {
             viewport={{ once: true }}
           >
             <h2
-              className="leading-tight text-4xl sm:text-5xl md:text-5xl lg:text-6xl"
-              style={{
-                fontFamily: "'Integral CF', sans-serif",
-                fontWeight: 400,
-              }}
+              className="leading-tight text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-integral font-normal"
             >
-              <span style={{ color: "#F00" }}>ADVERTISING,</span>
+              <span className="text-red-600">ADVERTISING,</span>
               <br />
-              <span style={{ color: "#000" }}>DONE THE</span>
+              DONE THE
               <br />
-              <span style={{ color: "#000" }}>RIGHT WAY.</span>
+              RIGHT WAY.
             </h2>
           </motion.div>
 
           {/* Right Side - Services List with Fade-in Animation */}
           <div
-            className="space-y-1 sm:space-y-2 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
-              lineHeight: 1.2,
-            }}
+            className="space-y-1 sm:space-y-2 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-inter font-semibold leading-tight"
           >
             {SERVICES.map((service, index) => (
               <motion.p

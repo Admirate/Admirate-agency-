@@ -26,8 +26,7 @@ export default function IdentitiesSection() {
         viewport={{ once: true }}
       >
         <span
-          className="text-sm text-black tracking-[0.3em]"
-          style={{ fontFamily: "'Integral CF', sans-serif", fontWeight: 700 }}
+          className="text-sm text-black tracking-[0.3em] font-integral font-bold"
         >
           IDENTITIES
         </span>
@@ -46,10 +45,9 @@ export default function IdentitiesSection() {
             viewport={{ once: true }}
           >
             <h2
-              className="text-3xl sm:text-4xl font-bold leading-tight text-black"
-              style={{ fontFamily: "'Inter', sans-serif" }}
+              className="text-3xl sm:text-4xl font-bold leading-tight text-black font-inter"
             >
-              <span className="text-red-500">IDENTITIES</span>
+              <span className="text-red-600">IDENTITIES</span>
               <br />
               BUILT TO
               <br />
@@ -91,10 +89,9 @@ export default function IdentitiesSection() {
               viewport={{ once: true }}
             >
               <h2
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black"
-                style={{ fontFamily: "'Inter', sans-serif" }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold leading-tight text-black font-inter"
               >
-                <span className="text-red-500">IDENTITIES</span>
+                <span className="text-red-600">IDENTITIES</span>
                 <br />
                 BUILT TO
                 <br />
