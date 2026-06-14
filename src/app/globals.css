@@ -1,153 +1,14 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
 
-/* Integral CF Font Face Declarations */
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* =========================================
+   Font Face Declarations
+   ========================================= */
 
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-regularoblique.otf') format('opentype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
+/* =========================================
+   Base Reset & Defaults
+   ========================================= */
 
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-mediumoblique.otf') format('opentype');
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-demibold.otf') format('opentype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-demiboldoblique.otf') format('opentype');
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-boldoblique.otf') format('opentype');
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-extrabold.otf') format('opentype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-extraboldoblique.otf') format('opentype');
-  font-weight: 800;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-heavy.otf') format('opentype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Integral CF';
-  src: url('/fonts/Fontspring-DEMO-integralcf-heavyoblique.otf') format('opentype');
-  font-weight: 900;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* Instrument Serif Font Face Declarations */
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/instrumentserif-regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/instrumentserif-italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* Inter Font Face Declarations */
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-SemiBold.otf') format('opentype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Basic Reset */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -165,132 +26,78 @@ body {
   padding: 0;
   overflow-x: hidden;
   overscroll-behavior-x: none;
-  font-family: 'Integral CF', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Lenis required styles */
+/* =========================================
+   Lenis Smooth Scroll
+   ========================================= */
+
 .lenis.lenis-smooth {
   scroll-behavior: auto;
 }
+
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
 
+/* =========================================
+   Font Utility Classes
+   ========================================= */
+
 .font-inter {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 .font-integral {
-  font-family: 'Integral CF', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 .font-instrument {
-  font-family: 'Instrument Serif', serif !important;
+  font-family: 'Lato', serif !important;
 }
 
-/* Ensure all text elements use Integral CF */
+.font-lato {
+  font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* =========================================
+   Typography
+   ========================================= */
+
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Integral CF', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* Custom height for line elements */
-.h-150 {
-  height: 37.5rem; /* 600px */
-}
-
-.h-tall-line {
-  height: 87.5rem; /* 1400px equivalent */
-}
-
-/* Clients marquee auto-scroll (infinite, seamless loop) */
-@keyframes clients-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.clients-marquee {
-   display: flex;              
-  width: max-content;
-  animation: clients-scroll 100s linear infinite;
-  will-change: transform;
-}
-
-@media (max-width: 768px) {
-  .clients-marquee {
-    animation-duration: 100s;
-  }
-}
-
-/* Responsive typography scale */
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 640px) {
-  html {
-    font-size: 15px;
-  }
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-@media (min-width: 1024px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-@media (min-width: 1280px) {
-  html {
-    font-size: 17px;
-  }
-}
-
-@media (min-width: 1536px) {
-  html {
-    font-size: 18px;
-  }
-}
-
-/* Prevent text overflow on small screens */
-h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
 }
 
-/* Better touch targets on mobile */
-@media (max-width: 768px) {
-  button, a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
+/* Responsive type scale */
+html { font-size: 14px; }
+@media (min-width: 640px)  { html { font-size: 15px; } }
+@media (min-width: 768px)  { html { font-size: 16px; } }
+@media (min-width: 1024px) { html { font-size: 16px; } }
+@media (min-width: 1280px) { html { font-size: 17px; } }
+@media (min-width: 1536px) { html { font-size: 18px; } }
 
-/* Accessible focus styles for keyboard navigation */
+/* =========================================
+   Accessibility
+   ========================================= */
+
 :focus-visible {
   outline: 2px solid #dc2626;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Remove focus outline for mouse users */
 :focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Screen reader only utility */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -301,4 +108,71 @@ h1, h2, h3, h4, h5, h6 {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+@media (max-width: 768px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* =========================================
+   Scrollbar Hide Utility
+   ========================================= */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================
+   Marquee Animation
+   ========================================= */
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* =========================================
+   Background Shift Animation
+   ========================================= */
+
+@keyframes bg-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-bg-shift {
+  animation: bg-shift 12s ease-in-out infinite;
 }

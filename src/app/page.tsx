@@ -1,57 +1,31 @@
- 
-import dynamic from 'next/dynamic'
-import MainContent from '@/components/MainContent'
-import ServicesIntro from '@/components/ServicesIntro'
-import ErrorBoundary from '@/components/ui/ErrorBoundary'
-
-const AdvertisingSection = dynamic(() => import('@/components/AdvertisingSection'))
-const DesignSection = dynamic(() => import('@/components/DesignSection'))
-const WebIntentSection = dynamic(() => import('@/components/WebIntentSection'))
-const SocialsSection = dynamic(() => import('@/components/SocialsSection'))
-const IdentitiesSection = dynamic(() => import('@/components/IdentitiesSection'))
-const VideoSection = dynamic(() => import('@/components/VideoSection'))
-const ClientsSection = dynamic(() => import('@/components/ClientsSection'))
-const ContactSection = dynamic(() => import('@/components/ContactSection'))
+import Header from "@/components/layout/Header";
+import HeroSection from "@/components/sections/HeroSection";
+import ClientsSection from "@/components/sections/ClientsSection";
+import AboutSection from "@/components/sections/AboutSection";
+import ServicesSection from "@/components/sections/ServicesSection";
+import WorkSection from "@/components/sections/WorkSection";
+import CtaSection from "@/components/sections/CtaSection";
+import ShowreelSection from "@/components/sections/ShowreelSection";
+import ContentSection from "@/components/sections/ContentSection";
+import CreationSection from "@/components/sections/CreationSection";
+import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
   return (
     <>
-      <header>
-        <ErrorBoundary>
-          <MainContent />
-        </ErrorBoundary>
-      </header>
-      <main id="main-content">
-        <ErrorBoundary>
-          <ServicesIntro />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <AdvertisingSection />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <DesignSection />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <WebIntentSection />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <SocialsSection />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <IdentitiesSection />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <VideoSection />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <ClientsSection />
-        </ErrorBoundary>
+      <Header />
+      <main id="main-content" className="min-h-screen bg-white">
+        <HeroSection />
+        <ClientsSection />
+        <AboutSection />
+        <ServicesSection />
+        <WorkSection />
+        <CtaSection />
+        <ShowreelSection />
+        <ContentSection />
+        <CreationSection />
+        <ContactSection />
       </main>
-      <footer>
-        <ErrorBoundary>
-          <ContactSection />
-        </ErrorBoundary>
-      </footer>
     </>
   );
 }
