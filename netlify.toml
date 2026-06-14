@@ -3,6 +3,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  SECRETS_SCAN_OMIT_KEYS = "SB_URL"
 
 [[headers]]
   for = "/*"
