@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { asset } from "@/lib/cdn";
 
 export default function CtaSection() {
   return (
@@ -18,7 +19,7 @@ export default function CtaSection() {
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[45%] sm:-translate-x-[30%] lg:-translate-x-[25%] w-[280px] sm:w-[340px] md:w-[420px] lg:w-[500px]"
           >
             <Image
-              src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/left%20laptop.webp"
+              src={asset("left laptop.webp")}
               alt="Laptop showcasing work"
               width={500}
               height={350}
@@ -36,7 +37,7 @@ export default function CtaSection() {
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[45%] sm:translate-x-[30%] lg:translate-x-[25%] w-[280px] sm:w-[340px] md:w-[420px] lg:w-[500px]"
           >
             <Image
-              src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/right%20laptop.webp"
+              src={asset("right laptop.webp")}
               alt="Laptop showcasing work"
               width={500}
               height={350}

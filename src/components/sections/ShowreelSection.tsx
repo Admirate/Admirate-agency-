@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { video } from "@/lib/cdn";
 
 export default function ShowreelSection() {
   return (
@@ -14,7 +15,7 @@ export default function ShowreelSection() {
           className="w-full aspect-video rounded-2xl overflow-hidden"
         >
           <video
-            src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/finalvideo.mp4"
+            src={video("finalvideo.mp4")}
             muted
             loop
             playsInline

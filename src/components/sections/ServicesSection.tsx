@@ -2,43 +2,39 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { asset } from "@/lib/cdn";
 
 const services = [
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/webdevelopment%20image.webp",
+    image: asset("webdevelopment image.webp"),
     title: "Web development",
     description:
       "We build simple, scalable websites that look sharp and work effortlessly.",
     tags: ["Analytics", "Web Design", "Development"],
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/socail%20media%20image.webp",
+    image: asset("socail media image.webp"),
     title: "Social Media",
     description:
       "We build simple, scalable websites that look sharp and work effortlessly.",
     tags: ["Analytics", "Web Design", "Development"],
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/visual%20identity.webp",
+    image: asset("visual identity.webp"),
     title: "Visual Identity",
     description:
       "We build simple, scalable websites that look sharp and work effortlessly.",
     tags: ["Analytics", "Web Design", "Development"],
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/service-video.webp",
+    image: asset("service-video.webp"),
     title: "Video",
     description:
       "We build simple, scalable websites that look sharp and work effortlessly.",
     tags: ["Analytics", "Web Design", "Development"],
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/service-editorial.webp",
+    image: asset("service-editorial.webp"),
     title: "Editorial design",
     description:
       "We build simple, scalable websites that look sharp and work effortlessly.",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { asset } from "@/lib/cdn";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -23,7 +24,7 @@ export default function Header() {
       <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 sm:px-10 lg:px-16 py-5">
         <Link href="/" className="flex items-center">
           <Image
-            src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp"
+            src={asset("admirate logo.webp")}
             alt="Admirate"
             width={160}
             height={40}

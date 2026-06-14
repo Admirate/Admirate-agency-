@@ -2,18 +2,19 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { clientLogo } from "@/lib/cdn";
 
 const clients = [
-  { name: "AA", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/AA%20Logo.webp" },
-  { name: "Avvent Global", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/avvent%20global%20logo.webp" },
-  { name: "Seniors For Change", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/EUI%20LOGO.webp" },
-  { name: "Hitex", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/hitex%20logo.webp" },
-  { name: "Hope Trust", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/hopetrust%20logo.webp" },
-  { name: "Patil Group", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/patilgroup%20logo.webp" },
-  { name: "Reroot Space", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/reroot%20logo.webp" },
-  { name: "South Glass", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/southglass%20logo.webp" },
-  { name: "Valucor Packaging", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/VALUCOR-LOGO%201.webp" },
-  { name: "Zythum", logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/client%20logos/zythum%20logo.webp" },
+  { name: "AA", logo: clientLogo("AA Logo.webp") },
+  { name: "Avvent Global", logo: clientLogo("avvent global logo.webp") },
+  { name: "Seniors For Change", logo: clientLogo("EUI LOGO.webp") },
+  { name: "Hitex", logo: clientLogo("hitex logo.webp") },
+  { name: "Hope Trust", logo: clientLogo("hopetrust logo.webp") },
+  { name: "Patil Group", logo: clientLogo("patilgroup logo.webp") },
+  { name: "Reroot Space", logo: clientLogo("reroot logo.webp") },
+  { name: "South Glass", logo: clientLogo("southglass logo.webp") },
+  { name: "Valucor Packaging", logo: clientLogo("VALUCOR-LOGO 1.webp") },
+  { name: "Zythum", logo: clientLogo("zythum logo.webp") },
 ];
 
 export default function ClientsSection() {

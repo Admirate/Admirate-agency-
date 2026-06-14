@@ -5,24 +5,21 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
 import Folder from "@/components/ui/Folder";
+import { asset } from "@/lib/cdn";
 
-const ADMIRATE_LOGO =
-  "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp";
+const ADMIRATE_LOGO = asset("admirate logo.webp");
 
 const posts = [
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/southglass%20creative.png",
+    image: asset("southglass creative.png"),
     alt: "South Glass - Makar Sankranti",
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/hopetrust%20creative.png",
+    image: asset("hopetrust creative.png"),
     alt: "It's Nothing - What you dismiss matters",
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/sportex%20creativer.png",
+    image: asset("sportex creativer.png"),
     alt: "HITEX SportExpo",
   },
 ];

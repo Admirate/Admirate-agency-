@@ -3,25 +3,26 @@
 import { useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { video } from "@/lib/cdn";
 
 const cards = [
   {
-    video: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/asset1.mp4",
+    video: video("asset1.mp4"),
     title: "Visual Identity",
     description: "Built to be seen—simple, consistent & recognizable.",
   },
   {
-    video: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/asset%202.mp4",
+    video: video("asset 2.mp4"),
     title: "Social Media",
     description: "System-led content visuals, reels & posts built with intent.",
   },
   {
-    video: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/asset%203.mp4",
+    video: video("asset 3.mp4"),
     title: "Web Development",
     description: "System-led content visuals, reels & posts built with intent.",
   },
   {
-    video: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/asset%204.mp4",
+    video: video("asset 4.mp4"),
     title: "Branding",
     description: "Crafting identities that stand out and tell your story.",
   },

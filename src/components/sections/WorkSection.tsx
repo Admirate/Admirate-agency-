@@ -3,39 +3,35 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { asset } from "@/lib/cdn";
 
 const projects = [
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/sportex%201.png",
+    image: asset("sportex 1.png"),
     name: "Hitex Sports expo",
     tags: ["Social media", "Web Development"],
     url: "https://sportex.in/",
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/screencapture-patilgroup-netlify-app-2026-02-13-12_39_01%201.png",
+    image: asset("screencapture-patilgroup-netlify-app-2026-02-13-12_39_01 1.png"),
     name: "Patil group",
     tags: ["Logo Refinement", "Web Development"],
     url: "https://patilgroup.com/",
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/Home%201.png",
+    image: asset("Home 1.png"),
     name: "Hope Trust",
     tags: ["Social media", "Web Development"],
     url: "https://hopetrustindia.com/",
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/south%20glass%201.png",
+    image: asset("south glass 1.png"),
     name: "South Glass",
     tags: ["Web Development"],
     url: "https://southglass.in/",
   },
   {
-    image:
-      "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/oss%20website.png",
+    image: asset("oss website.png"),
     name: "Our Sacred Space",
     tags: ["Web Development"],
     url: "https://oursacredspace.in/",

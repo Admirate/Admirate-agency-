@@ -2,25 +2,26 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { asset } from "@/lib/cdn";
 
 const features = [
   {
-    icon: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/icon1.webp",
+    icon: asset("icon1.webp"),
     title: "End to end thinking",
     description: "From first idea to final output, handled with intent.",
   },
   {
-    icon: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/icon2.webp",
+    icon: asset("icon2.webp"),
     title: "Long term partnerships",
     description: "Not one off work, but relationships that continue.",
   },
   {
-    icon: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/icon3.webp",
+    icon: asset("icon3.webp"),
     title: "Chosen by brands",
     description: "Teams that trusted us to build how they are seen.",
   },
   {
-    icon: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/icon4.webp",
+    icon: asset("icon4.webp"),
     title: "Nothing first try",
     description: "Every direction explored before the final call.",
   },
@@ -60,7 +61,7 @@ export default function AboutSection() {
           className="w-full max-w-[1309px] mx-auto h-[300px] sm:h-[400px] lg:h-[518px] rounded-none mb-16 sm:mb-20 overflow-hidden bg-[#D9D9D9]"
         >
           <video
-            src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo%20animated.mp4"
+            src={asset("admirate logo animated.mp4")}
             muted
             loop
             playsInline

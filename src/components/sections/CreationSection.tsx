@@ -2,23 +2,22 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { asset } from "@/lib/cdn";
 
-const LOGO_007 =
-  "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/007%20logo.png";
-const STATS_007 =
-  "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/007%20stats.png";
+const LOGO_007 = asset("007 logo.png");
+const STATS_007 = asset("007 stats.png");
 
 const posters = [
   {
-    src: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/skyfall.png",
+    src: asset("skyfall.png"),
     alt: "Skyfall - Directed by Sam Mendes",
   },
   {
-    src: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/die%20anopther%20day.png",
+    src: asset("die anopther day.png"),
     alt: "Die Another Day - Starring Pierce Brosnan",
   },
   {
-    src: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/skyfall%202.png",
+    src: asset("skyfall 2.png"),
     alt: "Skyfall 007",
   },
 ];
