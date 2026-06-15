@@ -295,9 +295,9 @@ export default function ContentSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="flex justify-center mt-52 sm:mt-60"
+          className="flex justify-center mt-20 sm:mt-24"
         >
-          <Folder color="#DC2626" size={2} className="sm:scale-[2.5] lg:scale-[3]" />
+          <Folder color="#DC2626" size={1.2} className="sm:scale-[1.5] lg:scale-[1.8]" />
         </motion.div>
 
         {/* Bottom CTA */}

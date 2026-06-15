@@ -34,7 +34,7 @@ const services = [
     tags: ["Analytics", "Web Design", "Development"],
   },
   {
-    image: asset("service-editorial.webp"),
+    image: asset("editorial design.png"),
     title: "Editorial design",
     description:
       "We build simple, scalable websites that look sharp and work effortlessly.",
