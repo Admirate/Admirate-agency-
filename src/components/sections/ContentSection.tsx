@@ -299,7 +299,7 @@ export default function ContentSection() {
         >
           <Folder
             color="#DC2626"
-            size={1.2}
+            size={2}
             className="sm:scale-[1.5] lg:scale-[2.5]"
             items={[
               <Image
@@ -341,11 +341,14 @@ export default function ContentSection() {
           <MagneticButton>
             <a
               href="#contact"
-              className="inline-block px-8 py-3 bg-gray-900 text-white text-sm sm:text-base font-medium font-inter rounded-md hover:bg-black transition-colors duration-300"
+              className="relative inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white text-sm sm:text-base font-medium font-inter rounded-md overflow-hidden group"
               tabIndex={0}
               aria-label="Connect with us"
             >
-              Connect with us
+              <span className="relative z-10 transition-colors duration-300">
+                Connect with us
+              </span>
+              <span className="absolute inset-0 z-0 bg-red-600 origin-bottom scale-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100" />
             </a>
           </MagneticButton>
         </motion.div>

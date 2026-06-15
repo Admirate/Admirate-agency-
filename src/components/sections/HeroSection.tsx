@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useVelocity, useSpring, useTransform } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { video } from "@/lib/cdn";
 
@@ -32,6 +32,15 @@ export default function HeroSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Skew on scroll
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 50,
+    stiffness: 400,
+  });
+  const skewVelocity = useTransform(smoothVelocity, [-1000, 1000], [4, -4]);
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -70,23 +79,43 @@ export default function HeroSection() {
         <MagneticButton className="self-start lg:self-auto">
           <a
             href="#contact"
-            className="group flex items-center gap-2"
+            className="group flex items-center gap-4 lg:gap-6"
           >
-            <span className="relative text-xl sm:text-2xl lg:text-[36px] font-normal font-lato leading-[108.21%] text-black pb-2">
-              Start a project
-              {/* Default underline - black */}
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gray-900 group-hover:bg-red-600 transition-colors duration-300" />
-            </span>
-            <svg
-              className="w-5 h-5 transition-transform duration-300 group-hover:-rotate-[30deg]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H7M17 7v10" />
-            </svg>
-            <span className="block w-3 h-3 rounded-full bg-red-600 ml-1" />
+            <div className="flex flex-col items-end">
+              <span className="text-xl sm:text-2xl lg:text-[36px] font-normal font-lato leading-[108.21%] text-black pb-1">
+                Book a Free Intro Call
+              </span>
+              <div className="relative pb-2">
+                <span className="text-xl sm:text-2xl lg:text-[36px] font-normal font-lato leading-[108.21%] text-black">
+                  WhatsApp Us
+                </span>
+                {/* Red dot and pill underline */}
+                <div className="absolute bottom-0 right-0 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-600" />
+                  <span className="w-10 sm:w-16 h-1.5 sm:h-2 rounded-full bg-red-600 transition-all duration-300 group-hover:w-16 sm:group-hover:w-20" />
+                </div>
+              </div>
+            </div>
+            <div className="relative overflow-hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
+              <svg
+                className="absolute w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+              <svg
+                className="absolute w-full h-full -translate-x-[150%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
           </a>
         </MagneticButton>
       </motion.div>
@@ -126,12 +155,15 @@ export default function HeroSection() {
         <div
           ref={scrollRef}
           onScroll={checkScroll}
+          data-cursor="drag"
           className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
         >
           {cards.map((card, i) => (
-            <div
+            <motion.div
               key={i}
-              className="relative flex-shrink-0 w-[300px] sm:w-[340px] lg:w-[363px] h-[400px] sm:h-[430px] lg:h-[449px] rounded-[24px] overflow-hidden snap-start group bg-[#D9D9D9] cursor-pointer"
+              data-cursor="play"
+              style={{ skewX: skewVelocity }}
+              className="relative flex-shrink-0 w-[300px] sm:w-[340px] lg:w-[363px] h-[400px] sm:h-[430px] lg:h-[449px] rounded-[24px] overflow-hidden snap-start group bg-[#D9D9D9] cursor-pointer origin-bottom"
             >
               <video
                 src={card.video}
@@ -178,7 +210,7 @@ export default function HeroSection() {
                   {card.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>

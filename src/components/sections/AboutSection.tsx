@@ -72,23 +72,84 @@ export default function AboutSection() {
 
         {/* Description */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.2,
+              },
+            },
+            hidden: {},
+          }}
           className="max-w-[672px] mx-auto text-center font-lato text-base sm:text-xl lg:text-[24px] leading-[108.21%] text-black mb-16 sm:mb-20"
         >
-          <p className="font-normal mb-4">
-            Most agencies focus on making things look good.
-            <br />
-            <span className="font-bold">We focus on making things work.</span>
-          </p>
-          <p className="font-normal mb-4">
-            From websites and social media to campaigns and brand systems, every decision is made with one goal in mind — reducing friction in the customer journey and helping businesses generate meaningful results.
-          </p>
-          <p className="font-bold text-red-600">
-            Good design is important. Clear strategy is essential.
-          </p>
+          <div className="font-normal mb-6 flex flex-col items-center gap-1 sm:gap-2">
+            <span className="overflow-hidden inline-block pb-1">
+              <motion.span
+                variants={{
+                  hidden: { y: "100%" },
+                  visible: {
+                    y: 0,
+                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+                  },
+                }}
+                className="inline-block"
+              >
+                Most agencies focus on making things look good.
+              </motion.span>
+            </span>
+            <span className="overflow-hidden inline-block pb-1">
+              <motion.span
+                variants={{
+                  hidden: { y: "100%" },
+                  visible: {
+                    y: 0,
+                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+                  },
+                }}
+                className="inline-block font-bold"
+              >
+                We focus on making things work.
+              </motion.span>
+            </span>
+          </div>
+
+          <div className="font-normal mb-6 flex flex-col items-center">
+            <span className="overflow-hidden inline-block pb-2">
+              <motion.span
+                variants={{
+                  hidden: { y: "100%" },
+                  visible: {
+                    y: 0,
+                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+                  },
+                }}
+                className="inline-block"
+              >
+                From websites and social media to campaigns and brand systems, every decision is made with one goal in mind — reducing friction in the customer journey and helping businesses generate meaningful results.
+              </motion.span>
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <span className="overflow-hidden inline-block pb-1">
+              <motion.span
+                variants={{
+                  hidden: { y: "100%" },
+                  visible: {
+                    y: 0,
+                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+                  },
+                }}
+                className="inline-block font-bold text-red-600"
+              >
+                Good design is important. Clear strategy is essential.
+              </motion.span>
+            </span>
+          </div>
         </motion.div>
 
         {/* Features grid */}

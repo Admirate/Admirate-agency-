@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { asset } from "@/lib/cdn";
+import HoverImageReveal from "@/components/ui/HoverImageReveal";
 
 const projects = [
   {
@@ -115,8 +116,8 @@ export default function WorkSection() {
 
               {/* Project info */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <h3 className="text-lg sm:text-xl font-bold font-lato">
-                  {project.name}
+                <h3 className="text-lg sm:text-xl font-bold font-lato z-10 cursor-pointer">
+                  <HoverImageReveal text={project.name} imageSrc={project.image} />
                 </h3>
                 <div className="flex gap-3">
                   {project.tags.map((tag) => (

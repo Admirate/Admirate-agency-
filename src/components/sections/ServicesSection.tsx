@@ -2,8 +2,9 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { asset } from "@/lib/cdn";
+import ScrambleText from "@/components/ui/ScrambleText";
 
 const services = [
   {
@@ -46,6 +47,12 @@ const services = [
 const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
+  
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <motion.div
@@ -56,13 +63,15 @@ const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
       className="flex flex-col sm:flex-row items-stretch bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow duration-300 group"
     >
       <div className="relative w-full sm:w-[320px] md:w-[380px] lg:w-[458px] h-[240px] sm:h-[320px] md:h-[380px] lg:h-[430px] flex-shrink-0 bg-gray-200 overflow-hidden rounded-2xl sm:rounded-3xl">
-        <Image
-          src={service.image}
-          alt={service.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-          sizes="(max-width: 640px) 100vw, 360px"
-        />
+        <motion.div style={{ y: imageY }} className="absolute inset-[-20%] w-[140%] h-[140%]">
+          <Image
+            src={service.image}
+            alt={service.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            sizes="(max-width: 640px) 100vw, 360px"
+          />
+        </motion.div>
       </div>
       <div className="flex-1 p-6 sm:p-8 flex flex-col justify-center relative">
         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-0.5">
@@ -79,9 +88,9 @@ const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
           {service.tags.map((tag) => (
             <span
               key={tag}
-              className="px-3 py-1 text-xs sm:text-sm font-inter text-gray-600 bg-white border border-gray-200 rounded-full"
+              className="px-3 py-1 text-xs sm:text-sm font-inter text-gray-600 bg-white border border-gray-200 rounded-full cursor-default"
             >
-              {tag}
+              <ScrambleText text={tag} />
             </span>
           ))}
         </div>
@@ -120,19 +129,34 @@ export default function ServicesSection() {
               Connect with us
               <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-gray-900 group-hover:bg-red-600 transition-colors duration-300" />
             </span>
-            <svg
-              className="w-4 h-4 transition-transform duration-300 group-hover:-rotate-[30deg]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M7 17L17 7M17 7H7M17 7v10"
-              />
-            </svg>
+            <div className="relative overflow-hidden w-4 h-4 flex items-center justify-center">
+              <svg
+                className="absolute w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] group-hover:-translate-y-[150%]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 17L17 7M17 7H7M17 7v10"
+                />
+              </svg>
+              <svg
+                className="absolute w-full h-full -translate-x-[150%] translate-y-[150%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 group-hover:translate-y-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 17L17 7M17 7H7M17 7v10"
+                />
+              </svg>
+            </div>
           </a>
         </motion.div>
 

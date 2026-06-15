@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useVelocity, useSpring } from "framer-motion";
 import { asset } from "@/lib/cdn";
 
 const LOGO_007 = asset("007 logo.png");
@@ -26,13 +26,21 @@ const posters = [
 export default function CreationSection() {
   const containerRef = useRef<HTMLElement>(null);
 
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress, scrollY } = useScroll({
     target: containerRef,
     offset: ["start 80%", "end 20%"],
   });
 
   const backgroundColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#ffffff", "#0a0a0a", "#0a0a0a", "#ffffff"]);
   const textColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#000000", "#ffffff", "#ffffff", "#000000"]);
+
+  // Skew on scroll
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 50,
+    stiffness: 400,
+  });
+  const skewVelocity = useTransform(smoothVelocity, [-1000, 1000], [5, -5]);
 
   return (
     <motion.section
@@ -96,7 +104,8 @@ export default function CreationSection() {
                 delay: 0.2 + i * 0.12,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="relative aspect-[3/4] rounded-xl overflow-hidden group"
+              style={{ skewY: skewVelocity }}
+              className="relative aspect-[3/4] rounded-xl overflow-hidden group origin-bottom"
             >
               <Image
                 src={poster.src}
