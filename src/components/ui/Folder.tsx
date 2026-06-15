@@ -156,7 +156,11 @@ const Folder: React.FC<FolderProps> = ({
                   borderRadius: "10px",
                 }}
               >
-                {item}
+                {item && (
+                  <div className="relative w-full h-full overflow-hidden rounded-[10px]">
+                    {item}
+                  </div>
+                )}
               </div>
             );
           })}

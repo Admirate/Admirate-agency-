@@ -295,9 +295,36 @@ export default function ContentSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="flex justify-center mt-20 sm:mt-24"
+          className="flex justify-center mt-64 sm:mt-72"
         >
-          <Folder color="#DC2626" size={1.2} className="sm:scale-[1.5] lg:scale-[1.8]" />
+          <Folder
+            color="#DC2626"
+            size={1.2}
+            className="sm:scale-[1.5] lg:scale-[2.5]"
+            items={[
+              <Image
+                key="creative-1"
+                src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/creatives/1@72x-100.jpg"
+                alt="Admirate creative 1"
+                fill
+                className="object-cover"
+              />,
+              <Image
+                key="creative-2"
+                src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/creatives/3a.jpg"
+                alt="Admirate creative 2"
+                fill
+                className="object-cover"
+              />,
+              <Image
+                key="creative-3"
+                src="https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/creatives/5.jpg"
+                alt="Admirate creative 3"
+                fill
+                className="object-cover"
+              />,
+            ]}
+          />
         </motion.div>
 
         {/* Bottom CTA */}

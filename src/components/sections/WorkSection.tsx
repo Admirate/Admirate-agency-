@@ -69,13 +69,13 @@ export default function WorkSection() {
           className="mb-12 sm:mb-16"
         >
           <motion.span style={{ color: subtitleColor }} className="text-base sm:text-[20px] font-normal font-lato leading-[108.21%] mb-4 block">
-            Our Work
+            • Our Work
           </motion.span>
           <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold font-lato leading-[108.21%] mb-4">
-            We build work that lasts
+            Work built around real business needs.
           </h2>
           <motion.p style={{ color: subtitleColor }} className="font-lato font-normal text-base sm:text-[20px] leading-[108.21%]">
-            We&apos;ve partnered with brands that share our values of creativity
+            A selection of websites, campaigns, social media, videos, and brand assets created for growing businesses.
           </motion.p>
         </motion.div>
 

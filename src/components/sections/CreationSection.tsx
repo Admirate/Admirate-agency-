@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { asset } from "@/lib/cdn";
 
 const LOGO_007 = asset("007 logo.png");
@@ -23,9 +24,22 @@ const posters = [
 ];
 
 export default function CreationSection() {
-  return (
-    <section className="relative w-full min-h-auto lg:min-h-[969px] overflow-hidden bg-black">
+  const containerRef = useRef<HTMLElement>(null);
 
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 80%", "end 20%"],
+  });
+
+  const backgroundColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#ffffff", "#0a0a0a", "#0a0a0a", "#ffffff"]);
+  const textColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#000000", "#ffffff", "#ffffff", "#000000"]);
+
+  return (
+    <motion.section
+      ref={containerRef}
+      style={{ backgroundColor, color: textColor }}
+      className="relative w-full min-h-auto lg:min-h-[969px] overflow-hidden"
+    >
       <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
         {/* Heading */}
         <motion.h2
@@ -33,7 +47,7 @@ export default function CreationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center text-white text-2xl sm:text-3xl md:text-[40px] font-bold font-lato leading-[108.21%] mb-6 sm:mb-8"
+          className="text-center text-2xl sm:text-3xl md:text-[40px] font-bold font-lato leading-[108.21%] mb-6 sm:mb-8"
         >
           Our Own creation
         </motion.h2>
@@ -95,6 +109,6 @@ export default function CreationSection() {
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

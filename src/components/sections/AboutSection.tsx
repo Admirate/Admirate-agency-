@@ -43,9 +43,9 @@ export default function AboutSection() {
             • Who we are
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold font-lato leading-[108.21%] text-black text-center mb-4">
-            Where strategy meets
+            A creative advertising agency
             <br />
-            design that actually performs
+            focused on business outcomes.
           </h2>
           <p className="text-black font-lato font-normal text-lg sm:text-[24px] leading-[108.21%]">
             From social to websites, everything built with intent
@@ -68,6 +68,27 @@ export default function AboutSection() {
             autoPlay
             className="w-full h-full object-cover"
           />
+        </motion.div>
+
+        {/* Description */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-[672px] mx-auto text-center font-lato text-base sm:text-xl lg:text-[24px] leading-[108.21%] text-black mb-16 sm:mb-20"
+        >
+          <p className="font-normal mb-4">
+            Most agencies focus on making things look good.
+            <br />
+            <span className="font-bold">We focus on making things work.</span>
+          </p>
+          <p className="font-normal mb-4">
+            From websites and social media to campaigns and brand systems, every decision is made with one goal in mind — reducing friction in the customer journey and helping businesses generate meaningful results.
+          </p>
+          <p className="font-bold text-red-600">
+            Good design is important. Clear strategy is essential.
+          </p>
         </motion.div>
 
         {/* Features grid */}

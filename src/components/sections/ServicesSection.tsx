@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { asset } from "@/lib/cdn";
 
 const services = [
@@ -16,31 +17,78 @@ const services = [
     image: asset("socail media image.webp"),
     title: "Social Media",
     description:
-      "We build simple, scalable websites that look sharp and work effortlessly.",
-    tags: ["Analytics", "Web Design", "Development"],
+      "Content built to strengthen brands, engage audiences, and support business goals.",
+    tags: ["Strategy", "Content", "Conversions"],
   },
   {
     image: asset("visual identity.webp"),
     title: "Visual Identity",
     description:
-      "We build simple, scalable websites that look sharp and work effortlessly.",
-    tags: ["Analytics", "Web Design", "Development"],
+      "Brand systems that stay relevant, recognizable, and consistent.",
+    tags: ["Logo Design", "Brand System", "Guidelines"],
   },
   {
-    image: asset("service-video.webp"),
+    image: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/asset5.webp",
     title: "Video",
     description:
-      "We build simple, scalable websites that look sharp and work effortlessly.",
-    tags: ["Analytics", "Web Design", "Development"],
+      "Stories that capture attention and communicate clearly.",
+    tags: ["Shoots", "Reels", "Edits"],
   },
   {
     image: asset("editorial design.png"),
     title: "Editorial design",
     description:
-      "We build simple, scalable websites that look sharp and work effortlessly.",
-    tags: ["Analytics", "Web Design", "Development"],
+      "Brochures, presentations, reports, and print materials designed with clarity.",
+    tags: ["Brochures", "Deck", "Print Design"],
   },
 ];
+
+const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
+
+  return (
+    <motion.div
+      ref={ref}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      style={{ opacity: 0, transform: "translateY(30px)" }}
+      className="flex flex-col sm:flex-row items-stretch bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow duration-300 group"
+    >
+      <div className="relative w-full sm:w-[320px] md:w-[380px] lg:w-[458px] h-[240px] sm:h-[320px] md:h-[380px] lg:h-[430px] flex-shrink-0 bg-gray-200 overflow-hidden rounded-2xl sm:rounded-3xl">
+        <Image
+          src={service.image}
+          alt={service.title}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 640px) 100vw, 360px"
+        />
+      </div>
+      <div className="flex-1 p-6 sm:p-8 flex flex-col justify-center relative">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-0.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+        </div>
+        <h3 className="text-xl sm:text-2xl lg:text-[40px] font-bold font-lato leading-[108.21%] text-black mb-2 sm:mb-3">
+          {service.title}
+        </h3>
+        <p className="text-sm sm:text-base lg:text-[24px] font-normal font-lato leading-[108.21%] text-black mb-4 sm:mb-5">
+          {service.description}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {service.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-3 py-1 text-xs sm:text-sm font-inter text-gray-600 bg-white border border-gray-200 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 export default function ServicesSection() {
   return (
@@ -91,51 +139,7 @@ export default function ServicesSection() {
         {/* Service cards */}
         <div className="flex flex-col gap-4">
           {services.map((service, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col sm:flex-row items-stretch bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-all duration-300 group"
-            >
-              {/* Image */}
-              <div className="relative w-full sm:w-[320px] md:w-[380px] lg:w-[458px] h-[240px] sm:h-[320px] md:h-[380px] lg:h-[430px] flex-shrink-0 bg-gray-200 overflow-hidden rounded-2xl sm:rounded-3xl">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  sizes="(max-width: 640px) 100vw, 360px"
-                />
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 p-6 sm:p-8 flex flex-col justify-center relative">
-                {/* Dots icon */}
-                <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                </div>
-
-                <h3 className="text-xl sm:text-2xl lg:text-[40px] font-bold font-lato leading-[108.21%] text-black mb-2 sm:mb-3">
-                  {service.title}
-                </h3>
-                <p className="text-sm sm:text-base lg:text-[24px] font-normal font-lato leading-[108.21%] text-black mb-4 sm:mb-5">
-                  {service.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-xs sm:text-sm font-inter text-gray-600 bg-white border border-gray-200 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            <ServiceCard key={i} service={service} />
           ))}
         </div>
       </div>
