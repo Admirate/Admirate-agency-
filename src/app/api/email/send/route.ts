@@ -49,6 +49,15 @@ export async function POST(request: NextRequest) {
         .from("email_drafts")
         .update({ status: "sent", sent_at: new Date().toISOString() })
         .eq("id", draftId);
+    } else {
+      await supabase
+        .from("email_drafts")
+        .insert({
+          subject,
+          body,
+          status: "sent",
+          sent_at: new Date().toISOString(),
+        });
     }
 
     return NextResponse.json({
