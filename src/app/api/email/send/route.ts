@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 
     const { error: sendError } = await resend.emails.send({
       from: "ADMIRATE <noreply@admirate.in>",
+      replyTo: "essentials@admirate.in",
       to: recipients.map((r) => r.email),
       subject,
       react: EmailTemplate({ subject, body }),
