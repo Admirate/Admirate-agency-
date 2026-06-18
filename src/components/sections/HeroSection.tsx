@@ -161,7 +161,7 @@ export default function HeroSection() {
           {cards.map((card, i) => (
             <motion.div
               key={i}
-              data-cursor="play"
+              
               style={{ skewX: skewVelocity }}
               className="relative flex-shrink-0 w-[300px] sm:w-[340px] lg:w-[363px] h-[400px] sm:h-[430px] lg:h-[449px] rounded-[24px] overflow-hidden snap-start group bg-[#D9D9D9] cursor-pointer origin-bottom"
             >
