@@ -70,10 +70,10 @@ export default function HeroSection() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 sm:mb-14"
       >
-        <h1 className="text-4xl sm:text-5xl md:text-[64px] font-bold leading-[108.21%] tracking-tight font-lato text-black">
+        <h1 className="text-4xl sm:text-5xl md:text-[64px] font-bold leading-[108.21%] tracking-tight font-lato text-[#000]">
           Advertising,
           <br />
-          done the <span className="text-red-600">right way</span>
+          done the <span className="text-[#FF0000]">right way</span>
         </h1>
 
         <MagneticButton className="self-start lg:self-auto">
@@ -82,11 +82,11 @@ export default function HeroSection() {
             className="group flex items-center gap-4 lg:gap-6"
           >
             <div className="flex flex-col items-end">
-              <span className="text-xl sm:text-2xl lg:text-[36px] font-normal font-lato leading-[108.21%] text-black pb-1">
+              <span className="text-base sm:text-lg lg:text-[20px] font-normal font-lato leading-[108.21%] text-[#000] text-right pb-1">
                 Book a Free Intro Call
               </span>
               <div className="relative pb-2">
-                <span className="text-xl sm:text-2xl lg:text-[36px] font-normal font-lato leading-[108.21%] text-black">
+                <span className="text-base sm:text-lg lg:text-[20px] font-normal font-lato leading-[108.21%] text-[#000] text-right">
                   WhatsApp Us
                 </span>
                 {/* Red dot and pill underline */}
@@ -155,7 +155,7 @@ export default function HeroSection() {
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          data-cursor="drag"
+          
           className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
         >
           {cards.map((card, i) => (

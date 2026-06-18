@@ -14,9 +14,15 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
 
   const isDashboard = pathname.startsWith("/dashboard");
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
-    if (isDashboard) return;
+    const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024;
+    setIsTouchDevice(isTouch);
+  }, []);
+
+  useEffect(() => {
+    if (isDashboard || isTouchDevice) return;
     // Hide default cursor for elements that are naturally clickable
     const style = document.createElement("style");
     style.innerHTML = `
@@ -83,7 +89,7 @@ export default function CustomCursor() {
     };
   }, []);
 
-  if (isDashboard || !isVisible) return null;
+  if (isDashboard || isTouchDevice || !isVisible) return null;
 
   // Variants for different cursor states
   const variants = {

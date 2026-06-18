@@ -1,23 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useMotionValue,
-  useVelocity,
-  useAnimationFrame,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { clientLogo } from "@/lib/cdn";
-
-// A simple wrap function replacing @motionone/utils
-const wrap = (min: number, max: number, v: number) => {
-  const rangeSize = max - min;
-  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
-};
 
 const clients = [
   { name: "AA", logo: clientLogo("AA Logo.webp") },
@@ -25,64 +9,33 @@ const clients = [
   { name: "Seniors For Change", logo: clientLogo("EUI LOGO.webp") },
   { name: "Hitex", logo: clientLogo("hitex logo.webp") },
   { name: "Hope Trust", logo: clientLogo("hopetrust logo.webp") },
+  { name: "OSS", logo: clientLogo("osslogo.png") },
   { name: "Patil Group", logo: clientLogo("patilgroup logo.webp") },
-  { name: "Reroot Space", logo: clientLogo("reroot logo.webp") },
   { name: "South Glass", logo: clientLogo("southglass logo.webp") },
-  { name: "Valucor Packaging", logo: clientLogo("VALUCOR-LOGO 1.webp") },
-  { name: "Zythum", logo: clientLogo("zythum logo.webp") },
+  { name: "Valucor Packaging", logo: clientLogo("valucorlogogogo.png") },
 ];
 
-function VelocityMarquee() {
-  const baseX = useMotionValue(0);
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 50,
-    stiffness: 400,
-  });
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
-    clamp: false,
-  });
-
-  const x = useTransform(baseX, (v) => `${wrap(-20, -70, v)}%`);
-
-  const directionFactor = useRef<number>(1);
-  useAnimationFrame((t, delta) => {
-    let moveBy = directionFactor.current * -1 * (delta / 1000);
-
-    if (velocityFactor.get() < 0) {
-      directionFactor.current = -1;
-    } else if (velocityFactor.get() > 0) {
-      directionFactor.current = 1;
-    }
-
-    moveBy += directionFactor.current * moveBy * velocityFactor.get();
-    baseX.set(baseX.get() + moveBy);
-  });
-
+function AutoCarousel() {
   return (
-    <div className="relative max-w-[1000px] mx-auto overflow-hidden">
-      <motion.div className="flex whitespace-nowrap" style={{ x }}>
-        {/* We need enough duplicates to fill the space and allow wrap seamlessly */}
-        {[1, 2, 3, 4].map((setIndex) => (
-          <div key={setIndex} className="flex shrink-0">
+    <div className="relative w-full overflow-hidden">
+      <div className="flex animate-marquee">
+        {[1, 2].map((setIndex) => (
+          <div key={setIndex} className="flex shrink-0 items-center">
             {clients.map((client, i) => (
               <div
-                key={`b-${setIndex}-${i}`}
-                className="flex-shrink-0 mx-3 sm:mx-8 flex items-center justify-center h-16 sm:h-16"
+                key={`${setIndex}-${i}`}
+                className="flex-shrink-0 mx-6 sm:mx-10 flex items-center justify-center h-16"
               >
-                <Image
+                <img
                   src={client.logo}
                   alt={client.name}
-                  width={120}
-                  height={60}
-                  className="h-16 sm:h-16 max-w-[140px] sm:max-w-[170px] object-contain"
+                  className="h-14 max-w-[140px] sm:max-w-[170px] object-contain"
                 />
               </div>
             ))}
           </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -100,7 +53,7 @@ export default function ClientsSection() {
         Design projects created for top brands including
       </p>
 
-      <VelocityMarquee />
+      <AutoCarousel />
     </motion.section>
   );
 }
