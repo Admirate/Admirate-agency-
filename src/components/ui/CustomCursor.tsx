@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function CustomCursor() {
+  const pathname = usePathname();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isPointer, setIsPointer] = useState(false);
   const [cursorText, setCursorText] = useState("");
@@ -11,7 +13,10 @@ export default function CustomCursor() {
   const [magneticPos, setMagneticPos] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
 
+  const isDashboard = pathname.startsWith("/dashboard");
+
   useEffect(() => {
+    if (isDashboard) return;
     // Hide default cursor for elements that are naturally clickable
     const style = document.createElement("style");
     style.innerHTML = `
@@ -78,7 +83,7 @@ export default function CustomCursor() {
     };
   }, []);
 
-  if (!isVisible) return null;
+  if (isDashboard || !isVisible) return null;
 
   // Variants for different cursor states
   const variants = {

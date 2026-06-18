@@ -16,6 +16,7 @@ export interface Database {
           email: string;
           phone: string | null;
           message: string;
+          status: string;
           created_at: string;
         };
         Insert: {
@@ -24,6 +25,7 @@ export interface Database {
           email: string;
           phone?: string | null;
           message: string;
+          status?: string;
           created_at?: string;
         };
         Update: {
@@ -32,6 +34,91 @@ export interface Database {
           email?: string;
           phone?: string | null;
           message?: string;
+          status?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      email_recipients: {
+        Row: {
+          id: string;
+          email: string;
+          name: string;
+          active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          name: string;
+          active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          name?: string;
+          active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      email_drafts: {
+        Row: {
+          id: string;
+          subject: string;
+          body: string;
+          status: "draft" | "sent" | "scheduled";
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          subject: string;
+          body: string;
+          status?: "draft" | "sent" | "scheduled";
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          subject?: string;
+          body?: string;
+          status?: "draft" | "sent" | "scheduled";
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      portfolio_projects: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          image_url: string;
+          external_url: string;
+          tags: string[];
+          order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description: string;
+          image_url: string;
+          external_url: string;
+          tags: string[];
+          order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          image_url?: string;
+          external_url?: string;
+          tags?: string[];
+          order?: number;
           created_at?: string;
         };
         Relationships: [];

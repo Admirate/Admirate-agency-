@@ -5,6 +5,9 @@
   NODE_VERSION = "22"
   SECRETS_SCAN_OMIT_KEYS = "SB_URL"
 
+[functions]
+  directory = "netlify/functions"
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -12,4 +15,4 @@
     X-Content-Type-Options   = "nosniff"
     X-Frame-Options          = "DENY"
     Referrer-Policy          = "strict-origin-when-cross-origin"
-    Content-Security-Policy  = "default-src 'self'; script-src 'self' https://www.clarity.ms 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.supabase.co; font-src 'self'; media-src 'self'; connect-src 'self' https://www.clarity.ms https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy  = "default-src 'self'; script-src 'self' https://www.clarity.ms 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.supabase.co; font-src 'self'; media-src 'self'; connect-src 'self' https://www.clarity.ms https://*.supabase.co https://api.resend.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"

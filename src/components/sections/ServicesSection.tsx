@@ -6,7 +6,15 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { asset } from "@/lib/cdn";
 import ScrambleText from "@/components/ui/ScrambleText";
 
-const services = [
+type Service = {
+  title: string;
+  description: string;
+  tags: string[];
+  image?: string;
+  video?: string;
+};
+
+const services: Service[] = [
   {
     image: asset("webdevelopment image.webp"),
     title: "Web development",
@@ -36,7 +44,7 @@ const services = [
     tags: ["Shoots", "Reels", "Edits"],
   },
   {
-    image: asset("editorial design.png"),
+    video: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/finalvideo.mp4",
     title: "Editorial design",
     description:
       "Brochures, presentations, reports, and print materials designed with clarity.",
@@ -44,7 +52,7 @@ const services = [
   },
 ];
 
-const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
+const ServiceCard = ({ service }: { service: Service }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   
@@ -53,6 +61,8 @@ const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
     offset: ["start end", "end start"],
   });
   const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
+  const hasVideo = !!service.video;
 
   return (
     <motion.div
@@ -63,15 +73,26 @@ const ServiceCard = ({ service }: { service: (typeof services)[number] }) => {
       className="flex flex-col sm:flex-row items-stretch bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow duration-300 group"
     >
       <div className="relative w-full sm:w-[320px] md:w-[380px] lg:w-[458px] h-[240px] sm:h-[320px] md:h-[380px] lg:h-[430px] flex-shrink-0 bg-gray-200 overflow-hidden rounded-2xl sm:rounded-3xl">
-        <motion.div style={{ y: imageY }} className="absolute inset-[-20%] w-[140%] h-[140%]">
-          <Image
-            src={service.image}
-            alt={service.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            sizes="(max-width: 640px) 100vw, 360px"
+        {hasVideo ? (
+          <video
+            src={service.video!}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
-        </motion.div>
+        ) : (
+          <motion.div style={{ y: imageY }} className="absolute inset-[-20%] w-[140%] h-[140%]">
+            <Image
+              src={service.image!}
+              alt={service.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              sizes="(max-width: 640px) 100vw, 360px"
+            />
+          </motion.div>
+        )}
       </div>
       <div className="flex-1 p-6 sm:p-8 flex flex-col justify-center relative">
         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-0.5">

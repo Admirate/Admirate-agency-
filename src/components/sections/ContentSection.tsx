@@ -300,7 +300,7 @@ export default function ContentSection() {
           <Folder
             color="#DC2626"
             size={2}
-            className="sm:scale-[1.5] lg:scale-[2.5]"
+            className="sm:scale-[1.5] lg:scale-[1.8]"
             items={[
               <Image
                 key="creative-1"

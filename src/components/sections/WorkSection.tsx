@@ -1,12 +1,19 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { asset } from "@/lib/cdn";
 import HoverImageReveal from "@/components/ui/HoverImageReveal";
 
-const projects = [
+type Project = {
+  image: string;
+  name: string;
+  tags: string[];
+  url: string;
+};
+
+const fallbackProjects: Project[] = [
   {
     image: asset("sportex 1.png"),
     name: "Hitex Sports expo",
@@ -41,13 +48,38 @@ const projects = [
 
 export default function WorkSection() {
   const containerRef = useRef<HTMLElement>(null);
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("/api/portfolio");
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (data && data.length > 0) {
+          setProjects(
+            data.map((p: { image_url: string; title: string; tags: string[]; external_url: string }) => ({
+              image: p.image_url,
+              name: p.title,
+              tags: p.tags,
+              url: p.external_url,
+            }))
+          );
+        }
+      } catch {
+        // Silently fall back to hardcoded projects
+      }
+    };
+
+    fetchProjects();
+  }, []);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 80%", "end 20%"]
   });
 
-  // Smoothly transition colors as the section scrolls through the viewport
   const backgroundColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#ffffff", "#0a0a0a", "#0a0a0a", "#ffffff"]);
   const textColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#000000", "#ffffff", "#ffffff", "#000000"]);
   const subtitleColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#6b7280", "#a1a1aa", "#a1a1aa", "#6b7280"]);
@@ -61,7 +93,6 @@ export default function WorkSection() {
       className="py-20 sm:py-28"
     >
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-        {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -80,7 +111,6 @@ export default function WorkSection() {
           </motion.p>
         </motion.div>
 
-        {/* Projects grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {projects.map((project, i) => (
             <motion.a
@@ -94,7 +124,6 @@ export default function WorkSection() {
               transition={{ duration: 0.6, delay: (i % 2) * 0.15, ease: [0.16, 1, 0.3, 1] }}
               className={`group cursor-pointer ${i === projects.length - 1 && projects.length % 2 !== 0 ? "md:col-span-2 md:mx-auto md:w-full md:max-w-[calc(50%-1rem)]" : ""}`}
             >
-              {/* Image card */}
               <motion.div style={{ borderColor }} className="relative w-full aspect-[648/736] rounded-2xl overflow-hidden border bg-gray-100/5 mb-4">
                 <Image
                   src={project.image}
@@ -104,7 +133,6 @@ export default function WorkSection() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 
-                {/* Hover overlay with plus icon */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-500 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all duration-500 ease-out">
                     <svg className="w-6 h-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -114,7 +142,6 @@ export default function WorkSection() {
                 </div>
               </motion.div>
 
-              {/* Project info */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <h3 className="text-lg sm:text-xl font-bold font-lato z-10 cursor-pointer">
                   <HoverImageReveal text={project.name} imageSrc={project.image} />
