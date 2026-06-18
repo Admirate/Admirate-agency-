@@ -1,22 +1,42 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import LenisProvider from "@/components/ui/LenisProvider";
+import CustomCursor from "@/components/ui/CustomCursor";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  // Set this to your deployed site URL to resolve Open Graph / Twitter images correctly
   metadataBase: new URL("https://admirate.in"),
-  title: "ADMIRATE",
-  description: "Strategic Design & Marketing Agency",
+  title: {
+    default: "ADMIRATE | Strategic Design & Marketing Agency",
+    template: "%s | ADMIRATE",
+  },
+  description:
+    "ADMIRATE is a strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
   icons: {
     icon: [{ url: "/redadmiratelogo.png", type: "image/png" }],
     shortcut: "/redadmiratelogo.png",
     apple: "/redadmiratelogo.png",
   },
   openGraph: {
-    title: "ADMIRATE",
-    description: "Strategic Design & Marketing Agency",
+    title: "ADMIRATE | Strategic Design & Marketing Agency",
+    description:
+      "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
+    url: "https://admirate.in",
+    siteName: "ADMIRATE",
     images: ["/redadmiratelogo.png"],
+    type: "website",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ADMIRATE | Strategic Design & Marketing Agency",
+    description:
+      "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
+    images: ["/redadmiratelogo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -25,10 +45,38 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "ADMIRATE",
+  url: "https://admirate.in",
+  logo: "https://admirate.in/redadmiratelogo.png",
+  description: "Strategic Design & Marketing Agency",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+91-8374494954",
+    contactType: "customer service",
+    availableLanguage: ["English", "Hindi"],
+  },
+  sameAs: [],
+  serviceArea: {
+    "@type": "Country",
+    name: "India",
+  },
+  knowsAbout: [
+    "Social Media Management",
+    "Web Design",
+    "Video Production",
+    "Digital Advertising",
+    "Brand Identity",
+    "Packaging Design",
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -39,44 +87,18 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "ADMIRATE",
-              url: "https://admirate.in",
-              logo: "https://admirate.in/redadmiratelogo.png",
-              description: "Strategic Design & Marketing Agency",
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: "+91-8374494954",
-                contactType: "customer service",
-                availableLanguage: ["English", "Hindi"],
-              },
-              sameAs: [],
-              serviceArea: {
-                "@type": "Country",
-                name: "India",
-              },
-              knowsAbout: [
-                "Social Media Management",
-                "Web Design",
-                "Video Production",
-                "Digital Advertising",
-                "Brand Identity",
-                "Packaging Design",
-              ],
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+
         <Script id="ms-clarity" strategy="afterInteractive">
           {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "u512498vm3");`}
         </Script>
-        <LenisProvider>
-          {children}
-        </LenisProvider>
+
+        <CustomCursor />
+        <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
   );
