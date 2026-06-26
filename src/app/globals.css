@@ -1,9 +1,20 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Instrument+Serif:ital@0;1&display=swap');
 
 /* =========================================
-   Font Face Declarations
+   Design Tokens
    ========================================= */
+
+:root {
+  --c-ink: #0A0A0A;
+  --c-paper: #FAFAF7;
+  --c-paper-soft: #F2F2EE;
+  --c-line: #E5E5E0;
+  --c-mute: #8A8A85;
+  --c-red: #FF0D0D;
+  --ease-out-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-cinema: cubic-bezier(0.83, 0, 0.17, 1);
+}
 
 /* =========================================
    Base Reset & Defaults
@@ -19,6 +30,8 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  background-color: var(--c-paper);
+  color: var(--c-ink);
 }
 
 body {
@@ -26,7 +39,10 @@ body {
   padding: 0;
   overflow-x: hidden;
   overscroll-behavior-x: none;
+  background-color: var(--c-paper);
+  color: var(--c-ink);
   font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: "ss01", "kern";
 }
 
 /* =========================================
@@ -50,7 +66,7 @@ body {
    ========================================= */
 
 .font-inter {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 .font-integral {
@@ -58,7 +74,13 @@ body {
 }
 
 .font-instrument {
-  font-family: 'Lato', serif !important;
+  font-family: 'Instrument Serif', 'Lato', Georgia, serif !important;
+}
+
+.font-editorial {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif !important;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .font-lato {
@@ -73,7 +95,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  hyphens: auto;
+  letter-spacing: -0.02em;
 }
 
 /* Responsive type scale */
@@ -84,14 +106,77 @@ html { font-size: 14px; }
 @media (min-width: 1280px) { html { font-size: 17px; } }
 @media (min-width: 1536px) { html { font-size: 18px; } }
 
+/* Eyebrow / overline label */
+.eyebrow {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--c-mute);
+}
+
+/* Display headline base */
+.h-display {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+/* =========================================
+   Reveal / Mask animations
+   ========================================= */
+
+@keyframes line-rise {
+  0%   { transform: translateY(110%); }
+  100% { transform: translateY(0%); }
+}
+
+.reveal-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: inherit;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.12em;
+}
+
+.reveal-mask > span {
+  display: inline-block;
+  transform: translateY(115%);
+  will-change: transform;
+  padding-bottom: 0.06em;
+}
+
+.reveal-mask.in-view > span {
+  animation: line-rise 0.95s var(--ease-out-cinema) forwards;
+}
+
+/* Subtle grain */
+.bg-grain {
+  position: relative;
+}
+.bg-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* =========================================
    Accessibility
    ========================================= */
 
 :focus-visible {
-  outline: 2px solid #dc2626;
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: 2px solid var(--c-red);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 :focus:not(:focus-visible) {
@@ -131,16 +216,12 @@ html { font-size: 14px; }
 }
 
 /* =========================================
-   Marquee Animation
+   Marquee Animations
    ========================================= */
 
 @keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
 .animate-marquee {
@@ -151,28 +232,84 @@ html { font-size: 14px; }
   animation-play-state: paused;
 }
 
+@keyframes marquee-slow {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-slow {
+  animation: marquee-slow 60s linear infinite;
+}
+
 /* =========================================
    Background Shift Animation
    ========================================= */
 
 @keyframes bg-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 50%;
-  }
-  50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0%   { background-position: 0% 50%; }
+  25%  { background-position: 100% 50%; }
+  50%  { background-position: 100% 100%; }
+  75%  { background-position: 0% 100%; }
+  100% { background-position: 0% 50%; }
 }
 
 .animate-bg-shift {
   animation: bg-shift 12s ease-in-out infinite;
+}
+
+/* =========================================
+   Blinking dot
+   ========================================= */
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.85); }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* =========================================
+   Underline link
+   ========================================= */
+
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: right;
+  transform: scaleX(1);
+  transition: transform 0.6s var(--ease-out-cinema);
+}
+
+.link-underline:hover::after {
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: link-underline-back 0.9s var(--ease-out-cinema) 0.2s forwards;
+}
+
+@keyframes link-underline-back {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  100% { transform: scaleX(1); transform-origin: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
