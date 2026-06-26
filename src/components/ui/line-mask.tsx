@@ -6,11 +6,11 @@ type Props = {
   children: ReactNode;
   delay?: number;
   className?: string;
-  as?: keyof React.JSX.IntrinsicElements;
+  as?: "span" | "div";
 };
 
 const LineMask = ({ children, delay = 0, className = "", as: Tag = "span" }: Props) => {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLSpanElement | HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
@@ -31,15 +31,20 @@ const LineMask = ({ children, delay = 0, className = "", as: Tag = "span" }: Pro
     return () => io.disconnect();
   }, []);
 
-  const TagEl = Tag as keyof React.JSX.IntrinsicElements;
-
-  return (
-    <TagEl
-      ref={ref as React.RefObject<HTMLElement>}
+  return Tag === "div" ? (
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
       className={`reveal-mask ${inView ? "in-view" : ""} ${className}`}
     >
       <span style={{ animationDelay: `${delay}ms` }}>{children}</span>
-    </TagEl>
+    </div>
+  ) : (
+    <span
+      ref={ref as React.RefObject<HTMLSpanElement>}
+      className={`reveal-mask ${inView ? "in-view" : ""} ${className}`}
+    >
+      <span style={{ animationDelay: `${delay}ms` }}>{children}</span>
+    </span>
   );
 };
 
