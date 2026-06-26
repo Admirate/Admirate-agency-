@@ -1,219 +1,253 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { motion, useScroll, useVelocity, useSpring, useTransform } from "framer-motion";
-import MagneticButton from "@/components/ui/MagneticButton";
+import { useRef } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  MotionValue,
+} from "framer-motion";
+import LineMask from "@/components/ui/line-mask";
 import { video } from "@/lib/cdn";
 
-const cards = [
+type Float = {
+  src: string;
+  label: string;
+  positionClass: string;
+  depth: number;
+  rotate: number;
+  delay: number;
+};
+
+const floats: Float[] = [
   {
-    video: video("asset1.mp4"),
-    title: "Visual Identity",
-    description: "Built to be seen—simple, consistent & recognizable.",
+    src: video("asset1.mp4"),
+    label: "Visual Identity",
+    positionClass:
+      "top-[14%] left-[2%] xl:left-[3%] w-[170px] h-[215px] xl:w-[200px] xl:h-[250px] 2xl:w-[220px] 2xl:h-[275px]",
+    depth: 18,
+    rotate: -5,
+    delay: 0.6,
   },
   {
-    video: video("asset 2.mp4"),
-    title: "Social Media",
-    description: "System-led content visuals, reels & posts built with intent.",
+    src: video("asset 2.mp4"),
+    label: "Social Media",
+    positionClass:
+      "top-[14%] right-[2%] xl:right-[3%] w-[170px] h-[215px] xl:w-[200px] xl:h-[250px] 2xl:w-[220px] 2xl:h-[275px]",
+    depth: -16,
+    rotate: 4,
+    delay: 0.72,
   },
   {
-    video: video("asset 3.mp4"),
-    title: "Web Development",
-    description: "System-led content visuals, reels & posts built with intent.",
+    src: video("asset 3.mp4"),
+    label: "Web",
+    positionClass:
+      "bottom-[14%] left-[2%] xl:left-[3%] w-[170px] h-[215px] xl:w-[200px] xl:h-[250px] 2xl:w-[220px] 2xl:h-[275px]",
+    depth: 20,
+    rotate: 6,
+    delay: 0.84,
   },
   {
-    video: video("asset 4.mp4"),
-    title: "Branding",
-    description: "Crafting identities that stand out and tell your story.",
+    src: video("asset 4.mp4"),
+    label: "Branding",
+    positionClass:
+      "bottom-[14%] right-[2%] xl:right-[3%] w-[170px] h-[215px] xl:w-[200px] xl:h-[250px] 2xl:w-[220px] 2xl:h-[275px]",
+    depth: -18,
+    rotate: -4,
+    delay: 0.96,
   },
 ];
 
-export default function HeroSection() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+const FloatThumb = ({
+  float,
+  mouseX,
+  mouseY,
+}: {
+  float: Float;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+}) => {
+  const x = useTransform(mouseX, [-0.5, 0.5], [-float.depth, float.depth]);
+  const y = useTransform(mouseY, [-0.5, 0.5], [-float.depth, float.depth]);
 
-  // Skew on scroll
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 50,
-    stiffness: 400,
-  });
-  const skewVelocity = useTransform(smoothVelocity, [-1000, 1000], [4, -4]);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 60, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 1.2, delay: float.delay, ease: [0.16, 1, 0.3, 1] }}
+      style={{ x, y, rotate: float.rotate }}
+      className={`absolute rounded-2xl overflow-hidden shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] ring-1 ring-black/5 will-change-transform ${float.positionClass}`}
+    >
+      <video
+        src={float.src}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+        <span className="text-[10px] uppercase tracking-[0.18em] text-white/90 font-semibold">
+          {float.label}
+        </span>
+      </div>
+    </motion.div>
+  );
+};
 
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
+const HeroSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const sx = useSpring(mouseX, { stiffness: 80, damping: 20, mass: 0.6 });
+  const sy = useSpring(mouseY, { stiffness: 80, damping: 20, mass: 0.6 });
+  const glowLeft = useTransform(sx, [-0.5, 0.5], ["20%", "60%"]);
+  const glowTop = useTransform(sy, [-0.5, 0.5], ["10%", "60%"]);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const el = sectionRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
-  }, []);
-
-  const scroll = (direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.querySelector("div")?.clientWidth || 300;
-    const scrollAmount = cardWidth + 16;
-    el.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-    setTimeout(checkScroll, 400);
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
   };
 
   return (
-    <section className="pt-28 sm:pt-32 pb-10 px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto">
-      {/* Top content row */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 sm:mb-14"
-      >
-        <h1 className="text-4xl sm:text-5xl md:text-[64px] font-bold leading-[108.21%] tracking-tight font-lato text-[#000]">
-          Advertising,
-          <br />
-          done the <span className="text-[#FF0000]">right way</span>
-        </h1>
+    <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      className="relative h-svh w-full overflow-hidden bg-[var(--c-paper)] bg-grain"
+      aria-label="Hero"
+    >
+      {/* Soft red ambient glow that follows the cursor */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -z-0 hidden md:block"
+        style={{
+          width: 720,
+          height: 720,
+          left: glowLeft,
+          top: glowTop,
+          background:
+            "radial-gradient(circle at center, rgba(255,13,13,0.18), rgba(255,13,13,0.05) 35%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+      />
 
-        <MagneticButton className="self-start lg:self-auto">
-          <a
-            href="#contact"
-            className="group flex items-center gap-4 lg:gap-6"
+      {/* Floating thumbnails (xl+ only, around perimeter) */}
+      <div aria-hidden="true" className="absolute inset-0 hidden xl:block">
+        {floats.map((f) => (
+          <FloatThumb key={f.label} float={f} mouseX={sx} mouseY={sy} />
+        ))}
+      </div>
+
+      {/* Foreground content */}
+      <div className="relative z-10 flex h-full flex-col">
+        {/* Top meta row */}
+        <div className="flex items-start justify-end px-6 sm:px-10 lg:px-16 pt-24 sm:pt-28 lg:pt-32 max-w-[1440px] w-full mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="hidden md:flex items-center gap-3 eyebrow"
           >
-            <div className="flex flex-col items-end">
-              <span className="text-base sm:text-lg lg:text-[20px] font-normal font-lato leading-[108.21%] text-[#000] text-right pb-1">
-                Book a Free Intro Call
-              </span>
-              <div className="relative pb-2">
-                <span className="text-base sm:text-lg lg:text-[20px] font-normal font-lato leading-[108.21%] text-[#000] text-right">
-                  WhatsApp Us
-                </span>
-                {/* Red dot and pill underline */}
-                <div className="absolute bottom-0 right-0 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-600" />
-                  <span className="w-10 sm:w-16 h-1.5 sm:h-2 rounded-full bg-red-600 transition-all duration-300 group-hover:w-16 sm:group-hover:w-20" />
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
-              <svg
-                className="absolute w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-              <svg
-                className="absolute w-full h-full -translate-x-[150%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </div>
-          </a>
-        </MagneticButton>
-      </motion.div>
-
-      {/* Video carousel */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className="relative"
-      >
-        {/* Left arrow */}
-        <button
-          onClick={() => scroll("left")}
-          disabled={!canScrollLeft}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition disabled:opacity-0 disabled:pointer-events-none"
-          aria-label="Scroll left"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* Right arrow */}
-        <button
-          onClick={() => scroll("right")}
-          disabled={!canScrollRight}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition disabled:opacity-0 disabled:pointer-events-none"
-          aria-label="Scroll right"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
-        {/* Scrollable row */}
-        <div
-          ref={scrollRef}
-          onScroll={checkScroll}
-          
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
-        >
-          {cards.map((card, i) => (
-            <motion.div
-              key={i}
-              
-              style={{ skewX: skewVelocity }}
-              className="relative flex-shrink-0 w-[300px] sm:w-[340px] lg:w-[363px] h-[400px] sm:h-[430px] lg:h-[449px] rounded-[24px] overflow-hidden snap-start group bg-[#D9D9D9] cursor-pointer origin-bottom"
-            >
-              <video
-                src={card.video}
-                muted
-                loop
-                playsInline
-                autoPlay
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-
-              {/* Dark overlay on hover */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-400" />
-
-              {/* Plus icon → X icon on hover */}
-              <div className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center z-10">
-                {/* Plus (default) */}
-                <svg
-                  className="w-6 h-6 text-gray-900/70 group-hover:opacity-0 group-hover:rotate-45 transition-all duration-300 absolute"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                {/* X (on hover) */}
-                <svg
-                  className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 absolute"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-
-              {/* Text overlay on hover */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 z-10 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
-                <h3 className="text-white text-xl sm:text-2xl font-bold font-integral mb-2">
-                  {card.title}
-                </h3>
-                <p className="text-white/80 text-sm font-inter leading-relaxed">
-                  {card.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+            <span>(01 / 09)</span>
+          </motion.div>
         </div>
-      </motion.div>
+
+        {/* Centered headline block — marquee sits where CTAs used to */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center">
+          <h1 className="h-display text-[clamp(2.75rem,9vw,8.5rem)] text-[var(--c-ink)] px-6 sm:px-10 lg:px-16">
+            <LineMask as="span" className="block">
+              Advertising,
+            </LineMask>
+            <LineMask as="span" delay={140} className="block">
+              done the{" "}
+              <span className="font-editorial italic font-normal text-[var(--c-red)]">
+                right way.
+              </span>
+            </LineMask>
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 max-w-xl text-base sm:text-lg text-[var(--c-mute)] leading-relaxed px-6 sm:px-10 lg:px-16"
+          >
+            We design brands, build websites, produce content, and run campaigns
+            engineered to move business — not just metrics.
+          </motion.p>
+
+          {/* Marquee — full-bleed, sits where CTAs used to */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.1 }}
+            className="relative w-full border-t border-b border-[var(--c-line)] py-4 sm:py-5 overflow-hidden mt-10 sm:mt-12"
+          >
+            <div className="flex w-max animate-marquee-slow whitespace-nowrap">
+              {Array.from({ length: 2 }).map((_, idx) => (
+                <div key={idx} className="flex items-center">
+                  {[
+                    "Branding",
+                    "Web Development",
+                    "Social Media",
+                    "Video & Film",
+                    "Creative Strategy",
+                    "Campaigns",
+                    "Editorial Design",
+                  ].map((w) => (
+                    <span key={`${idx}-${w}`} className="flex items-center">
+                      <span className="text-[clamp(1.25rem,3.5vw,2.5rem)] font-editorial italic px-6 sm:px-8 text-[var(--c-ink)]">
+                        {w}
+                      </span>
+                      <span className="text-[var(--c-red)] text-xl">✦</span>
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Mobile + tablet inline thumbnail strip */}
+          <div className="xl:hidden mt-8 sm:mt-10 w-full max-w-md flex justify-center gap-3 sm:gap-4 px-6 sm:px-10">
+            {floats.slice(0, 4).map((f, i) => (
+              <motion.div
+                key={f.label}
+                initial={{ opacity: 0, y: 24, scale: 0.92 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.9,
+                  delay: 1.2 + i * 0.08,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="relative aspect-[3/4] w-[22%] sm:w-[20%] rounded-xl overflow-hidden ring-1 ring-black/5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.35)]"
+              >
+                <video
+                  src={f.src}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/65 to-transparent">
+                  <span className="block text-[8px] sm:text-[9px] uppercase tracking-[0.18em] text-white/90 font-semibold truncate">
+                    {f.label}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+      </div>
     </section>
   );
-}
+};
+
+export default HeroSection;

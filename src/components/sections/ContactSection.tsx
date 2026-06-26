@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import LineMask from "@/components/ui/line-mask";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 const contactSchema = z.object({
   name: z
@@ -19,10 +22,46 @@ const contactSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
-
 type SubmitStatus = "idle" | "loading" | "success" | "error";
 
-export default function ContactSection() {
+const InputField = ({
+  id,
+  label,
+  type = "text",
+  placeholder,
+  register,
+  error,
+}: {
+  id: keyof ContactFormData;
+  label: string;
+  type?: string;
+  placeholder: string;
+  register: ReturnType<typeof useForm<ContactFormData>>["register"];
+  error?: string;
+}) => (
+  <div className="group relative border-b border-[var(--c-ink)]/15 focus-within:border-[var(--c-ink)] transition-colors duration-300">
+    <label
+      htmlFor={id}
+      className="eyebrow block mb-2 text-[var(--c-mute)] group-focus-within:text-[var(--c-ink)] transition-colors"
+    >
+      {label}
+    </label>
+    <input
+      id={id}
+      type={type}
+      {...register(id)}
+      placeholder={placeholder}
+      className="w-full bg-transparent text-[var(--c-ink)] text-xl sm:text-2xl font-editorial italic font-normal placeholder:text-[var(--c-mute)]/60 placeholder:italic outline-none pb-4"
+    />
+    {error && (
+      <p className="absolute -bottom-6 left-0 text-xs text-[var(--c-red)]">
+        {error}
+      </p>
+    )}
+  </div>
+);
+
+const ContactSection = () => {
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -31,9 +70,7 @@ export default function ContactSection() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
-  });
+  } = useForm<ContactFormData>({ resolver: zodResolver(contactSchema) });
 
   const onSubmit = async (data: ContactFormData) => {
     setStatus("loading");
@@ -43,7 +80,6 @@ export default function ContactSection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-
       const result = await response.json();
 
       if (!response.ok) {
@@ -53,7 +89,7 @@ export default function ContactSection() {
       }
 
       setStatus("success");
-      setStatusMessage(result.message);
+      setStatusMessage(result.message || "Thanks — we'll be in touch soon.");
       reset();
     } catch {
       setStatus("error");
@@ -62,123 +98,218 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 font-lato">
-          Get in Touch
-        </h2>
-        <p className="text-gray-600 text-center mb-10 font-inter">
-          Have a project in mind? Let&apos;s talk about it.
-        </p>
+    <section
+      id="contact"
+      className="relative min-h-svh w-full bg-[var(--c-ink)] text-[var(--c-paper)] overflow-hidden bg-grain"
+      aria-label="Contact"
+    >
+      {/* Ambient red glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-[15%] top-1/3 w-[60vw] h-[60vw] rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at center, rgba(255,13,13,0.22), rgba(255,13,13,0.06) 35%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Name *
-            </label>
-            <input
-              id="name"
-              type="text"
-              {...register("name")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="Your name"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-            )}
+      <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 pt-28 sm:pt-36 pb-12">
+        {/* Top meta */}
+        <div className="flex items-start justify-between mb-16 sm:mb-24">
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-[var(--c-red)] animate-pulse-dot" />
+            <span className="eyebrow text-white/70">(09 / 09) — Get in touch</span>
           </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Email *
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register("email")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="you@example.com"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Phone (optional)
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              {...register("phone")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="+91 XXXXX XXXXX"
-            />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Message *
-            </label>
-            <textarea
-              id="message"
-              rows={5}
-              {...register("message")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition resize-none font-inter"
-              placeholder="Tell us about your project..."
-            />
-            {errors.message && (
-              <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 font-inter"
-          >
-            {status === "loading" ? "Sending..." : "Send Message"}
-          </button>
-
-          {status === "success" && (
-            <p className="text-center text-green-600 font-medium font-inter">
-              {statusMessage}
-            </p>
-          )}
-          {status === "error" && (
-            <p className="text-center text-red-600 font-medium font-inter">
-              {statusMessage}
-            </p>
-          )}
-        </form>
-
-        <div className="mt-10 text-center">
-          <p className="text-gray-500 text-sm mb-3 font-inter">
-            Or reach out directly
-          </p>
-          <a
-            href="https://wa.me/918374494954"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 font-inter"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
-            Chat on WhatsApp
-          </a>
+          <span className="eyebrow text-white/40 hidden sm:inline">
+            Available for new work · 2026 / 27
+          </span>
         </div>
+
+        {/* Dramatic headline */}
+        <h2 className="h-display text-[clamp(2.5rem,9vw,9rem)] mb-16 sm:mb-24">
+          <LineMask as="span" className="block">
+            Let&apos;s build
+          </LineMask>
+          <LineMask as="span" delay={140} className="block">
+            something{" "}
+            <span className="font-editorial italic font-normal text-[var(--c-red)]">
+              worth
+            </span>
+          </LineMask>
+          <LineMask as="span" delay={280} className="block">
+            <span className="font-editorial italic font-normal">admiring.</span>
+          </LineMask>
+        </h2>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="lg:col-span-7 space-y-10"
+          >
+            <InputField
+              id="name"
+              label="01 — Your name"
+              placeholder="Jane Doe"
+              register={register}
+              error={errors.name?.message}
+            />
+            <InputField
+              id="email"
+              label="02 — Email"
+              type="email"
+              placeholder="jane@brand.com"
+              register={register}
+              error={errors.email?.message}
+            />
+            <InputField
+              id="phone"
+              label="03 — Phone (optional)"
+              type="tel"
+              placeholder="+91 XXXXX XXXXX"
+              register={register}
+              error={errors.phone?.message}
+            />
+
+            <div className="group relative border-b border-[var(--c-ink)]/15 focus-within:border-white transition-colors duration-300">
+              <label
+                htmlFor="message"
+                className="eyebrow block mb-2 text-[var(--c-mute)] group-focus-within:text-white transition-colors"
+              >
+                04 — Tell us about the project
+              </label>
+              <textarea
+                id="message"
+                rows={4}
+                {...register("message")}
+                placeholder="A brand to launch, a site to build, a campaign to run…"
+                className="w-full bg-transparent text-white text-xl sm:text-2xl font-editorial italic font-normal placeholder:text-white/30 placeholder:italic outline-none pb-4 resize-none"
+              />
+              {errors.message && (
+                <p className="absolute -bottom-6 left-0 text-xs text-[var(--c-red)]">
+                  {errors.message.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-6">
+              <MagneticButton>
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="group relative inline-flex items-center gap-3 rounded-full bg-[var(--c-red)] text-white px-8 py-4 text-sm font-semibold tracking-wide overflow-hidden disabled:opacity-60"
+                >
+                  <span className="relative z-10">
+                    {status === "loading" ? "Sending…" : "Send enquiry"}
+                  </span>
+                  <span className="relative z-10 inline-block transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
+                    →
+                  </span>
+                  <span className="absolute inset-0 translate-y-full bg-white text-[var(--c-ink)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0" />
+                </button>
+              </MagneticButton>
+
+              <a
+                href="https://wa.me/918374494954"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold tracking-wide text-white/80 link-underline"
+              >
+                or message us on WhatsApp
+              </a>
+            </div>
+
+            {status === "success" && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-green-300"
+              >
+                {statusMessage}
+              </motion.p>
+            )}
+            {status === "error" && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-[var(--c-red)]"
+              >
+                {statusMessage}
+              </motion.p>
+            )}
+          </form>
+
+          {/* Side meta */}
+          <aside className="lg:col-span-5 lg:pl-8 lg:border-l lg:border-white/10 space-y-12">
+            <div>
+              <p className="eyebrow text-white/40 mb-3">Direct line</p>
+              <a
+                href="mailto:essentials@admirate.in"
+                className="block text-2xl sm:text-3xl font-editorial italic text-white link-underline"
+              >
+                essentials@admirate.in
+              </a>
+            </div>
+            <div>
+              <p className="eyebrow text-white/40 mb-3">Office</p>
+              <p className="text-base sm:text-lg text-white/80 leading-relaxed">
+                Hyderabad, India
+                <br />
+                17.3850° N, 78.4867° E
+              </p>
+            </div>
+            <div>
+              <p className="eyebrow text-white/40 mb-3">Follow</p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-base text-white/80 link-underline w-fit"
+                >
+                  Instagram ↗
+                </a>
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-base text-white/80 link-underline w-fit"
+                >
+                  LinkedIn ↗
+                </a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      {/* Bottom marquee */}
+      <div className="relative z-10 border-t border-white/10 mt-16 overflow-hidden">
+        <div className="flex w-max animate-marquee-slow whitespace-nowrap py-8">
+          {Array.from({ length: 2 }).map((_, idx) => (
+            <div key={idx} className="flex items-center">
+              {Array.from({ length: 6 }).map((__, j) => (
+                <span key={`${idx}-${j}`} className="flex items-center">
+                  <span className="text-[clamp(2rem,6vw,5rem)] font-editorial italic px-10 text-white">
+                    Available for new work
+                  </span>
+                  <span className="text-[var(--c-red)] text-3xl">✦</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <span className="eyebrow text-white/40">© ADMIRATE · 2026</span>
+        <span className="eyebrow text-white/40">
+          Designed & built in-house · Hyderabad
+        </span>
       </div>
     </section>
   );
-}
+};
+
+export default ContactSection;
