@@ -158,8 +158,8 @@ const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Centered headline block — marquee sits where CTAs used to */}
-        <div className="flex-1 flex flex-col items-center justify-center text-center">
+        {/* Centered headline block */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center min-h-0">
           <h1 className="h-display text-[clamp(2.75rem,9vw,8.5rem)] text-[var(--c-ink)] px-6 sm:px-10 lg:px-16">
             <LineMask as="span" className="block">
               Advertising,
@@ -176,18 +176,20 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-8 max-w-xl text-base sm:text-lg text-[var(--c-mute)] leading-relaxed px-6 sm:px-10 lg:px-16"
+            className="mt-6 sm:mt-8 max-w-xl text-base sm:text-lg text-[var(--c-mute)] leading-relaxed px-6 sm:px-10 lg:px-16"
           >
             We design brands, build websites, produce content, and run campaigns
             engineered to move business — not just metrics.
           </motion.p>
+        </div>
 
-          {/* Marquee — full-bleed, sits where CTAs used to */}
+        {/* Marquee — pinned to bottom of hero, never clipped */}
+        <div className="shrink-0">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1.1 }}
-            className="relative w-full border-t border-b border-[var(--c-line)] py-4 sm:py-5 overflow-hidden mt-10 sm:mt-12"
+            className="relative w-full border-t border-b border-[var(--c-line)] py-3 sm:py-4 overflow-hidden"
           >
             <div className="flex w-max animate-marquee-slow whitespace-nowrap">
               {Array.from({ length: 2 }).map((_, idx) => (
@@ -212,37 +214,6 @@ const HeroSection = () => {
               ))}
             </div>
           </motion.div>
-
-          {/* Mobile + tablet inline thumbnail strip */}
-          <div className="xl:hidden mt-8 sm:mt-10 w-full max-w-md flex justify-center gap-3 sm:gap-4 px-6 sm:px-10">
-            {floats.slice(0, 4).map((f, i) => (
-              <motion.div
-                key={f.label}
-                initial={{ opacity: 0, y: 24, scale: 0.92 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  duration: 0.9,
-                  delay: 1.2 + i * 0.08,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="relative aspect-[3/4] w-[22%] sm:w-[20%] rounded-xl overflow-hidden ring-1 ring-black/5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.35)]"
-              >
-                <video
-                  src={f.src}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/65 to-transparent">
-                  <span className="block text-[8px] sm:text-[9px] uppercase tracking-[0.18em] text-white/90 font-semibold truncate">
-                    {f.label}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </div>
 
       </div>
