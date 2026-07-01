@@ -1,78 +1,58 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
-import MagneticButton from "@/components/ui/MagneticButton";
-import { asset } from "@/lib/cdn";
+import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function CtaSection() {
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    gsap.to(".cta-px-bg", {
+      yPercent: -35,
+      xPercent: 10,
+      ease: "none",
+      scrollTrigger: { trigger: "#cta-banner", start: "top bottom", end: "bottom top", scrub: true },
+    });
+    gsap.to(".cta-banner-inner", {
+      yPercent: -6,
+      ease: "none",
+      scrollTrigger: { trigger: "#cta-banner", start: "top bottom", end: "bottom top", scrub: true },
+    });
+  }, []);
+
   return (
-    <section className="py-20 sm:py-28 bg-white overflow-hidden">
-      <div className="relative max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-        <div className="relative flex items-center justify-center min-h-[400px] sm:min-h-[450px] md:min-h-[500px]">
-          {/* Left laptop */}
-          <motion.div 
-            initial={{ opacity: 0, x: -100, rotate: -15 }}
-            whileInView={{ opacity: 1, x: 0, rotate: -8 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[45%] sm:-translate-x-[30%] lg:-translate-x-[25%] w-[280px] sm:w-[340px] md:w-[420px] lg:w-[500px]"
-          >
-            <Image
-              src={asset("left laptop.webp")}
-              alt="Laptop showcasing work"
-              width={500}
-              height={350}
-              className="w-full h-auto"
-              priority
-            />
-          </motion.div>
+    <section
+      id="cta-banner"
+      className="relative overflow-hidden text-center"
+      style={{ padding: "clamp(80px,10vw,120px) var(--pad)", background: "var(--ink)" }}
+    >
+      <div
+        className="cta-px-bg absolute pointer-events-none"
+        style={{
+          inset: "-30%",
+          background: "radial-gradient(ellipse 50% 60% at 30% 50%, rgba(227,30,36,.18) 0%, transparent 65%)",
+          willChange: "transform",
+        }}
+        aria-hidden="true"
+      />
 
-          {/* Right laptop */}
-          <motion.div 
-            initial={{ opacity: 0, x: 100, rotate: 15 }}
-            whileInView={{ opacity: 1, x: 0, rotate: 8 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[45%] sm:translate-x-[30%] lg:translate-x-[25%] w-[280px] sm:w-[340px] md:w-[420px] lg:w-[500px]"
-          >
-            <Image
-              src={asset("right laptop.webp")}
-              alt="Laptop showcasing work"
-              width={500}
-              height={350}
-              className="w-full h-auto"
-              priority
-            />
-          </motion.div>
-
-          {/* Center content */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 text-center px-4 max-w-lg"
-          >
-            <span className="text-sm font-inter text-gray-500 mb-4 block">
-              • Free intro call
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-bold font-lato leading-[108.21%] text-black text-center mb-4">
-              Tell us what are you building
-            </h2>
-            <p className="text-black font-lato font-normal text-base sm:text-lg lg:text-[24px] leading-[108.21%] text-center mb-8">
-              We bring clarity, direction, and design that holds
-            </p>
-            <MagneticButton>
-              <a
-                href="#contact"
-                className="inline-block w-[180px] sm:w-[208px] h-[44px] sm:h-[48px] leading-[44px] sm:leading-[48px] bg-black text-white text-base sm:text-lg lg:text-[24px] font-normal font-lato rounded-lg hover:bg-gray-900 transition-colors duration-300 text-center"
-              >
-                Connect with us
-              </a>
-            </MagneticButton>
-          </motion.div>
-        </div>
+      <div className="cta-banner-inner fade-up mx-auto" style={{ maxWidth: 700 }}>
+        <h2 className="h2 mb-5" style={{ color: "#fff" }}>
+          Ready to build something worth seeing?
+        </h2>
+        <p className="mb-9" style={{ color: "rgba(255,255,255,.45)", fontSize: "clamp(15px,1.6vw,18px)" }}>
+          Let&apos;s talk about your brand. We&apos;ll get back to you within 24 hours.
+        </p>
+        <a href="#contact" className="btn-red">
+          Start a Project
+          <svg viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
       </div>
     </section>
   );

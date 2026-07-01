@@ -1,99 +1,150 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { asset } from "@/lib/cdn";
+import { useState, useEffect } from "react";
 
 const navLinks = [
   { label: "About", href: "#about" },
-  { label: "Our work", href: "#work" },
-  { label: "Contact us", href: "#contact" },
+  { label: "Services", href: "#services" },
+  { label: "Work", href: "#work" },
+  { label: "Process", href: "#process" },
 ];
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleNavClick = () => {
-    setIsOpen(false);
-  };
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleNavClick = () => setMenuOpen(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md">
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 sm:px-10 lg:px-16 py-5">
-        <Link href="/" className="flex items-center">
-          <Image
-            src={asset("admirate logo.webp")}
-            alt="Admirate"
-            width={160}
-            height={40}
-            className="h-8 sm:h-10 w-auto object-contain"
-            priority
-          />
-        </Link>
+    <>
+      <nav
+        className="fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between h-16"
+        style={{
+          padding: `0 var(--pad)`,
+          background: isScrolled ? "rgba(250,250,247,.88)" : "transparent",
+          backdropFilter: isScrolled ? "blur(14px)" : "none",
+          borderBottom: isScrolled ? "1px solid var(--hair)" : "none",
+          transition: "background .3s, backdrop-filter .3s",
+        }}
+      >
+        <a
+          href="#"
+          className="font-disp font-black text-lg tracking-tight"
+          style={{
+            fontStretch: "expanded",
+            letterSpacing: "-.02em",
+            color: isScrolled ? "var(--ink)" : "#fff",
+            transition: "color .3s",
+          }}
+        >
+          ADMIRATE
+        </a>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <ul className="hidden md-nav:flex list-none gap-8 items-center">
           {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-sm font-medium text-gray-900 hover:text-red-600 transition-colors duration-200 font-lato"
-            >
-              {link.label}
-            </a>
+            <li key={link.label}>
+              <a
+                href={link.href}
+                className="font-mono text-[11px] tracking-[.12em] uppercase transition-colors duration-250"
+                style={{
+                  color: isScrolled ? "var(--grey)" : "rgba(255,255,255,.6)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = isScrolled ? "var(--ink)" : "#fff";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = isScrolled
+                    ? "var(--grey)"
+                    : "rgba(255,255,255,.6)";
+                }}
+              >
+                {link.label}
+              </a>
+            </li>
           ))}
-        </nav>
+          <li>
+            <a
+              href="#contact"
+              className="font-mono text-[11px] tracking-[.12em] uppercase px-[18px] py-2 rounded-sm transition-all duration-250"
+              style={{
+                color: isScrolled ? "var(--ink)" : "#fff",
+                border: isScrolled
+                  ? "1px solid var(--ink)"
+                  : "1px solid rgba(255,255,255,.3)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = isScrolled ? "var(--ink)" : "var(--red)";
+                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.borderColor = isScrolled ? "var(--ink)" : "var(--red)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = isScrolled ? "var(--ink)" : "#fff";
+                e.currentTarget.style.borderColor = isScrolled
+                  ? "var(--ink)"
+                  : "rgba(255,255,255,.3)";
+              }}
+            >
+              Start a Project
+            </a>
+          </li>
+        </ul>
 
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2 relative z-50"
-          aria-label="Toggle menu"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((prev) => !prev)}
+          className="flex md-nav:hidden flex-col gap-[5px] p-1 bg-transparent border-none"
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((prev) => !prev)}
         >
-          <span
-            className={`block w-6 h-0.5 bg-gray-900 transition-all duration-300 ${
-              isOpen ? "rotate-45 translate-y-2" : ""
-            }`}
-          />
-          <span
-            className={`block w-6 h-0.5 bg-gray-900 transition-all duration-300 ${
-              isOpen ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block w-4 h-0.5 bg-gray-900 transition-all duration-300 ${
-              isOpen ? "-rotate-45 -translate-y-2 w-6" : ""
-            }`}
-          />
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="block w-[22px] h-[1.5px] transition-colors duration-300"
+              style={{
+                background: isScrolled ? "var(--ink)" : "#fff",
+              }}
+            />
+          ))}
         </button>
-      </div>
+      </nav>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden bg-white/95 backdrop-blur-md border-t border-gray-100"
+      {/* Mobile menu */}
+      <div
+        className="fixed inset-0 top-16 z-[999] flex-col gap-6"
+        style={{
+          background: "var(--paper)",
+          padding: `32px var(--pad)`,
+          display: menuOpen ? "flex" : "none",
+        }}
+      >
+        {navLinks.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            onClick={handleNavClick}
+            className="font-mono text-[13px] tracking-[.12em] uppercase py-3 border-b"
+            style={{ color: "var(--grey)", borderColor: "var(--hair)" }}
+            tabIndex={menuOpen ? 0 : -1}
           >
-            <div className="flex flex-col px-6 py-6 gap-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={handleNavClick}
-                  className="text-lg font-medium text-gray-900 hover:text-red-600 transition-colors duration-200 font-lato py-2"
-                  tabIndex={0}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </header>
+            {link.label}
+          </a>
+        ))}
+        <a
+          href="#contact"
+          onClick={handleNavClick}
+          className="font-mono text-[13px] tracking-[.12em] uppercase py-3 border-b"
+          style={{ color: "var(--grey)", borderColor: "var(--hair)" }}
+          tabIndex={menuOpen ? 0 : -1}
+        >
+          Start a Project
+        </a>
+      </div>
+    </>
   );
 }

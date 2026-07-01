@@ -2,23 +2,25 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import LenisProvider from "@/components/ui/LenisProvider";
 import CustomCursor from "@/components/ui/CustomCursor";
+import Preloader from "@/components/ui/Preloader";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://admirate.in"),
   title: {
-    default: "ADMIRATE | Strategic Design & Marketing Agency",
+    default: "ADMIRATE — Strategic Design & Marketing Agency",
     template: "%s | ADMIRATE",
   },
   description:
-    "ADMIRATE is a strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
+    "ADMIRATE is a strategic design and marketing agency. Branding, web design, social media, video production, and digital advertising — done the right way.",
   icons: {
     icon: [{ url: "/redadmiratelogo.png", type: "image/png" }],
     shortcut: "/redadmiratelogo.png",
     apple: "/redadmiratelogo.png",
   },
   openGraph: {
-    title: "ADMIRATE | Strategic Design & Marketing Agency",
+    title: "ADMIRATE — Strategic Design & Marketing Agency",
     description:
       "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
     url: "https://admirate.in",
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ADMIRATE | Strategic Design & Marketing Agency",
+    title: "ADMIRATE — Strategic Design & Marketing Agency",
     description:
       "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
     images: ["/redadmiratelogo.png"],
@@ -97,7 +99,9 @@ export default function RootLayout({
           {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "u512498vm3");`}
         </Script>
 
+        <Preloader />
         <CustomCursor />
+        <ScrollReveal />
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>

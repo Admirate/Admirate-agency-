@@ -1,26 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const contactSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be under 100 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be under 100 characters"),
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().max(20, "Phone number is too long").optional(),
-  message: z
-    .string()
-    .min(10, "Message must be at least 10 characters")
-    .max(2000, "Message must be under 2000 characters"),
+  message: z.string().min(10, "Message must be at least 10 characters").max(2000, "Message must be under 2000 characters"),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
 type SubmitStatus = "idle" | "loading" | "success" | "error";
+
+const inputStyle = {
+  background: "#fff",
+  border: "1px solid var(--hair)",
+  borderRadius: 2,
+  color: "var(--ink)",
+  fontFamily: "var(--body)",
+};
 
 export default function ContactSection() {
   const [status, setStatus] = useState<SubmitStatus>("idle");
@@ -35,149 +37,190 @@ export default function ContactSection() {
     resolver: zodResolver(contactSchema),
   });
 
-  const onSubmit = async (data: ContactFormData) => {
+  const handleFormSubmit = useCallback(async (data: ContactFormData) => {
     setStatus("loading");
     try {
-      const response = await fetch("/api/contact", {
+      await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setStatus("error");
-        setStatusMessage(result.error || "Something went wrong.");
-        return;
-      }
-
-      setStatus("success");
-      setStatusMessage(result.message);
-      reset();
     } catch {
-      setStatus("error");
-      setStatusMessage("Network error. Please try again.");
+      // Save silently, WhatsApp is primary action
     }
+
+    const text = `Hi, I'm ${data.name}.%0A%0AEmail: ${data.email}${data.phone ? `%0APhone: ${data.phone}` : ""}%0A%0A${encodeURIComponent(data.message)}`;
+    window.open(`https://wa.me/918374494954?text=${text}`, "_blank");
+
+    setStatus("success");
+    setStatusMessage("Message sent! We'll get back to you soon.");
+    reset();
+  }, [reset]);
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.style.borderColor = "var(--red)";
+  };
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.style.borderColor = "var(--hair)";
   };
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 font-lato">
-          Get in Touch
-        </h2>
-        <p className="text-gray-600 text-center mb-10 font-inter">
-          Have a project in mind? Let&apos;s talk about it.
-        </p>
+    <section
+      id="contact"
+      style={{ padding: "clamp(80px,10vw,140px) var(--pad)", background: "var(--paper)" }}
+    >
+      <div
+        className="con-inner mx-auto grid items-start gap-20"
+        style={{ maxWidth: "var(--maxw)", gridTemplateColumns: "1fr 1fr" }}
+      >
+        {/* Left */}
+        <div>
+          <div className="eyebrow fade-up">
+            <span style={{ color: "var(--ink)" }}>07</span> Get in Touch
+          </div>
+          <h2 className="h2 fade-up">Tell us what you&apos;re building.</h2>
+          <p className="lead fade-up mt-4">
+            Have a project in mind? Let&apos;s talk. We&apos;ll get back to you within 24 hours.
+          </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Name *
+          <div className="fade-up mt-8 flex flex-col gap-4">
+            <a href="mailto:hello@admirate.in" className="flex items-center gap-3 group">
+              <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="var(--grey)" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="M22 7l-10 7L2 7" />
+              </svg>
+              <span className="text-sm transition-colors duration-200 group-hover:text-[var(--red)]" style={{ color: "var(--ink-2)" }}>hello@admirate.in</span>
+            </a>
+            <a href="tel:+918374494954" className="flex items-center gap-3 group">
+              <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="var(--grey)" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+              </svg>
+              <span className="text-sm transition-colors duration-200 group-hover:text-[var(--red)]" style={{ color: "var(--ink-2)" }}>+91 83744 94954</span>
+            </a>
+            <div className="flex items-center gap-3">
+              <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="var(--grey)" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span className="text-sm" style={{ color: "var(--ink-2)" }}>India</span>
+            </div>
+          </div>
+
+          <div className="fade-up mt-8">
+            <a
+              href="https://wa.me/918374494954"
+              className="btn-red"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ width: "fit-content" }}
+            >
+              Chat on WhatsApp
+              <svg viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Right - Form */}
+        <form
+          className="fade-up flex flex-col gap-[18px]"
+          onSubmit={handleSubmit(handleFormSubmit)}
+          noValidate
+        >
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="f-name" className="font-mono text-[9.5px] tracking-[.15em] uppercase" style={{ color: "var(--grey)" }}>
+              Name
             </label>
             <input
-              id="name"
+              id="f-name"
               type="text"
-              {...register("name")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
               placeholder="Your name"
+              {...register("name")}
+              className="px-3.5 py-3 text-sm outline-none transition-colors duration-250"
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="text-xs" style={{ color: "var(--red)" }}>{errors.name.message}</p>}
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Email *
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="f-email" className="font-mono text-[9.5px] tracking-[.15em] uppercase" style={{ color: "var(--grey)" }}>
+              Email
             </label>
             <input
-              id="email"
+              id="f-email"
               type="email"
+              placeholder="your@email.com"
               {...register("email")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="you@example.com"
+              className="px-3.5 py-3 text-sm outline-none transition-colors duration-250"
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-xs" style={{ color: "var(--red)" }}>{errors.email.message}</p>}
           </div>
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="f-phone" className="font-mono text-[9.5px] tracking-[.15em] uppercase" style={{ color: "var(--grey)" }}>
               Phone (optional)
             </label>
             <input
-              id="phone"
+              id="f-phone"
               type="tel"
+              placeholder="+91"
               {...register("phone")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="+91 XXXXX XXXXX"
+              className="px-3.5 py-3 text-sm outline-none transition-colors duration-250"
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-            )}
+            {errors.phone && <p className="text-xs" style={{ color: "var(--red)" }}>{errors.phone.message}</p>}
           </div>
 
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Message *
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="f-msg" className="font-mono text-[9.5px] tracking-[.15em] uppercase" style={{ color: "var(--grey)" }}>
+              Message
             </label>
             <textarea
-              id="message"
-              rows={5}
+              id="f-msg"
+              placeholder="Tell us about your project…"
               {...register("message")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition resize-none font-inter"
-              placeholder="Tell us about your project..."
+              className="px-3.5 py-3 text-sm outline-none transition-colors duration-250 resize-y"
+              style={{ ...inputStyle, minHeight: 130 }}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
-            {errors.message && (
-              <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
-            )}
+            {errors.message && <p className="text-xs" style={{ color: "var(--red)" }}>{errors.message.message}</p>}
           </div>
 
           <button
             type="submit"
             disabled={status === "loading"}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 font-inter"
+            className="btn-red w-full justify-center disabled:opacity-50"
           >
-            {status === "loading" ? "Sending..." : "Send Message"}
+            {status === "loading" ? "Sending..." : "Send via WhatsApp"}
+            <svg viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </button>
 
+          <p className="font-mono text-[10px] tracking-[.08em] text-center" style={{ color: "var(--grey)" }}>
+            Opens WhatsApp with your message pre-filled.
+          </p>
+
           {status === "success" && (
-            <p className="text-center text-green-600 font-medium font-inter">
+            <p className="font-mono text-[10px] tracking-[.08em] text-center" style={{ color: "var(--grey)" }}>
               {statusMessage}
             </p>
           )}
           {status === "error" && (
-            <p className="text-center text-red-600 font-medium font-inter">
+            <p className="font-mono text-[10px] tracking-[.08em] text-center" style={{ color: "var(--red)" }}>
               {statusMessage}
             </p>
           )}
         </form>
-
-        <div className="mt-10 text-center">
-          <p className="text-gray-500 text-sm mb-3 font-inter">
-            Or reach out directly
-          </p>
-          <a
-            href="https://wa.me/918374494954"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 font-inter"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
-            Chat on WhatsApp
-          </a>
-        </div>
       </div>
     </section>
   );

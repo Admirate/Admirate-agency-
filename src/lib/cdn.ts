@@ -14,3 +14,6 @@ export const video = (path: string) =>
 
 export const clientLogo = (path: string) =>
   `${CDN_HOST}${STORAGE_PATH}/client%20logos/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
+
+export const creative = (path: string) =>
+  `${CDN_HOST}${STORAGE_PATH}/creatives/${encodeURIComponent(path).replace(/%2F/g, "/")}`;

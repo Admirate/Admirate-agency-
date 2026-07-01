@@ -1,150 +1,95 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 
 export default function CustomCursor() {
   const pathname = usePathname();
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isPointer, setIsPointer] = useState(false);
-  const [cursorText, setCursorText] = useState("");
-  const [isMagnetic, setIsMagnetic] = useState(false);
-  const [magneticPos, setMagneticPos] = useState({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const [hasMouse, setHasMouse] = useState(false);
 
   const isDashboard = pathname.startsWith("/dashboard");
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
-    const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024;
-    setIsTouchDevice(isTouch);
-  }, []);
+    if (isDashboard) return;
 
-  useEffect(() => {
-    if (isDashboard || isTouchDevice) return;
-    // Hide default cursor for elements that are naturally clickable
-    const style = document.createElement("style");
-    style.innerHTML = `
-      * {
-        cursor: none !important;
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouch) return;
+
+    const handleFirstMove = () => {
+      setHasMouse(true);
+      window.removeEventListener("mousemove", handleFirstMove);
+    };
+    window.addEventListener("mousemove", handleFirstMove, { once: true });
+
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    let rafId = 0;
+    let running = true;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mx = e.clientX;
+      my = e.clientY;
+      if (cursorRef.current) {
+        cursorRef.current.style.left = `${mx}px`;
+        cursorRef.current.style.top = `${my}px`;
       }
-    `;
+    };
+
+    const animateRing = () => {
+      if (!running) return;
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      if (ringRef.current) {
+        ringRef.current.style.left = `${rx}px`;
+        ringRef.current.style.top = `${ry}px`;
+      }
+      rafId = requestAnimationFrame(animateRing);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    rafId = requestAnimationFrame(animateRing);
+
+    const style = document.createElement("style");
+    style.innerHTML = `* { cursor: none !important; }`;
     document.head.appendChild(style);
 
-    const updateMousePosition = (e: MouseEvent) => {
-      setIsVisible(true);
-      
-      const target = e.target as HTMLElement;
-      const magneticElement = target.closest("[data-magnetic]") as HTMLElement;
-      const cursorElement = target.closest("[data-cursor]") as HTMLElement;
-      const isLinkOrButton = target.closest('a, button, [role="button"], input, select, textarea');
-
-      // Handle magnetic pull
-      if (magneticElement) {
-        const { left, top, width, height } = magneticElement.getBoundingClientRect();
-        const centerX = left + width / 2;
-        const centerY = top + height / 2;
-        
-        // Calculate a gentle pull towards the center of the magnetic element
-        const distanceX = e.clientX - centerX;
-        const distanceY = e.clientY - centerY;
-        
-        setMagneticPos({
-          x: centerX + distanceX * 0.1,
-          y: centerY + distanceY * 0.1,
-        });
-        setIsMagnetic(true);
-      } else {
-        setIsMagnetic(false);
-      }
-
-      setPosition({ x: e.clientX, y: e.clientY });
-
-      // Handle text states (PLAY, DRAG)
-      if (cursorElement) {
-        setCursorText(cursorElement.getAttribute("data-cursor") || "");
-        setIsPointer(true);
-      } else if (isLinkOrButton || isMagnetic) {
-        setCursorText("");
-        setIsPointer(true);
-      } else {
-        setCursorText("");
-        setIsPointer(false);
-      }
-    };
-
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
-
-    window.addEventListener("mousemove", updateMousePosition);
-    window.addEventListener("mouseleave", handleMouseLeave);
-    window.addEventListener("mouseenter", handleMouseEnter);
-    
     return () => {
-      window.removeEventListener("mousemove", updateMousePosition);
-      window.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("mouseenter", handleMouseEnter);
-      document.head.removeChild(style);
+      running = false;
+      document.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(rafId);
+      if (style.parentNode) document.head.removeChild(style);
     };
-  }, []);
+  }, [isDashboard]);
 
-  if (isDashboard || isTouchDevice || !isVisible) return null;
-
-  // Variants for different cursor states
-  const variants = {
-    default: {
-      x: position.x - 10,
-      y: position.y - 10,
-      width: 20,
-      height: 20,
-    },
-    pointer: {
-      x: position.x - 20,
-      y: position.y - 20,
-      width: 40,
-      height: 40,
-    },
-    text: {
-      x: position.x - 40,
-      y: position.y - 40,
-      width: 80,
-      height: 80,
-    },
-    magnetic: {
-      x: magneticPos.x - 20,
-      y: magneticPos.y - 20,
-      width: 40,
-      height: 40,
-    }
-  };
-
-  let state = "default";
-  if (isMagnetic) state = "magnetic";
-  else if (cursorText) state = "text";
-  else if (isPointer) state = "pointer";
+  if (isDashboard || !hasMouse) return null;
 
   return (
-    <motion.div
-      variants={variants}
-      animate={state}
-      transition={{
-        type: "spring",
-        stiffness: 150,
-        damping: 15,
-        mass: 0.1,
-      }}
-      className="fixed top-0 left-0 z-[9999] pointer-events-none flex items-center justify-center rounded-full bg-white text-black font-bold font-inter text-[12px] tracking-wider mix-blend-difference"
-    >
-      {cursorText && state === "text" && (
-        <motion.span 
-          initial={{ opacity: 0, scale: 0.5 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          className="text-black uppercase"
-        >
-          {cursorText}
-        </motion.span>
-      )}
-    </motion.div>
+    <>
+      <div
+        ref={cursorRef}
+        className="fixed z-[9999] pointer-events-none"
+        style={{
+          width: 6,
+          height: 6,
+          background: "var(--red)",
+          borderRadius: "50%",
+          transform: "translate(-50%, -50%)",
+          transition: "transform .1s",
+        }}
+      />
+      <div
+        ref={ringRef}
+        className="fixed z-[9998] pointer-events-none"
+        style={{
+          width: 32,
+          height: 32,
+          border: "1px solid rgba(227,30,36,.4)",
+          borderRadius: "50%",
+          transform: "translate(-50%, -50%)",
+          transition: "left .12s var(--ease), top .12s var(--ease)",
+        }}
+      />
+    </>
   );
 }

@@ -1,187 +1,178 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
+import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { asset } from "@/lib/cdn";
 
-const features = [
+gsap.registerPlugin(ScrollTrigger);
+
+const cards = [
   {
-    icon: asset("icon1.webp"),
-    title: "End to end thinking",
-    description: "From first idea to final output, handled with intent.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="4.5" cy="12" r="2.3" />
+        <circle cx="19.5" cy="12" r="2.3" />
+        <path d="M6.8 12h8.4" />
+        <path d="M13 9l3 3-3 3" />
+      </svg>
+    ),
+    title: "End-to-end thinking",
+    description: "From first idea to final output, handled with intent at every step.",
   },
   {
-    icon: asset("icon2.webp"),
-    title: "Long term partnerships",
-    description: "Not one off work, but relationships that continue.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 13a4 4 0 0 0 5.66 0l3-3a4 4 0 1 0-5.66-5.66l-1.5 1.5" />
+        <path d="M15 11a4 4 0 0 0-5.66 0l-3 3a4 4 0 1 0 5.66 5.66l1.5-1.5" />
+      </svg>
+    ),
+    title: "Long-term partnerships",
+    description: "Not one-off work, but relationships that grow with your brand.",
   },
   {
-    icon: asset("icon3.webp"),
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="9" r="6" />
+        <path d="M8.5 14.2L7 22l5-3 5 3-1.5-7.8" />
+      </svg>
+    ),
     title: "Chosen by brands",
-    description: "Teams that trusted us to build how they are seen.",
+    description: "Teams that trusted us to shape how the world sees them.",
   },
   {
-    icon: asset("icon4.webp"),
-    title: "Nothing first try",
-    description: "Every direction explored before the final call.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.5" />
+        <polygon points="16 8 13.8 13.8 8 16 10.2 10.2 16 8" />
+      </svg>
+    ),
+    title: "Every direction explored",
+    description: "Every creative angle considered before the final call is made.",
   },
 ];
 
 export default function AboutSection() {
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    gsap.to(".about-px-bg", {
+      yPercent: -30,
+      xPercent: 5,
+      ease: "none",
+      scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom top", scrub: true },
+    });
+    gsap.to(".about-left", {
+      yPercent: -4,
+      ease: "none",
+      scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom top", scrub: true },
+    });
+    gsap.to(".about-right", {
+      yPercent: -8,
+      ease: "none",
+      scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom top", scrub: true },
+    });
+  }, []);
+
   return (
-    <section id="about" className="py-20 sm:py-28 bg-white">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16 sm:mb-20"
-        >
-          <span className="text-sm font-inter text-gray-500 mb-4 block">
-            • Who we are
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold font-lato leading-[108.21%] text-black text-center mb-4">
-            A creative advertising agency
-            <br />
-            focused on business outcomes.
-          </h2>
-          <p className="text-black font-lato font-normal text-lg sm:text-[24px] leading-[108.21%]">
-            From social to websites, everything built with intent
-          </p>
-        </motion.div>
+    <section
+      id="about"
+      className="relative overflow-hidden"
+      style={{ padding: "clamp(80px,10vw,140px) var(--pad)", background: "var(--paper)" }}
+    >
+      <div
+        className="about-px-bg absolute pointer-events-none"
+        style={{
+          inset: "-20%",
+          background: "radial-gradient(ellipse 60% 50% at 80% 50%, rgba(227,30,36,.05) 0%, transparent 70%)",
+          willChange: "transform",
+        }}
+        aria-hidden="true"
+      />
 
-        {/* Video block */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-[1309px] mx-auto h-[300px] sm:h-[400px] lg:h-[518px] rounded-none mb-16 sm:mb-20 overflow-hidden bg-[#D9D9D9]"
-        >
-          <video
-            src={asset("admirate logo animated.mp4")}
-            muted
-            loop
-            playsInline
-            autoPlay
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-
-        {/* Description */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            visible: {
-              transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.2,
-              },
-            },
-            hidden: {},
-          }}
-          className="max-w-[672px] mx-auto text-center font-lato text-base sm:text-xl lg:text-[24px] leading-[108.21%] text-black mb-16 sm:mb-20"
-        >
-          <div className="font-normal mb-6 flex flex-col items-center gap-1 sm:gap-2">
-            <span className="overflow-hidden inline-block pb-1">
-              <motion.span
-                variants={{
-                  hidden: { y: "100%" },
-                  visible: {
-                    y: 0,
-                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
-                  },
-                }}
-                className="inline-block"
-              >
-                Most agencies focus on making things look good.
-              </motion.span>
-            </span>
-            <span className="overflow-hidden inline-block pb-1">
-              <motion.span
-                variants={{
-                  hidden: { y: "100%" },
-                  visible: {
-                    y: 0,
-                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
-                  },
-                }}
-                className="inline-block font-bold"
-              >
-                We focus on making things work.
-              </motion.span>
-            </span>
+      <div
+        className="about-grid grid items-start gap-20 mx-auto"
+        style={{ maxWidth: "var(--maxw)", gridTemplateColumns: "1fr 1fr" }}
+      >
+        {/* Left column */}
+        <div className="about-left">
+          <div className="eyebrow fade-up">
+            <span style={{ color: "var(--ink)" }}>01</span> Who We Are
           </div>
+          <h2 className="h2 fade-up">Built for brands that want to be seen.</h2>
 
-          <div className="font-normal mb-6 flex flex-col items-center">
-            <span className="overflow-hidden inline-block pb-2">
-              <motion.span
-                variants={{
-                  hidden: { y: "100%" },
-                  visible: {
-                    y: 0,
-                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
-                  },
+          <div className="about-cards grid grid-cols-2 gap-5 mt-12">
+            {cards.map((card, i) => (
+              <div
+                key={i}
+                className="fade-up p-7 rounded-sm transition-all duration-300 hover:-translate-y-[3px]"
+                style={{
+                  background: "var(--card)",
+                  border: "1px solid var(--hair-2)",
+                  borderRadius: 2,
                 }}
-                className="inline-block"
               >
-                From websites and social media to campaigns and brand systems, every decision is made with one goal in mind — reducing friction in the customer journey and helping businesses generate meaningful results.
-              </motion.span>
-            </span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <span className="overflow-hidden inline-block pb-1">
-              <motion.span
-                variants={{
-                  hidden: { y: "100%" },
-                  visible: {
-                    y: 0,
-                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
-                  },
-                }}
-                className="inline-block font-bold text-red-600"
-              >
-                Good design is important. Clear strategy is essential.
-              </motion.span>
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Features grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-          {features.map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="border-l border-gray-200 pl-6"
-            >
-              <div className="mb-5 h-14 w-14 relative">
-                <Image
-                  src={feature.icon}
-                  alt={feature.title}
-                  width={56}
-                  height={56}
-                  className="object-contain"
-                />
+                <div className="mb-4" style={{ color: "var(--red)" }}>
+                  <div className="w-7 h-7 [&>svg]:w-7 [&>svg]:h-7 [&>svg]:block [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:stroke-[1.6] [&>svg]:stroke-linecap-round [&>svg]:stroke-linejoin-round [&>svg]:transition-transform [&>svg]:duration-350 hover:[&>svg]:scale-110">
+                    {card.icon}
+                  </div>
+                </div>
+                <h3
+                  className="font-disp font-bold text-[14px] tracking-tight mb-2"
+                  style={{ fontStretch: "expanded", letterSpacing: "-.01em" }}
+                >
+                  {card.title}
+                </h3>
+                <p className="text-[13.5px] leading-[1.55]" style={{ color: "var(--grey)" }}>
+                  {card.description}
+                </p>
               </div>
-              <h3 className="text-lg sm:text-xl lg:text-[32px] font-bold font-lato leading-[108.21%] text-black mb-2 sm:mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-sm sm:text-base lg:text-[24px] font-normal font-lato leading-[108.21%] text-black">
-                {feature.description}
-              </p>
-            </motion.div>
-          ))}
+            ))}
+          </div>
+        </div>
+
+        {/* Right column */}
+        <div className="about-right">
+          <div className="fade-up rounded-[4px] overflow-hidden leading-[0]" style={{
+            background: "#0C0C0D",
+            boxShadow: "0 24px 64px rgba(12,12,13,.12), 0 2px 8px rgba(12,12,13,.08)",
+          }}>
+            <video
+              className="w-full h-auto block"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              src={asset("admirate logo animated.mp4")}
+            />
+          </div>
+
+          <p className="lead fade-up mt-6">
+            ADMIRATE is a strategic design and marketing agency based in India. We work with ambitious brands across identity, digital, social, and advertising — from early-stage startups to established names.
+          </p>
+          <p className="lead fade-up mt-4">
+            We don&apos;t just make things look good. We make them work — for your audience, your goals, and your bottom line.
+          </p>
+
+          <div className="fade-up mt-7 flex flex-wrap gap-2">
+            <span
+              className="font-mono text-[10px] tracking-[.14em] uppercase px-4 py-2 rounded-sm"
+              style={{ border: "1px solid var(--hair)", color: "var(--grey)" }}
+            >
+              admirate.in
+            </span>
+            <span
+              className="font-mono text-[10px] tracking-[.14em] uppercase px-4 py-2 rounded-sm"
+              style={{ border: "1px solid var(--hair)", color: "var(--grey)" }}
+            >
+              India
+            </span>
+          </div>
         </div>
       </div>
+
     </section>
   );
 }

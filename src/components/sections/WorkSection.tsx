@@ -1,53 +1,64 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { asset } from "@/lib/cdn";
-import HoverImageReveal from "@/components/ui/HoverImageReveal";
+import { useEffect, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Project = {
-  image: string;
-  name: string;
+  num: string;
+  client: string;
+  title: string;
   tags: string[];
   url: string;
+  screenshot: string;
 };
 
 const fallbackProjects: Project[] = [
   {
-    image: asset("sportex 1.png"),
-    name: "Hitex Sports expo",
-    tags: ["Social media", "Web Development"],
-    url: "https://sportex.in/",
+    num: "01",
+    client: "Hitex Sports Expo",
+    title: "Sportex",
+    tags: ["Web", "Brand", "Event"],
+    url: "https://sportex.in",
+    screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fsportex.in%2F?w=1200",
   },
   {
-    image: asset("screencapture-patilgroup-netlify-app-2026-02-13-12_39_01 1.png"),
-    name: "Patil group",
-    tags: ["Logo Refinement", "Web Development"],
-    url: "https://patilgroup.com/",
+    num: "02",
+    client: "Patil Group",
+    title: "Patil Group",
+    tags: ["Real Estate", "Web", "Campaign"],
+    url: "https://patilgroup.com",
+    screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fpatilgroup.com%2F?w=1200",
   },
   {
-    image: asset("Home 1.png"),
-    name: "Hope Trust",
-    tags: ["Social media", "Web Development"],
-    url: "https://hopetrustindia.com/",
+    num: "03",
+    client: "Hope Trust India",
+    title: "Hope Trust",
+    tags: ["NGO", "Brand", "Digital"],
+    url: "https://hopetrustindia.com",
+    screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fhopetrustindia.com%2F?w=1200",
   },
   {
-    image: asset("south glass 1.png"),
-    name: "South Glass",
-    tags: ["Web Development"],
-    url: "https://southglass.in/",
+    num: "04",
+    client: "South Glass",
+    title: "South Glass",
+    tags: ["Identity", "Web"],
+    url: "https://southglass.in",
+    screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fsouthglass.in%2F?w=1200",
   },
   {
-    image: asset("oss website.png"),
-    name: "Our Sacred Space",
-    tags: ["Web Development"],
-    url: "https://oursacredspace.in/",
+    num: "05",
+    client: "Our Sacred Space",
+    title: "Sacred Space",
+    tags: ["Wellness", "Brand", "Social"],
+    url: "https://oursacredspace.in",
+    screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Foursacredspace.in%2F?w=1200",
   },
 ];
 
 export default function WorkSection() {
-  const containerRef = useRef<HTMLElement>(null);
   const [projects, setProjects] = useState<Project[]>(fallbackProjects);
 
   useEffect(() => {
@@ -55,113 +66,139 @@ export default function WorkSection() {
       try {
         const res = await fetch("/api/portfolio");
         if (!res.ok) return;
-
         const data = await res.json();
         if (data && data.length > 0) {
           setProjects(
-            data.map((p: { image_url: string; title: string; tags: string[]; external_url: string }) => ({
-              image: p.image_url,
-              name: p.title,
+            data.map((p: { image_url: string; title: string; tags: string[]; external_url: string }, i: number) => ({
+              num: String(i + 1).padStart(2, "0"),
+              client: p.title,
+              title: p.title,
               tags: p.tags,
               url: p.external_url,
+              screenshot: p.image_url,
             }))
           );
         }
       } catch {
-        // Silently fall back to hardcoded projects
+        // Fall back to hardcoded
       }
     };
-
     fetchProjects();
   }, []);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 80%", "end 20%"]
-  });
 
-  const backgroundColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#ffffff", "#0a0a0a", "#0a0a0a", "#ffffff"]);
-  const textColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#000000", "#ffffff", "#ffffff", "#000000"]);
-  const subtitleColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#6b7280", "#a1a1aa", "#a1a1aa", "#6b7280"]);
-  const borderColor = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["#f3f4f6", "#27272a", "#27272a", "#f3f4f6"]);
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    document.querySelectorAll(".work-item").forEach((item, i) => {
+      const speed = 0.03 + i * 0.015;
+      const wLeft = item.querySelector(".w-left");
+      if (wLeft) {
+        gsap.to(wLeft, {
+          yPercent: -(speed * 100),
+          ease: "none",
+          scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true },
+        });
+      }
+    });
+  }, [projects]);
 
   return (
-    <motion.section 
-      id="work" 
-      ref={containerRef}
-      style={{ backgroundColor, color: textColor }}
-      className="py-20 sm:py-28"
+    <section
+      id="work"
+      style={{ padding: "clamp(80px,10vw,140px) var(--pad)", background: "var(--paper)" }}
     >
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-12 sm:mb-16"
-        >
-          <motion.span style={{ color: subtitleColor }} className="text-base sm:text-[20px] font-normal font-lato leading-[108.21%] mb-4 block">
-            • Our Work
-          </motion.span>
-          <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold font-lato leading-[108.21%] mb-4">
-            Work built around real business needs.
-          </h2>
-          <motion.p style={{ color: subtitleColor }} className="font-lato font-normal text-base sm:text-[20px] leading-[108.21%]">
-            A selection of websites, campaigns, social media, videos, and brand assets created for growing businesses.
-          </motion.p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {projects.map((project, i) => (
-            <motion.a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              key={i} 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: (i % 2) * 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className={`group cursor-pointer ${i === projects.length - 1 && projects.length % 2 !== 0 ? "md:col-span-2 md:mx-auto md:w-full md:max-w-[calc(50%-1rem)]" : ""}`}
-            >
-              <motion.div style={{ borderColor }} className="relative w-full aspect-[648/736] rounded-2xl overflow-hidden border bg-gray-100/5 mb-4">
-                <Image
-                  src={project.image}
-                  alt={project.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-500 flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all duration-500 ease-out">
-                    <svg className="w-6 h-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                  </div>
-                </div>
-              </motion.div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <h3 className="text-lg sm:text-xl font-bold font-lato z-10 cursor-pointer">
-                  <HoverImageReveal text={project.name} imageSrc={project.image} />
-                </h3>
-                <div className="flex gap-3">
-                  {project.tags.map((tag) => (
-                    <motion.span
-                      key={tag}
-                      style={{ color: subtitleColor }}
-                      className="text-xs sm:text-sm font-inter"
-                    >
-                      {tag}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-            </motion.a>
-          ))}
+      <div className="mx-auto mb-14" style={{ maxWidth: "var(--maxw)" }}>
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div className="eyebrow fade-up">
+              <span style={{ color: "var(--ink)" }}>03</span> Selected Work
+            </div>
+            <h2 className="h2 fade-up">Projects that moved the needle.</h2>
+          </div>
         </div>
       </div>
-    </motion.section>
+
+      <div className="mx-auto" style={{ maxWidth: "var(--maxw)" }}>
+        {projects.map((project, i) => (
+          <a
+            key={i}
+            className="work-item fade-up relative flex items-center gap-6 py-7 overflow-hidden transition-[padding-left] duration-300 hover:pl-[10px] group"
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              borderBottom: "1px solid var(--hair)",
+              ...(i === 0 ? { borderTop: "1px solid var(--hair)" } : {}),
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="absolute top-0 right-0 h-full w-[55%] object-cover object-left-top z-0 pointer-events-none opacity-0 transition-opacity duration-[450ms] group-hover:opacity-[.15]"
+              style={{
+                maskImage: "linear-gradient(to right, transparent, #000 50%)",
+                WebkitMaskImage: "linear-gradient(to right, transparent, #000 50%)",
+              }}
+              src={project.screenshot}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+            />
+
+            <span
+              className="font-mono text-[10px] tracking-[.14em] z-[1] shrink-0 w-6 text-right"
+              style={{ color: "var(--grey)" }}
+            >
+              {project.num}
+            </span>
+
+            <div className="w-left z-[1] flex-1 min-w-0" style={{ willChange: "transform" }}>
+              <div className="font-mono text-[10px] tracking-[.14em] uppercase mb-1" style={{ color: "var(--red)" }}>
+                {project.client}
+              </div>
+              <div
+                className="font-disp font-extrabold leading-none"
+                style={{
+                  fontStretch: "expanded",
+                  fontSize: "clamp(18px, 2.8vw, 36px)",
+                  letterSpacing: "-.025em",
+                }}
+              >
+                {project.title}
+              </div>
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="font-mono text-[9.5px] tracking-[.1em] uppercase px-[10px] py-1 rounded-sm"
+                    style={{ color: "var(--grey)", border: "1px solid var(--hair)" }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div
+              className="z-[1] w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-250 group-hover:bg-[var(--ink)] group-hover:border-[var(--ink)]"
+              style={{ border: "1px solid var(--hair)" }}
+            >
+              <svg
+                className="w-[14px] h-[14px] transition-colors duration-250 group-hover:stroke-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--grey)"
+                strokeWidth={1.8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M7 17L17 7M7 7h10v10" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
   );
 }
