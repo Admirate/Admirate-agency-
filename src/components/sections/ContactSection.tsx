@@ -1,183 +1,122 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import styles from "./ContactSection.module.css";
 
 const contactSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be under 100 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be under 100 characters"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().max(20, "Phone number is too long").optional(),
-  message: z
-    .string()
-    .min(10, "Message must be at least 10 characters")
-    .max(2000, "Message must be under 2000 characters"),
+  phone: z.string().max(20, "Phone number is too long").optional().or(z.literal("")),
+  message: z.string().min(10, "Message must be at least 10 characters").max(2000, "Message must be under 2000 characters"),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
-type SubmitStatus = "idle" | "loading" | "success" | "error";
-
 export default function ContactSection() {
-  const [status, setStatus] = useState<SubmitStatus>("idle");
-  const [statusMessage, setStatusMessage] = useState("");
+  const [note, setNote] = useState("Opens WhatsApp with your message pre-filled.");
+  const [sending, setSending] = useState(false);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
-  });
+  } = useForm<ContactFormData>({ resolver: zodResolver(contactSchema) });
 
-  const onSubmit = async (data: ContactFormData) => {
-    setStatus("loading");
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setStatus("error");
-        setStatusMessage(result.error || "Something went wrong.");
-        return;
+  const submit = useCallback(
+    async (data: ContactFormData) => {
+      setSending(true);
+      try {
+        await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } catch {
+        // WhatsApp remains the primary path even if this fails
       }
 
-      setStatus("success");
-      setStatusMessage(result.message);
+      const text = `Hi Admirate, I'd like to start a project.%0A%0AName: ${encodeURIComponent(data.name)}%0AEmail: ${encodeURIComponent(data.email)}${data.phone ? `%0APhone: ${encodeURIComponent(data.phone)}` : ""}%0A%0A${encodeURIComponent(data.message)}`;
+      window.open(`https://wa.me/918374494954?text=${text}`, "_blank");
+
+      setNote("Opening WhatsApp…");
+      setSending(false);
       reset();
-    } catch {
-      setStatus("error");
-      setStatusMessage("Network error. Please try again.");
-    }
-  };
+    },
+    [reset]
+  );
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 font-lato">
-          Get in Touch
-        </h2>
-        <p className="text-gray-600 text-center mb-10 font-inter">
-          Have a project in mind? Let&apos;s talk about it.
-        </p>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Name *
-            </label>
-            <input
-              id="name"
-              type="text"
-              {...register("name")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="Your name"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-            )}
+    <section id="contact" className={styles.contact}>
+      <div className={styles.inner}>
+        <div className={styles.left}>
+          <div className="eyebrow fade-up">
+            <span className="idx">07</span> Get in Touch
           </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Email *
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register("email")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="you@example.com"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Phone (optional)
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              {...register("phone")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition font-inter"
-              placeholder="+91 XXXXX XXXXX"
-            />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1 font-inter">
-              Message *
-            </label>
-            <textarea
-              id="message"
-              rows={5}
-              {...register("message")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition resize-none font-inter"
-              placeholder="Tell us about your project..."
-            />
-            {errors.message && (
-              <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 font-inter"
-          >
-            {status === "loading" ? "Sending..." : "Send Message"}
-          </button>
-
-          {status === "success" && (
-            <p className="text-center text-green-600 font-medium font-inter">
-              {statusMessage}
-            </p>
-          )}
-          {status === "error" && (
-            <p className="text-center text-red-600 font-medium font-inter">
-              {statusMessage}
-            </p>
-          )}
-        </form>
-
-        <div className="mt-10 text-center">
-          <p className="text-gray-500 text-sm mb-3 font-inter">
-            Or reach out directly
+          <h2 className="h2 fade-up">Tell us what you&apos;re building.</h2>
+          <p className="lead fade-up" style={{ marginTop: "16px" }}>
+            Have a project in mind? Let&apos;s talk. We&apos;ll get back to you within 24 hours.
           </p>
+          <div className={`${styles.details} fade-up`}>
+            <div className={styles.row}>
+              <span>✉</span>
+              <span>hello@admirate.in</span>
+            </div>
+            <div className={styles.row}>
+              <span>📞</span>
+              <span>+91 83744 94954</span>
+            </div>
+            <div className={styles.row}>
+              <span>📍</span>
+              <span>India</span>
+            </div>
+          </div>
           <a
             href="https://wa.me/918374494954"
+            className="btn-red fade-up"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 font-inter"
+            style={{ marginTop: "24px", width: "fit-content" }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
             Chat on WhatsApp
+            <svg viewBox="0 0 24 24" stroke="#fff" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </a>
         </div>
+
+        <form className={`${styles.form} fade-up`} onSubmit={handleSubmit(submit)} noValidate>
+          <div className={styles.field}>
+            <label htmlFor="f-name">Name</label>
+            <input id="f-name" type="text" placeholder="Your name" {...register("name")} />
+            {errors.name && <p className={styles.error}>{errors.name.message}</p>}
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="f-email">Email</label>
+            <input id="f-email" type="email" placeholder="your@email.com" {...register("email")} />
+            {errors.email && <p className={styles.error}>{errors.email.message}</p>}
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="f-phone">Phone (optional)</label>
+            <input id="f-phone" type="tel" placeholder="+91" {...register("phone")} />
+            {errors.phone && <p className={styles.error}>{errors.phone.message}</p>}
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="f-msg">Message</label>
+            <textarea id="f-msg" placeholder="Tell us about your project…" {...register("message")} />
+            {errors.message && <p className={styles.error}>{errors.message.message}</p>}
+          </div>
+          <button type="submit" className="btn-red" disabled={sending} style={{ width: "100%", justifyContent: "center" }}>
+            {sending ? "Sending..." : "Send via WhatsApp"}
+            <svg viewBox="0 0 24 24" stroke="#fff" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+          <div className={styles.note}>{note}</div>
+        </form>
       </div>
     </section>
   );

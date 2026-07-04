@@ -1,219 +1,160 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { motion, useScroll, useVelocity, useSpring, useTransform } from "framer-motion";
-import MagneticButton from "@/components/ui/MagneticButton";
-import { video } from "@/lib/cdn";
-
-const cards = [
-  {
-    video: video("asset1.mp4"),
-    title: "Visual Identity",
-    description: "Built to be seen—simple, consistent & recognizable.",
-  },
-  {
-    video: video("asset 2.mp4"),
-    title: "Social Media",
-    description: "System-led content visuals, reels & posts built with intent.",
-  },
-  {
-    video: video("asset 3.mp4"),
-    title: "Web Development",
-    description: "System-led content visuals, reels & posts built with intent.",
-  },
-  {
-    video: video("asset 4.mp4"),
-    title: "Branding",
-    description: "Crafting identities that stand out and tell your story.",
-  },
-];
+import { useEffect, useRef } from "react";
+import styles from "./HeroSection.module.css";
 
 export default function HeroSection() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Skew on scroll
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 50,
-    stiffness: 400,
-  });
-  const skewVelocity = useTransform(smoothVelocity, [-1000, 1000], [4, -4]);
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const canvas = canvasRef.current;
+    if (prefersReduced || !canvas) return;
 
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let w = 0, h = 0;
+    const resize = () => {
+      w = canvas.width = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+    };
+
+    type Particle = {
+      x: number; y: number; vx: number; vy: number;
+      r: number; a: number; red: boolean;
+      reset: () => void; draw: () => void;
+    };
+
+    const createParticle = (): Particle => {
+      const p: Particle = {
+        x: 0, y: 0, vx: 0, vy: 0, r: 0, a: 0, red: false,
+        reset() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.vx = (Math.random() - 0.5) * 0.4;
+          this.vy = (Math.random() - 0.5) * 0.4;
+          this.r = 0.3 + Math.random() * 0.65;
+          this.a = 0.03 + Math.random() * 0.07;
+          this.red = Math.random() < 0.1;
+        },
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          ctx.fillStyle = this.red
+            ? `rgba(227,30,36,${this.a})`
+            : `rgba(255,255,255,${this.a})`;
+          ctx.fill();
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < -5 || this.x > w + 5 || this.y < -5 || this.y > h + 5) {
+            this.reset();
+          }
+        },
+      };
+      p.reset();
+      return p;
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    const particles = Array.from({ length: 110 }, createParticle);
+
+    let animId: number;
+    const loop = () => {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach((p) => p.draw());
+      animId = requestAnimationFrame(loop);
+    };
+    animId = requestAnimationFrame(loop);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animId);
+    };
   }, []);
 
-  const scroll = (direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.querySelector("div")?.clientWidth || 300;
-    const scrollAmount = cardWidth + 16;
-    el.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-    setTimeout(checkScroll, 400);
-  };
+  useEffect(() => {
+    async function run() {
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReduced) {
+        gsap.set(
+          [`.${styles.eyebrow}`, `.${styles.sub}`, `.${styles.actions}`, `.${styles.scrollHint}`],
+          { opacity: 1, y: 0 }
+        );
+        gsap.set(`.${styles.line} > span`, { y: "0%" });
+        return;
+      }
+
+      gsap.to(`.${styles.eyebrow}`, { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" });
+      gsap.to(`.${styles.line} > span`, { y: "0%", duration: 1.1, delay: 0.45, stagger: 0.12, ease: "power4.out" });
+      gsap.to(`.${styles.sub}`, { opacity: 1, duration: 1, delay: 0.95, ease: "power2.out" });
+      gsap.to(`.${styles.actions}`, { opacity: 1, y: 0, duration: 0.8, delay: 1.3, ease: "power2.out" });
+      gsap.to(`.${styles.scrollHint}`, { opacity: 1, duration: 0.8, delay: 1.85, ease: "power2.out" });
+
+      gsap.to(`.${styles.inner}`, {
+        yPercent: -22, ease: "none",
+        scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true },
+      });
+      gsap.to(`.${styles.bloom}`, {
+        yPercent: -14, scale: 1.15, ease: "none",
+        scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true },
+      });
+      gsap.to(`.${styles.canvas}`, {
+        yPercent: -8, ease: "none",
+        scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true },
+      });
+    }
+    run();
+  }, []);
 
   return (
-    <section className="pt-28 sm:pt-32 pb-10 px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto">
-      {/* Top content row */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 sm:mb-14"
-      >
-        <h1 className="text-4xl sm:text-5xl md:text-[64px] font-bold leading-[108.21%] tracking-tight font-lato text-[#000]">
-          Advertising,
-          <br />
-          done the <span className="text-[#FF0000]">right way</span>
-        </h1>
-
-        <MagneticButton className="self-start lg:self-auto">
-          <a
-            href="#contact"
-            className="group flex items-center gap-4 lg:gap-6"
-          >
-            <div className="flex flex-col items-end">
-              <span className="text-base sm:text-lg lg:text-[20px] font-normal font-lato leading-[108.21%] text-[#000] text-right pb-1">
-                Book a Free Intro Call
-              </span>
-              <div className="relative pb-2">
-                <span className="text-base sm:text-lg lg:text-[20px] font-normal font-lato leading-[108.21%] text-[#000] text-right">
-                  WhatsApp Us
-                </span>
-                {/* Red dot and pill underline */}
-                <div className="absolute bottom-0 right-0 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-600" />
-                  <span className="w-10 sm:w-16 h-1.5 sm:h-2 rounded-full bg-red-600 transition-all duration-300 group-hover:w-16 sm:group-hover:w-20" />
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
-              <svg
-                className="absolute w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-              <svg
-                className="absolute w-full h-full -translate-x-[150%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </div>
-          </a>
-        </MagneticButton>
-      </motion.div>
-
-      {/* Video carousel */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className="relative"
-      >
-        {/* Left arrow */}
-        <button
-          onClick={() => scroll("left")}
-          disabled={!canScrollLeft}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition disabled:opacity-0 disabled:pointer-events-none"
-          aria-label="Scroll left"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* Right arrow */}
-        <button
-          onClick={() => scroll("right")}
-          disabled={!canScrollRight}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition disabled:opacity-0 disabled:pointer-events-none"
-          aria-label="Scroll right"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
-        {/* Scrollable row */}
-        <div
-          ref={scrollRef}
-          onScroll={checkScroll}
-          
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
-        >
-          {cards.map((card, i) => (
-            <motion.div
-              key={i}
-              
-              style={{ skewX: skewVelocity }}
-              className="relative flex-shrink-0 w-[300px] sm:w-[340px] lg:w-[363px] h-[400px] sm:h-[430px] lg:h-[449px] rounded-[24px] overflow-hidden snap-start group bg-[#D9D9D9] cursor-pointer origin-bottom"
-            >
-              <video
-                src={card.video}
-                muted
-                loop
-                playsInline
-                autoPlay
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-
-              {/* Dark overlay on hover */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-400" />
-
-              {/* Plus icon → X icon on hover */}
-              <div className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center z-10">
-                {/* Plus (default) */}
-                <svg
-                  className="w-6 h-6 text-gray-900/70 group-hover:opacity-0 group-hover:rotate-45 transition-all duration-300 absolute"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                {/* X (on hover) */}
-                <svg
-                  className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 absolute"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-
-              {/* Text overlay on hover */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 z-10 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
-                <h3 className="text-white text-xl sm:text-2xl font-bold font-integral mb-2">
-                  {card.title}
-                </h3>
-                <p className="text-white/80 text-sm font-inter leading-relaxed">
-                  {card.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+    <section id="hero" className={styles.hero}>
+      <canvas ref={canvasRef} className={styles.canvas} />
+      <div className={styles.bloom} />
+      <div className={styles.inner}>
+        <div className={styles.eyebrow}>Strategic Design &amp; Marketing</div>
+        <div className={styles.headline}>
+          <span className={styles.line}>
+            <span>Advertising,</span>
+          </span>
+          <span className={styles.line}>
+            <span>
+              done the <span className={styles.red}>right</span>
+            </span>
+          </span>
+          <span className={styles.line}>
+            <span>way.</span>
+          </span>
         </div>
-      </motion.div>
+        <p className={styles.sub}>
+          We build brands that people remember — across identity, digital, and everything in between.
+        </p>
+        <div className={styles.actions}>
+          <a href="#work" className={`${styles.link} ${styles.linkPrimary}`}>
+            View Work
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href="#contact" className={styles.link}>
+            Start a Project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div className={styles.scrollHint}>
+        <span>Scroll</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
+      </div>
     </section>
   );
 }

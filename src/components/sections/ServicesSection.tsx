@@ -1,192 +1,52 @@
-"use client";
+import styles from "./ServicesSection.module.css";
 
-import { useRef } from "react";
-import Image from "next/image";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { asset } from "@/lib/cdn";
-import ScrambleText from "@/components/ui/ScrambleText";
-
-type Service = {
-  title: string;
-  description: string;
-  tags: string[];
-  image?: string;
-  video?: string;
-};
-
-const services: Service[] = [
-  {
-    image: asset("webdevelopment image.webp"),
-    title: "Web development",
-    description:
-      "We build simple, scalable websites that look sharp and work effortlessly.",
-    tags: ["Analytics", "Web Design", "Development"],
-  },
-  {
-    image: asset("socail media image.webp"),
-    title: "Social Media",
-    description:
-      "Content built to strengthen brands, engage audiences, and support business goals.",
-    tags: ["Strategy", "Content", "Conversions"],
-  },
-  {
-    image: asset("visual identity.webp"),
-    title: "Visual Identity",
-    description:
-      "Brand systems that stay relevant, recognizable, and consistent.",
-    tags: ["Logo Design", "Brand System", "Guidelines"],
-  },
-  {
-    image: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/asset5.webp",
-    title: "Video",
-    description:
-      "Stories that capture attention and communicate clearly.",
-    tags: ["Shoots", "Reels", "Edits"],
-  },
-  {
-    video: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/videos/finalvideo.mp4",
-    title: "Editorial design",
-    description:
-      "Brochures, presentations, reports, and print materials designed with clarity.",
-    tags: ["Brochures", "Deck", "Print Design"],
-  },
+const SERVICES = [
+  { n: "01", name: "Visual Identity", body: "Logos, systems, and guidelines that make brands recognisable anywhere." },
+  { n: "02", name: "Social Media", body: "Content, strategy and creatives that build presence across every platform." },
+  { n: "03", name: "Web Development", body: "Fast, beautiful websites built for conversion and crafted with care." },
+  { n: "04", name: "Video Production", body: "Reels, ads, and branded films that stop the scroll and tell the story." },
+  { n: "05", name: "Creative Campaigns", body: "Big ideas executed with strategy — from concept to final delivery." },
+  { n: "06", name: "Editorial Design", body: "Catalogues, lookbooks, reports — print and digital, crafted to impress." },
+  { n: "07", name: "Brand Strategy", body: "Positioning, messaging, and direction that gives every decision clarity." },
+  { n: "08", name: "Digital Advertising", body: "Paid campaigns on Meta, Google, and beyond — built to perform." },
 ];
 
-const ServiceCard = ({ service }: { service: Service }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-
-  const hasVideo = !!service.video;
-
-  return (
-    <motion.div
-      ref={ref}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      style={{ opacity: 0, transform: "translateY(30px)" }}
-      className="flex flex-col sm:flex-row items-stretch bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow duration-300 group"
-    >
-      <div className="relative w-full sm:w-[320px] md:w-[380px] lg:w-[458px] h-[240px] sm:h-[320px] md:h-[380px] lg:h-[430px] flex-shrink-0 bg-gray-200 overflow-hidden rounded-2xl sm:rounded-3xl">
-        {hasVideo ? (
-          <video
-            src={service.video!}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-          />
-        ) : (
-          <motion.div style={{ y: imageY }} className="absolute inset-[-20%] w-[140%] h-[140%]">
-            <Image
-              src={service.image!}
-              alt={service.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              sizes="(max-width: 640px) 100vw, 360px"
-            />
-          </motion.div>
-        )}
-      </div>
-      <div className="flex-1 p-6 sm:p-8 flex flex-col justify-center relative">
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-0.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-        </div>
-        <h3 className="text-xl sm:text-2xl lg:text-[40px] font-bold font-lato leading-[108.21%] text-black mb-2 sm:mb-3">
-          {service.title}
-        </h3>
-        <p className="text-sm sm:text-base lg:text-[24px] font-normal font-lato leading-[108.21%] text-black mb-4 sm:mb-5">
-          {service.description}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {service.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-3 py-1 text-xs sm:text-sm font-inter text-gray-600 bg-white border border-gray-200 rounded-full cursor-default"
-            >
-              <ScrambleText text={tag} />
-            </span>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+const ICONS = [
+  <svg key="1" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2" /></svg>,
+  <svg key="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>,
+  <svg key="3" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>,
+  <svg key="4" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>,
+  <svg key="5" viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z" /></svg>,
+  <svg key="6" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>,
+  <svg key="7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.4" /></svg>,
+  <svg key="8" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7" /><polyline points="15 7 21 7 21 13" /></svg>,
+];
 
 export default function ServicesSection() {
   return (
-    <section className="py-20 sm:py-28 bg-white">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12 sm:mb-16"
-        >
-          <div>
-            <span className="text-base sm:text-[20px] font-normal font-lato leading-[108.21%] text-black mb-4 block">
-              Services
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-[48px] font-bold font-lato leading-[108.21%] text-black">
-              Clear steps for
-              <br />
-              <span className="text-red-600">growing brands</span>
-            </h2>
-          </div>
-          <a
-            href="#contact"
-            className="group flex items-center gap-2 self-start sm:self-auto"
-          >
-            <span className="relative text-lg sm:text-2xl lg:text-[36px] font-normal font-lato leading-[108.21%] text-black pb-1">
-              Connect with us
-              <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-gray-900 group-hover:bg-red-600 transition-colors duration-300" />
-            </span>
-            <div className="relative overflow-hidden w-4 h-4 flex items-center justify-center">
-              <svg
-                className="absolute w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[150%] group-hover:-translate-y-[150%]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 17L17 7M17 7H7M17 7v10"
-                />
-              </svg>
-              <svg
-                className="absolute w-full h-full -translate-x-[150%] translate-y-[150%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 group-hover:translate-y-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 17L17 7M17 7H7M17 7v10"
-                />
-              </svg>
-            </div>
-          </a>
-        </motion.div>
-
-        {/* Service cards */}
-        <div className="flex flex-col gap-4">
-          {services.map((service, i) => (
-            <ServiceCard key={i} service={service} />
-          ))}
+    <section id="services" className={styles.services}>
+      <div className={styles.head}>
+        <div className="eyebrow fade-up" style={{ color: "rgba(255,255,255,.35)" }}>
+          <span className="idx" style={{ color: "rgba(255,255,255,.6)" }}>
+            02
+          </span>{" "}
+          What We Do
         </div>
+        <h2 className="h2 fade-up" style={{ color: "#fff", maxWidth: "16ch" }}>
+          Every service your brand needs.
+        </h2>
+      </div>
+      <div className={styles.grid}>
+        {SERVICES.map((s, i) => (
+          <div key={s.n} className={`${styles.card} fade-up`}>
+            <div className={styles.top}>
+              <span className={styles.num}>{s.n}</span>
+              <span className={styles.ico}>{ICONS[i]}</span>
+            </div>
+            <h3>{s.name}</h3>
+            <p>{s.body}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

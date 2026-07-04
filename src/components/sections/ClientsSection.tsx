@@ -1,59 +1,41 @@
 "use client";
 
-import { motion } from "framer-motion";
+import styles from "./ClientsSection.module.css";
 import { clientLogo } from "@/lib/cdn";
 
-const clients = [
-  { name: "AA", logo: clientLogo("AA Logo.webp") },
-  { name: "Avvent Global", logo: clientLogo("avvent global logo.webp") },
-  { name: "Seniors For Change", logo: clientLogo("EUI LOGO.webp") },
-  { name: "Hitex", logo: clientLogo("hitex logo.webp") },
-  { name: "Hope Trust", logo: clientLogo("hopetrust logo.webp") },
-  { name: "OSS", logo: clientLogo("osslogo.png") },
+const CLIENTS = [
+  { name: "Hitex Sports Expo", logo: clientLogo("hitex logo.webp") },
   { name: "Patil Group", logo: clientLogo("patilgroup logo.webp") },
+  { name: "Hope Trust India", logo: clientLogo("hopetrust logo.webp") },
   { name: "South Glass", logo: clientLogo("southglass logo.webp") },
-  { name: "Valucor Packaging", logo: clientLogo("valucorlogogogo.png") },
+  { name: "Our Sacred Space", logo: clientLogo("osslogo.png") },
+  { name: "Avvent Global", logo: clientLogo("avvent global logo.webp") },
+  { name: "Valucor", logo: clientLogo("valucorlogogogo.png") },
+  { name: "Zythum", logo: clientLogo("zythum logo.webp") },
+  { name: "EUI", logo: clientLogo("EUI LOGO.webp") },
+  { name: "AA", logo: clientLogo("AA Logo.webp") },
 ];
 
-function AutoCarousel() {
-  return (
-    <div className="relative w-full overflow-hidden">
-      <div className="flex animate-marquee">
-        {[1, 2].map((setIndex) => (
-          <div key={setIndex} className="flex shrink-0 items-center">
-            {clients.map((client, i) => (
-              <div
-                key={`${setIndex}-${i}`}
-                className="flex-shrink-0 mx-6 sm:mx-10 flex items-center justify-center h-16"
-              >
-                <img
-                  src={client.logo}
-                  alt={client.name}
-                  className="h-14 max-w-[140px] sm:max-w-[170px] object-contain"
-                />
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function ClientsSection() {
+  const repeated = [...CLIENTS, ...CLIENTS];
   return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8 }}
-      className="py-16 sm:py-20"
-    >
-      <p className="text-center text-sm sm:text-base text-gray-500 font-inter italic mb-10 sm:mb-14">
-        Design projects created for top brands including
-      </p>
-
-      <AutoCarousel />
-    </motion.section>
+    <section id="clients" className={styles.clients}>
+      <div className={styles.head}>
+        <div className="eyebrow fade-up">
+          <span className="idx">06</span> Clients
+        </div>
+        <h2 className="h2 fade-up" style={{ fontSize: "clamp(22px,3vw,36px)" }}>
+          Brands that chose to do it right.
+        </h2>
+      </div>
+      <div className={styles.marquee}>
+        <div className={styles.track}>
+          {repeated.map((c, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={i} src={c.logo} alt={c.name} className={styles.logo} loading="lazy" />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

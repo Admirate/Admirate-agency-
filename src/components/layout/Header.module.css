@@ -1,0 +1,100 @@
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+}
+.nav.scrolled {
+  background: rgba(250,250,247,0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hair);
+}
+.logo {
+  font-family: var(--disp);
+  font-weight: 900;
+  font-stretch: expanded;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: #fff;
+  transition: color 0.3s;
+}
+.scrolled .logo { color: var(--ink); }
+
+.links {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+.links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  transition: color 0.25s;
+}
+.scrolled .links a { color: var(--grey); }
+.links a:hover { color: #fff; }
+.scrolled .links a:hover { color: var(--ink); }
+
+.cta {
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  color: #fff !important;
+  padding: 8px 18px;
+  border-radius: 2px;
+  transition: background 0.25s, border-color 0.25s !important;
+}
+.cta:hover { background: var(--red) !important; border-color: var(--red) !important; }
+.scrolled .cta { color: var(--ink) !important; border-color: var(--ink) !important; }
+.scrolled .cta:hover { background: var(--ink) !important; color: #fff !important; }
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.burger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: #fff;
+  transition: background 0.3s;
+}
+.scrolled .burger span { background: var(--ink); }
+
+.mmenu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: 64px;
+  background: var(--paper);
+  z-index: 999;
+  padding: 32px var(--pad);
+  flex-direction: column;
+  gap: 24px;
+}
+.mmenu.open { display: flex; }
+.mmenu a {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hair);
+}
+
+@media (max-width: 820px) {
+  .links { display: none; }
+  .burger { display: flex; }
+}

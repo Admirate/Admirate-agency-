@@ -1,0 +1,25 @@
+.clients { padding: clamp(60px,8vw,100px) var(--pad); background: var(--hair-2); overflow: hidden; }
+.head { max-width: var(--maxw); margin: 0 auto 44px; }
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+.track {
+  display: flex;
+  gap: 56px;
+  width: max-content;
+  animation: scroll 28s linear infinite;
+}
+.logo {
+  height: clamp(36px, 5vw, 64px);
+  width: auto;
+  object-fit: contain;
+  opacity: 0.85;
+  transition: opacity 0.25s;
+}
+.logo:hover { opacity: 1; }
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
