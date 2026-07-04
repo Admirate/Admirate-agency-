@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import LenisProvider from "@/components/ui/LenisProvider";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Preloader from "@/components/ui/Preloader";
 import ScrollReveal from "@/components/ui/ScrollReveal";
@@ -102,7 +101,7 @@ export default function RootLayout({
         <Preloader />
         <CustomCursor />
         <ScrollReveal />
-        <LenisProvider>{children}</LenisProvider>
+        {children}
       </body>
     </html>
   );

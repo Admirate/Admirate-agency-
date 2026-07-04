@@ -7,7 +7,6 @@ import WorkSection from "@/components/sections/WorkSection";
 import SocialCreativesSection from "@/components/sections/SocialCreativesSection";
 import ProcessSection from "@/components/sections/ProcessSection";
 import CountersSection from "@/components/sections/CountersSection";
-import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import ClientsSection from "@/components/sections/ClientsSection";
 import CtaSection from "@/components/sections/CtaSection";
 import ContactSection from "@/components/sections/ContactSection";
@@ -26,7 +25,6 @@ export default function Home() {
         <SocialCreativesSection />
         <ProcessSection />
         <CountersSection />
-        <TestimonialsSection />
         <ClientsSection />
         <CtaSection />
         <ContactSection />
