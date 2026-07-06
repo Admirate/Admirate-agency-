@@ -27,13 +27,13 @@
   height: 100%; width: 55%;
   object-fit: cover;
   object-position: left top;
-  opacity: 0.08;
+  opacity: 0.16;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 50%);
   mask-image: linear-gradient(to right, transparent, #000 50%);
   transition: opacity 0.45s;
 }
-.item:hover .shot { opacity: 0.18; }
+.item:hover .shot { opacity: 0.3; }
 .num {
   position: absolute;
   left: 0;
