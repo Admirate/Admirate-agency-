@@ -86,7 +86,7 @@
 .mmenu.open { display: flex; }
 .mmenu a {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--grey);

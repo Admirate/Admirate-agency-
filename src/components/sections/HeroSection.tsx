@@ -117,7 +117,7 @@ export default function HeroSection() {
       <canvas ref={canvasRef} className={styles.canvas} />
       <div className={styles.bloom} />
       <div className={styles.inner}>
-        <div className={styles.eyebrow}>Strategic Design &amp; Marketing</div>
+        <div className={styles.eyebrow}>Creative Advertising Agency</div>
         <div className={styles.headline}>
           <span className={styles.line}>
             <span>Advertising,</span>

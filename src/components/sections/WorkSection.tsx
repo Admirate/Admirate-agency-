@@ -18,6 +18,7 @@ const FALLBACK_PROJECTS: Project[] = [
   { n: "03", client: "Hope Trust India", title: "Hope Trust", tags: ["NGO", "Brand", "Digital"], url: "https://hopetrustindia.com", screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fhopetrustindia.com%2F?w=1200" },
   { n: "04", client: "South Glass", title: "South Glass", tags: ["Identity", "Web"], url: "https://southglass.in", screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fsouthglass.in%2F?w=1200" },
   { n: "05", client: "Our Sacred Space", title: "Sacred Space", tags: ["Wellness", "Brand", "Social"], url: "https://oursacredspace.in", screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Foursacredspace.in%2F?w=1200" },
+  { n: "06", client: "Samyoga Studio", title: "Samyoga Studio", tags: ["Wellness", "Web"], url: "https://samyogastudio.in", screenshot: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fsamyogastudio.in%2F?w=1200" },
 ];
 
 export default function WorkSection() {

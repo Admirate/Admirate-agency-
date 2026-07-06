@@ -64,10 +64,7 @@ export default function AboutSection() {
             />
           </div>
           <p className="lead fade-up" style={{ marginTop: "32px" }}>
-            ADMIRATE is a strategic design and marketing agency based in India. We work with ambitious brands across identity, digital, social, and advertising — from early-stage startups to established names.
-          </p>
-          <p className="lead fade-up" style={{ marginTop: "16px", fontSize: "clamp(14px,1.4vw,16px)" }}>
-            We don&apos;t just make things look good. We make them work — for your audience, your goals, and your bottom line.
+            ADMIRATE is a strategic design and marketing agency based in India. We work with ambitious brands across identity, digital, social, and advertising.
           </p>
           <div className={`${styles.tags} fade-up`}>
             <span className={styles.tag}>admirate.in</span>

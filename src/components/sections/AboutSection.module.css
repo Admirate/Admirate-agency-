@@ -35,7 +35,7 @@
   letter-spacing: -0.01em;
   margin-bottom: 8px;
 }
-.card p { font-size: 13.5px; color: var(--grey); line-height: 1.55; }
+.card p { font-size: 14.5px; color: var(--grey); line-height: 1.55; }
 
 .right { display: flex; flex-direction: column; }
 .videoWrap {

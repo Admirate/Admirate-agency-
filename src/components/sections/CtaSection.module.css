@@ -16,5 +16,5 @@
 }
 .inner p {
   color: rgba(255,255,255,0.45);
-  font-size: clamp(15px,1.6vw,18px);
+  font-size: clamp(17px,1.6vw,18px);
 }
