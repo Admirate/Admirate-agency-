@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   description:
     "ADMIRATE is a strategic design and marketing agency. Branding, web design, social media, video production, and digital advertising — done the right way.",
   icons: {
-    icon: [{ url: "/redadmiratelogo.png", type: "image/png" }],
-    shortcut: "/redadmiratelogo.png",
-    apple: "/redadmiratelogo.png",
+    icon: [{ url: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp", type: "image/webp" }],
+    shortcut: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp",
+    apple: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp",
   },
   openGraph: {
     title: "ADMIRATE — Strategic Design & Marketing Agency",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
     url: "https://admirate.in",
     siteName: "ADMIRATE",
-    images: ["/redadmiratelogo.png"],
+    images: ["https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp"],
     type: "website",
     locale: "en_IN",
   },
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "ADMIRATE — Strategic Design & Marketing Agency",
     description:
       "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
-    images: ["/redadmiratelogo.png"],
+    images: ["https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp"],
   },
   robots: {
     index: true,
@@ -51,7 +51,7 @@ const jsonLd = {
   "@type": "Organization",
   name: "ADMIRATE",
   url: "https://admirate.in",
-  logo: "https://admirate.in/redadmiratelogo.png",
+  logo: "https://admirate.inhttps://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp",
   description: "Strategic Design & Marketing Agency",
   contactPoint: {
     "@type": "ContactPoint",
