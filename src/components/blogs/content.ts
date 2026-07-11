@@ -152,8 +152,40 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 .btn.red:hover{box-shadow:4px 4px 0 var(--white)}
 footer.bfoot{border-top:1px solid var(--line);padding:18px var(--pad);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:10px;color:var(--grey);letter-spacing:.12em;background:var(--paper)}
 
-@media (max-width:980px){ .pgrid{grid-template-columns:repeat(2,1fr)} }
-@media (max-width:640px){ .pgrid{grid-template-columns:1fr} }
+/* ============ RESPONSIVE ============ */
+@media (max-width:980px){
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .bhead h1{max-width:none}
+}
+@media (max-width:640px){
+  .pgrid{grid-template-columns:1fr;gap:16px}
+  .bhead{padding-top:clamp(104px,15vh,140px)}
+  .bhead .bsub{font-size:16px;margin-top:16px}
+  .filters{gap:6px}
+  .chip{padding:8px 12px;font-size:9.5px;letter-spacing:.12em}
+  .pcard{box-shadow:4px 4px 0 rgba(11,11,12,.05)}
+  .pcard h2{font-size:19px}
+  .pbody{padding:18px 18px 20px}
+
+  .ahead{padding-top:clamp(104px,15vh,140px)}
+  .article h1{font-size:clamp(26px,7.4vw,34px)}
+  .ameta{gap:8px;font-size:9.5px}
+  .abody p{font-size:16px;line-height:1.7}
+  .abody p:first-of-type{font-size:17.5px}
+  .abody h2{font-size:21px}
+  .abody blockquote{padding:18px 20px}
+  .abody blockquote p{font-size:17px}
+  /* Stack the "next up" link above the CTA rather than squeezing them side by
+     side — the button would otherwise wrap under a half-width title. */
+  .anext{flex-direction:column;align-items:flex-start;gap:24px}
+  .anext .ntitle{max-width:none}
+  .anext .btn{width:100%;justify-content:center}
+
+  .bcta{padding:clamp(48px,8vh,70px) 0}
+  .btns{flex-direction:column;align-items:stretch;padding:0 var(--pad)}
+  .btn{justify-content:center}
+  footer.bfoot{flex-direction:column;gap:6px}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important;transition-delay:0s!important}
   .rise{opacity:1!important;transform:none!important}

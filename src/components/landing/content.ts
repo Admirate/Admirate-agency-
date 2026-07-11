@@ -19,7 +19,11 @@ body.locked{overflow:hidden;height:100vh}
 
 /* ============ SHARED SECTION SYSTEM ============ */
 .sec{position:relative}
-.full{height:100svh;overflow:hidden}
+/* min-height rather than height: a slide fills the viewport when its content
+   fits, and grows when it doesn't, so it can never crop itself vertically on a
+   short or narrow screen. overflow:hidden stays to clip the horizontal decor
+   (the CTA ghost text, the hero grid) that is meant to bleed. */
+.full{min-height:100svh;overflow:hidden}
 .shead{position:absolute;top:clamp(92px,14vh,150px);left:var(--pad);right:calc(var(--pad) + 30px);z-index:5}
 .eb{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--red);margin-bottom:14px}
 h2.light{font-family:var(--body);font-weight:500;font-size:clamp(26px,3.4vw,46px);line-height:1.22;letter-spacing:-.008em;word-spacing:.05em;color:var(--black)}
@@ -268,7 +272,9 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 .note{font-family:var(--mono);font-size:10px;color:var(--grey);padding:22px var(--pad) 0}
 
 /* ============ S9 CONTACT ============ */
-#contact{background:var(--paper);display:flex;align-items:center;padding:clamp(96px,14vh,150px) var(--pad) 70px}
+/* Overrides .full's fixed 100svh + overflow:hidden. The form is taller than a
+   short laptop viewport, and a clipped contact form is a lost lead. */
+#contact{background:var(--paper);display:flex;align-items:center;height:auto;min-height:100svh;overflow:visible;padding:clamp(112px,15vh,150px) var(--pad) 84px}
 #contact .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:110px 110px;opacity:.4;pointer-events:none}
 .cwrap{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;display:flex;gap:clamp(30px,6vw,90px);align-items:flex-start}
 .cleft{flex:1 1 380px;min-width:0}
@@ -317,20 +323,132 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 .btn.red:hover{box-shadow:4px 4px 0 var(--white)}
 #cta footer{position:absolute;bottom:0;left:0;right:0;border-top:1px solid #1d1d1f;padding:18px var(--pad);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:10px;color:#77777b;letter-spacing:.12em}
 
+/* ============================================================
+   RESPONSIVE
+   The scrub sections are viewport-height slides: an absolutely positioned
+   .shead sitting over an absolutely positioned, centred .stagewrap. That only
+   holds while the heading is short. Once headings wrap to 3-4 lines the two
+   layers collide, and .stage's overflow:hidden silently crops whatever spills.
+   So below the desktop breakpoint the stage becomes an ordinary flex column —
+   heading on top, media in the space that's left — and each mock is capped in
+   svh so it always fits the space it's given.
+   ============================================================ */
+
+/* ---------- TABLET ---------- */
+@media (max-width:1024px){
+  /* Shorten the scroll distance: the same animation over less travel keeps the
+     pacing right on a touch device, where scrolling is coarser. */
+  #services{height:210vh}
+  #logos{height:175vh}
+  #tv{height:215vh}
+  #web{height:215vh}
+  #reels{height:235vh}
+
+  .browser{width:min(560px,90vw)}
+  .tvframe{width:min(500px,88vw)}
+  .phone{height:min(56svh,470px)}
+  .objcap{font-size:clamp(24px,4.6vw,44px)}
+  #logos .grid{grid-template-columns:repeat(3,minmax(92px,140px));gap:14px}
+  .svcline{font-size:clamp(22px,3.8vw,40px);gap:14px}
+  .cwrap{gap:clamp(28px,4vw,50px)}
+}
+
+/* ---------- TABLET / PHONE: restructure the slides ---------- */
 @media (max-width:900px){
   .cwrap{flex-direction:column;gap:34px}
-  #contact{height:auto;min-height:100svh}
+  .cform{width:100%}
+
+  .scrub .stage{
+    display:flex;flex-direction:column;
+    padding:clamp(84px,11vh,104px) var(--pad) 34px;
+  }
+  .shead{position:static;flex:0 0 auto;margin-bottom:14px}
+  .stagewrap{position:static;flex:1;min-height:0;padding-top:0;gap:clamp(10px,2vh,16px)}
+
+  /* #services has no .stagewrap — its list is an absolute layer, so instead of
+     restructuring it, push the layer below the heading. */
+  #services .svcbox{left:var(--pad);right:calc(var(--pad) + 30px);top:clamp(150px,22vh,200px)}
+
+  .objcap{font-size:clamp(22px,4.4vw,32px)}
+  .phone{height:min(48svh,420px)}
+  .browser{width:min(520px,100%)}
+  .tvframe{width:min(460px,100%)}
+  #logos .grid{grid-template-columns:repeat(3,minmax(78px,116px));gap:12px}
 }
+
+/* ---------- PHONE ---------- */
 @media (max-width:640px){
-  #logos .grid{grid-template-columns:repeat(2,minmax(104px,140px))}
+  #logos .grid{grid-template-columns:repeat(2,minmax(96px,130px))}
   .wcards{grid-template-columns:1fr 1fr}
   .wcards .c:nth-child(3){display:none}
   #hero .orbit{display:none}
   #dots{display:none}
-  h2.light{font-size:24px}
-  .svcline{font-size:21px;gap:10px}
+  h2.light{font-size:22px}
+  .svcline{font-size:20px;gap:10px}
   .svcmeta{right:-6px}
+  .svccount{font-size:10px}
+
+  #hero{padding:0 var(--pad) 40px}
+  #hero .sub{font-size:17px;margin-top:16px}
+  #hero .rule{margin-top:24px}
+  #scrollhint{bottom:44px}
+  #intro p.big{font-size:19px;line-height:1.45}
+  #intro .tag{margin-bottom:20px}
+
+  .phone{height:min(46svh,380px)}
+  .reel .rh{font-size:14px}
+  .reel .rc{font-size:10.5px}
+
+  .cform{padding:20px}
+  .cfield textarea{min-height:96px}
+  .cleft h2{font-size:clamp(28px,8vw,38px)}
+  .mk{font-size:22px;padding:18px 20px;gap:20px}
 }
+
+/* ---------- SHORT VIEWPORTS ----------
+   Landscape phones and small phones (SE-class) give a slide ~280-440px of usable
+   height. No amount of shrinking fits a heading, a paragraph and a device mock
+   into that, so below 600px tall the sticky-scrub is abandoned: the sections
+   become ordinary flowing content and the page just scrolls. The scrub JS is
+   disabled to match (see the staticScrub flag in init.ts), so the built states
+   have to be pinned here — otherwise the elements it would have animated stay
+   stuck at their opacity:0 / scale(0) start values. */
+@media (max-height:600px){
+  .scrub{height:auto!important}
+  /* position:relative (not static) un-sticks the stage while keeping it the
+     containing block for its absolute children — static would re-parent them to
+     .sec, which doesn't clip, and the #services dot field (inset:-40%, i.e. 180%
+     of the stage width) would escape and drag the page sideways.
+     overflow stays hidden: height:auto means it can no longer crop its content,
+     so hidden now only contains the decor that bleeds sideways. */
+  .scrub .stage{position:relative;height:auto;display:block;padding:76px var(--pad) 50px}
+  .shead{position:static;margin-bottom:14px}
+  .stagewrap{position:static;padding:18px 0 0;gap:14px}
+  .full{min-height:0;padding-top:80px;padding-bottom:56px}
+  #hero{min-height:100svh;padding-top:92px}
+  #contact{min-height:0}
+  .objcap,#scrollhint{display:none}
+
+  /* pinned end-states */
+  .rise,.tile,.wnav,.wcards .c{opacity:1!important;transform:none!important}
+  .whero{clip-path:none!important}
+  .wbtn,.sicon,.livechip{transform:none!important;opacity:1!important}
+  #services{height:auto!important}
+  #services .svcbox{position:static;padding:6px 0 16px}
+  .svclist{position:static}
+  .svcline{position:static;transform:none!important;opacity:1!important;color:var(--black);font-size:19px;padding:5px 0}
+  .svcmeta{display:none}
+
+  /* the mocks, sized for a short screen */
+  .phone{height:min(82svh,330px)}
+  #logos .grid{grid-template-columns:repeat(3,minmax(70px,104px));gap:10px}
+  .tvframe{width:min(380px,100%)}
+  .browser{width:min(440px,100%)}
+  .site{padding:12px}
+  .whero{height:70px}
+  .wcards .c{height:52px}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important;transition-delay:0s!important}
   .scrub{height:auto!important}
@@ -478,7 +596,9 @@ export const LANDING_HTML = String.raw`
       <div class="browser">
         <div class="chrome">
           <div class="b"></div><div class="b"></div><div class="b"></div>
-          <div class="urlbar" id="urlbar"></div>
+          <!-- Prefilled: the scrub types this out, but it's switched off on short
+               viewports, where an empty bar would just look broken. -->
+          <div class="urlbar" id="urlbar">admirate.in/your-next-website</div>
         </div>
         <div class="site">
           <div class="wnav" id="wnav"><div class="wl">BRAND<span style="color:var(--red)">.</span></div><div class="links"><i></i><i></i><i></i></div></div>
@@ -514,7 +634,7 @@ export const LANDING_HTML = String.raw`
               <div class="ruser"><span class="avatar">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
               <div class="likes"><i style="--d:0s;--x:-14px">♥</i><i style="--d:.5s;--x:8px">♥</i><i style="--d:1s;--x:-6px">♥</i><i style="--d:1.5s;--x:12px">♥</i></div>
               <div class="stack">
-                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">0</span></div>
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">214K</span></div>
                 <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">3.1K</span></div>
                 <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
               </div>
@@ -530,7 +650,7 @@ export const LANDING_HTML = String.raw`
               <div class="ruser"><span class="avatar" style="background:#0B0B0C">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
               <div class="likes"><i style="--d:.2s;--x:10px">♥</i><i style="--d:.7s;--x:-10px">♥</i><i style="--d:1.2s;--x:6px">♥</i><i style="--d:1.7s;--x:-14px">♥</i></div>
               <div class="stack">
-                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">0</span></div>
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">489K</span></div>
                 <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">7.8K</span></div>
                 <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
               </div>
@@ -546,7 +666,7 @@ export const LANDING_HTML = String.raw`
               <div class="ruser"><span class="avatar">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
               <div class="likes"><i style="--d:.1s;--x:-8px">♥</i><i style="--d:.6s;--x:14px">♥</i><i style="--d:1.1s;--x:-12px">♥</i><i style="--d:1.6s;--x:8px">♥</i></div>
               <div class="stack">
-                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">0</span></div>
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">1.2M</span></div>
                 <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">12K</span></div>
                 <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
               </div>

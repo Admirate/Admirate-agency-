@@ -26,7 +26,9 @@ export const NAV_CSS = String.raw`
   transform:translateX(-50%) translateY(-2px);
 }
 
-.pnav .pbrand{display:flex;align-items:center;gap:9px;text-decoration:none;flex:0 0 auto}
+/* min-height on every hit area keeps the tap targets ~40px on touch, rather
+   than the ~20-26px the text alone would give. */
+.pnav .pbrand{display:flex;align-items:center;gap:9px;text-decoration:none;flex:0 0 auto;min-height:40px}
 .pnav .pmark{
   width:26px;height:26px;flex:0 0 26px;border-radius:8px;
   background:linear-gradient(150deg,#FF3B4E,#E3001B 55%,#9c0013);
@@ -39,34 +41,48 @@ export const NAV_CSS = String.raw`
 
 .pnav .plinks{display:flex;align-items:center;gap:clamp(2px,.9vw,8px);margin-left:clamp(4px,1vw,14px)}
 .pnav .plink{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:40px;
   font-family:var(--body);font-weight:500;font-size:13.5px;letter-spacing:.01em;
-  color:#8A8A8E;text-decoration:none;padding:8px 12px;border-radius:999px;white-space:nowrap;
+  color:#8A8A8E;text-decoration:none;padding:0 12px;border-radius:999px;white-space:nowrap;
   transition:color .2s,background .2s;
 }
 .pnav .plink:hover{color:#fff;background:rgba(255,255,255,.06)}
 .pnav .plink.on{color:#fff}
+/* Absolutely placed so it sits under the label — as a flex child it would land
+   beside it. */
 .pnav .plink.on::after{
-  content:"";display:block;height:2px;width:14px;margin:3px auto -2px;
-  background:var(--red);border-radius:2px;
+  content:"";position:absolute;left:50%;bottom:7px;transform:translateX(-50%);
+  width:14px;height:2px;background:var(--red);border-radius:2px;
 }
 
 .pnav .pcta{
-  display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;min-height:40px;
   font-family:var(--body);font-weight:600;font-size:13.5px;
   background:#fff;color:#0B0B0C;text-decoration:none;
-  padding:10px 16px;border-radius:999px;white-space:nowrap;
+  padding:0 16px;border-radius:999px;white-space:nowrap;
   transition:background .2s,color .2s,transform .18s;
 }
 .pnav .pcta .ar{display:inline-block;transition:transform .18s}
 .pnav .pcta:hover{background:var(--red);color:#fff;transform:translateY(-1px)}
 .pnav .pcta:hover .ar{transform:translateX(3px)}
 
-@media (max-width:720px){
-  .pnav{gap:4px;padding:6px 6px 6px 12px;top:10px}
+/* Tablet — drop the gaps before anything has to shrink. */
+@media (max-width:860px){
+  .pnav{gap:8px;padding:6px 6px 6px 14px}
+  .pnav .plink{padding:8px 10px}
+}
+/* Phone — the wordmark and the long half of the CTA label are the first things
+   to go, so the three links survive at a tappable size. */
+@media (max-width:640px){
+  .pnav{gap:2px;padding:4px 4px 4px 10px;top:10px}
   .pnav .pword{display:none}
-  .pnav .plink{padding:8px 9px;font-size:12.5px}
-  .pnav .pcta{padding:9px 13px;font-size:12.5px}
+  .pnav .plink{padding:0 9px;font-size:12.5px}
+  .pnav .pcta{padding:0 13px;font-size:12.5px;gap:5px}
   .pnav .pcta .ctalong{display:none}
+}
+@media (max-width:380px){
+  .pnav .plink{padding:0 7px;font-size:12px}
+  .pnav .pcta{padding:0 11px}
 }
 @media (prefers-reduced-motion:reduce){
   .pnav,.pnav .pcta,.pnav .pcta .ar{transition:none}
@@ -96,7 +112,7 @@ export const navHtml = (active: NavPage, ctaHref = "/#contact") => `
         } data-h>${l.label}</a>`
     ).join("\n    ")}
   </div>
-  <a class="pcta" href="${ctaHref}" data-h>Start a project<span class="ctalong"></span> <span class="ar">→</span></a>
+  <a class="pcta" href="${ctaHref}" data-h>Start<span class="ctalong"> a project</span> <span class="ar">→</span></a>
 </nav>
 `;
 

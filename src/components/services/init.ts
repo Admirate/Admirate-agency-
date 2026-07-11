@@ -4,6 +4,10 @@ export default function initServices(){
 let _dead=false, _rafId=0, _curRaf=0;
 const _winListeners=[];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* Below 600px tall the CSS drops the sticky-scrub and lets the sections flow
+   (landscape phones, SE-class screens). The scrub writes would fight those
+   pinned states, so they're switched off here too. */
+const staticScrub = reduced || matchMedia('(max-height: 600px)').matches;
 requestAnimationFrame(()=>{ if(!_dead) document.body.classList.add('ready'); });
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const seg=(p,a,b)=>clamp((p-a)/(b-a),0,1);
@@ -278,7 +282,7 @@ function progressOf(section){
 const topline=document.getElementById('topline');
 function raf(){
   if(_dead)return;
-  if(!reduced){
+  if(!staticScrub){
     const doc=document.documentElement;
     const gp=clamp(scrollY/(doc.scrollHeight-innerHeight||1),0,1);
     topline.style.width=(gp*100)+'%';
@@ -325,7 +329,7 @@ function raf(){
   _rafId=requestAnimationFrame(raf);
 }
 _rafId=requestAnimationFrame(raf);
-if(reduced){updateDots();}
+if(staticScrub){updateDots();}
 
 function cleanup(){
   _dead=true;

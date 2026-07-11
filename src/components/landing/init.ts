@@ -4,6 +4,11 @@ export default function initLanding(){
 let _dead=false, _rafId=0;
 const _winListeners=[];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* Below 600px tall the CSS drops the sticky-scrub and lets the sections flow
+   (landscape phones, SE-class screens). The scrub writes would fight those
+   pinned states, so they're switched off here too. The loader still runs —
+   it's gated on `reduced` alone. */
+const staticScrub = reduced || matchMedia('(max-height: 600px)').matches;
 document.body.classList.add('locked');
 
 /* ---------- content fills ---------- */
@@ -267,7 +272,7 @@ function updateDots(){
 
 function tick2(){
   if(_dead) return;
-  if(reduced) return;
+  if(staticScrub) return;
   updateDots();
 
   /* services: rolling index */
@@ -328,7 +333,7 @@ function tick2(){
   _rafId=requestAnimationFrame(tick2);
 }
 _rafId=requestAnimationFrame(tick2);
-if(reduced){ updateDots(); }
+if(staticScrub){ updateDots(); }
 
 function cleanup(){
   _dead=true;

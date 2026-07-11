@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -55,6 +56,29 @@ const navItems = [
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const [navOpen, setNavOpen] = useState(false);
+
+  // Close the drawer on navigation, so tapping a link doesn't leave it covering
+  // the page it just opened.
+  useEffect(() => {
+    setNavOpen(false);
+  }, [pathname]);
+
+  // Lock the page behind the drawer while it's open.
+  useEffect(() => {
+    document.body.style.overflow = navOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [navOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setNavOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   if (pathname === "/dashboard/login") {
     return <>{children}</>;
@@ -66,7 +90,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex cursor-default">
+    <div className="min-h-screen bg-gray-50 lg:flex">
       <Toaster
         position="top-right"
         toastOptions={{
@@ -81,18 +105,72 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         }}
       />
 
-      <aside className="w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm">
-        <div className="p-5 border-b border-gray-100">
-          <Link href="/dashboard" className="flex items-center gap-3">
+      {/* Mobile / tablet top bar — the sidebar is off-canvas below lg. */}
+      <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 h-16 px-4 bg-white border-b border-gray-200">
+        <button
+          onClick={() => setNavOpen(true)}
+          className="p-2 -ml-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Open navigation"
+          aria-expanded={navOpen}
+          aria-controls="dashboard-sidebar"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+            <path d="M3 6h18M3 12h18M3 18h18" />
+          </svg>
+        </button>
+
+        <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
+          <Image
+            src={asset("admirate logo.webp")}
+            alt="Admirate logo"
+            width={30}
+            height={30}
+            className="rounded-lg shrink-0"
+          />
+          <span className="text-sm font-bold text-gray-900 tracking-wide truncate">
+            ADMIRATE
+          </span>
+        </Link>
+
+        <button
+          onClick={handleLogout}
+          className="ml-auto p-2 text-gray-500 hover:text-[#FF0D0D] hover:bg-[#FF0D0D]/5 rounded-lg transition-colors"
+          aria-label="Log out"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+      </header>
+
+      {/* Scrim — only rendered (and only clickable) while the drawer is open. */}
+      {navOpen && (
+        <div
+          onClick={() => setNavOpen(false)}
+          className="lg:hidden fixed inset-0 z-40 bg-black/40"
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        id="dashboard-sidebar"
+        className={`fixed inset-y-0 left-0 z-50 w-[270px] max-w-[85vw] bg-white border-r border-gray-200 flex flex-col shadow-sm transition-transform duration-300 ease-out lg:translate-x-0 lg:shadow-none ${
+          navOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-5 border-b border-gray-100 flex items-center justify-between gap-2">
+          <Link href="/dashboard" className="flex items-center gap-3 min-w-0">
             <Image
               src={asset("admirate logo.webp")}
               alt="Admirate logo"
               width={36}
               height={36}
-              className="rounded-lg"
+              className="rounded-lg shrink-0"
             />
-            <div>
-              <h1 className="text-base font-bold text-gray-900 tracking-wide">
+            <div className="min-w-0">
+              <h1 className="text-base font-bold text-gray-900 tracking-wide truncate">
                 ADMIRATE
               </h1>
               <p className="text-gray-400 text-[11px] font-medium">
@@ -100,10 +178,20 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               </p>
             </div>
           </Link>
+
+          <button
+            onClick={() => setNavOpen(false)}
+            className="lg:hidden p-2 -mr-1 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
+            aria-label="Close navigation"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         <nav
-          className="flex-1 p-3 space-y-0.5 mt-2"
+          className="flex-1 overflow-y-auto p-3 space-y-0.5 mt-2"
           aria-label="Dashboard navigation"
         >
           {navItems.map((item) => {
@@ -116,6 +204,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-[#FF0D0D]/8 text-[#FF0D0D]"
@@ -147,7 +236,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </aside>
 
-      <main className="flex-1 ml-[260px] p-8 cursor-default">{children}</main>
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 lg:ml-[270px]">
+        {children}
+      </main>
     </div>
   );
 };

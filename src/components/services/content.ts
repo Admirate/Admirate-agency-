@@ -35,7 +35,10 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 
 /* ============ SECTION TEMPLATE ============ */
 .sec{position:relative;z-index:3}
-.full{height:100svh;overflow:hidden;display:flex;flex-direction:column;padding:clamp(84px,12vh,120px) calc(var(--pad) + 44px) 64px var(--pad)}
+/* min-height rather than height — see the landing sheet: the slide fills the
+   viewport when its content fits and grows when it doesn't, so it can never
+   crop itself. overflow:hidden stays for the horizontal decor. */
+.full{min-height:100svh;overflow:hidden;display:flex;flex-direction:column;padding:clamp(84px,12vh,120px) calc(var(--pad) + 44px) 64px var(--pad)}
 .scrub{position:relative}
 .scrub .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;padding:clamp(84px,12vh,120px) calc(var(--pad) + 44px) 64px var(--pad)}
 .shead{position:relative;z-index:6;max-width:900px;margin-bottom:clamp(14px,2.8vh,30px);flex:0 0 auto}
@@ -250,7 +253,9 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .mcol{display:flex;flex-direction:column;gap:14px;will-change:transform}
 .mcard{background:var(--white);border:1px solid var(--line);border-radius:6px;aspect-ratio:4/4.6;position:relative;overflow:hidden;opacity:0;transform:rotateX(14deg) translateY(50px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);box-shadow:4px 4px 0 rgba(11,11,12,.05);will-change:transform}
 .sec.active .mcard{opacity:1;transform:none;transition-delay:calc(var(--i)*90ms + .15s)}
-.mcard .mhd{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:13px;color:#fff}
+/* padding-bottom reserves the strip the .rprog scrubber sits in, so a title that
+   wraps to two lines can't run underneath it. */
+.mcard .mhd{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:13px 13px 24px;color:#fff}
 .mcard .mhd::before{content:"";position:absolute;inset:0;z-index:0}
 .mcard.g1 .mhd::before{background:linear-gradient(160deg,#1c1c1e,#3b0009)}
 .mcard.g2 .mhd::before{background:linear-gradient(160deg,var(--red),#7e000f)}
@@ -265,7 +270,7 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .mcard .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:1;animation:ppulse 2s ease-in-out infinite}
 .mcard .play::after{content:"";border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent #fff;margin-left:3px}
 @keyframes ppulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 0 12px rgba(255,255,255,0)}}
-.mcard .rprog{position:absolute;left:11px;right:11px;bottom:48px;height:2.5px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden;z-index:1}
+.mcard .rprog{position:absolute;left:11px;right:11px;bottom:11px;height:2.5px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden;z-index:1}
 .mcard .rprog i{display:block;height:100%;width:40%;background:#fff;animation:rp 3.2s linear infinite}
 @keyframes rp{from{transform:translateX(-110%)}to{transform:translateX(260%)}}
 .sbars{position:absolute;top:11px;left:11px;right:44px;display:flex;gap:5px;z-index:1}
@@ -334,19 +339,147 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .btn.red:hover{box-shadow:4px 4px 0 var(--white)}
 #cta footer{position:absolute;bottom:0;left:0;right:0;z-index:1;border-top:1px solid #1d1d1f;padding:18px var(--pad);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:10px;color:#77777b;letter-spacing:.12em}
 
-@media (max-width:900px){
-  .duo{flex-direction:column;justify-content:center;gap:24px;align-items:flex-start}
-  .duotext{flex:0 0 auto}
-  .duomedia{width:100%}
-  .comp{height:min(42svh,380px)}
-  .wsteps{min-height:150px}
-  .cgrid{grid-template-columns:repeat(2,1fr)}
-  .cpanel{flex-direction:column}
-  .mgrid{grid-template-columns:repeat(2,1fr)}
-  .lgrid{grid-template-columns:repeat(2,minmax(96px,140px))}
-  #hero .orbit{display:none}
-  #dots{display:none}
+/* ============================================================
+   RESPONSIVE
+   Every section here is a 100svh slide with overflow:hidden. On a phone the
+   headings wrap to three or four lines and the grids need more rows, so the
+   content simply doesn't fit the slide any more — and overflow:hidden crops it
+   without a scrollbar to warn you. Below the desktop breakpoint the .full
+   sections therefore grow to their natural height, and the sticky .scrub stages
+   (which must stay exactly one viewport tall for the scrub maths to work) get
+   their media capped in svh instead.
+   ============================================================ */
+
+/* ---------- TABLET ---------- */
+@media (max-width:1024px){
+  /* Less scroll travel per scrub — coarser input, same choreography. */
+  #eye{height:240vh}
+  #web{height:270vh}
+  #social{height:190vh}
+
+  .full,.scrub .stage{padding-right:calc(var(--pad) + 30px)}
+  .lgrid{grid-template-columns:repeat(4,minmax(78px,120px));gap:12px}
+  .cgrid{grid-template-columns:repeat(2,1fr);width:min(720px,100%)}
+  .mgrid{width:min(680px,100%)}
+  .comp{height:min(52svh,420px)}
+  .citem{width:clamp(120px,20vw,170px)}
+  .shead p{font-size:14.5px}
 }
+
+/* ---------- TABLET / PHONE ---------- */
+@media (max-width:900px){
+  #dots{display:none}
+  #hero .orbit{display:none}
+
+  /* .full already grows rather than crops (see the base rule); on touch it just
+     needs roomier padding and the grid left at its natural height. */
+  .full{padding:clamp(104px,14vh,124px) var(--pad) 72px}
+  .full .stagewrap{flex:0 0 auto;padding-top:clamp(18px,3vh,30px)}
+  .full .idx{position:static;margin-top:34px}
+
+  /* Scrub stages must stay exactly one viewport tall — the scrub progress is
+     measured against it — so they keep height:100svh and shrink their media. */
+  .scrub .stage{padding:clamp(84px,11vh,104px) var(--pad) 40px}
+  .duo{flex-direction:column;justify-content:center;gap:clamp(16px,3vh,24px);align-items:flex-start}
+  .duotext{flex:0 0 auto;width:100%}
+  .duomedia{width:100%;flex:1;min-height:0}
+
+  .comp{height:min(100%,340px);max-height:100%}
+  .duotext p{font-size:14px;line-height:1.55}
+  .fixcount{margin-top:18px}
+  .wsteps{min-height:132px}
+  .wstep p{font-size:13.5px}
+  .wstep h3{font-size:18px}
+  .wticks{margin-top:16px}
+  .browser{width:min(560px,100%)}
+
+  .cpanel{flex-direction:column;max-height:90svh}
+  .cmedia,.ctext{flex:0 0 auto;min-width:0}
+  .cctrl{margin-top:24px}
+
+  /* Four columns of two cards each is 8 cards deep on a 2-col grid — far taller
+     than the stage. Show one card per column so the grid stays 2x2. */
+  .mgrid{grid-template-columns:repeat(2,1fr);width:min(420px,100%);gap:12px}
+  .mcol .mcard + .mcard{display:none}
+
+  .lgrid{grid-template-columns:repeat(4,minmax(64px,100px));gap:10px}
+  .shelf{gap:clamp(16px,4vw,32px)}
+}
+
+/* ---------- PHONE ---------- */
+@media (max-width:640px){
+  .full,.scrub .stage{padding-left:var(--pad);padding-right:var(--pad)}
+  .shead h2{font-size:clamp(24px,6.4vw,32px)}
+  .shead p{font-size:14px}
+  .eb{font-size:10px;letter-spacing:.2em}
+
+  #hero{padding:104px var(--pad) 0}
+  #hero .sub{font-size:16px;margin-top:20px}
+  #scrollhint{margin-top:30px}
+
+  .lgrid{grid-template-columns:repeat(2,minmax(96px,132px));gap:12px}
+  .cgrid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .csite .cfoot{flex-direction:column;gap:3px}
+  .csite .cfoot span{text-align:left}
+  .mgrid{width:min(300px,100%)}
+  .citem{width:clamp(120px,40vw,150px)}
+  .shelfring{display:none}
+  .comp{height:min(100%,300px);padding:16px}
+  .comp .ccta{padding:10px 16px;font-size:10px}
+  .sq{width:22px;height:22px}
+  #consist h2{font-size:clamp(23px,6.4vw,32px)}
+  .ctext h3{font-size:26px}
+  .cpanel{padding:20px}
+  .cclose{top:10px;right:10px;width:34px;height:34px}
+}
+
+/* ---------- SHORT VIEWPORTS ----------
+   See the landing sheet: below 600px tall there isn't enough room for a heading,
+   a paragraph and a device mock inside one sticky slide, so the scrub is
+   abandoned and the sections flow normally. The scrub JS is off here (see the
+   staticScrub flag in init.ts), so anything it would have animated — and
+   anything it would have painted, like the morphing background — is pinned
+   by hand. */
+@media (max-height:600px){
+  .scrub{height:auto!important}
+  /* position:relative (not static) un-sticks the stage while keeping it the
+     containing block for its absolute children. overflow stays hidden: with
+     height:auto it can no longer crop its content, so hidden now only contains
+     the decor that bleeds sideways. */
+  .scrub .stage{position:relative;height:auto;padding:76px var(--pad) 50px}
+  .full{min-height:0;padding:80px var(--pad) 56px}
+  .stagewrap{flex:none;height:auto}
+  .duo{flex:none;height:auto;flex-direction:column;align-items:flex-start;gap:20px}
+  .duotext{flex:0 0 auto;width:100%}
+  .duomedia{width:100%;height:auto;justify-content:flex-start}
+  .idx{position:static;margin-top:26px}
+  #scrollhint{display:none}
+
+  /* the JS paints these; without it they'd be blank/transparent */
+  #bgfade,#lightorb,#topline,.gdot{display:none}
+  #hero,#eye,#logos,#clients,#social,#consist{background:var(--paper)}
+  #web,#collat{background:var(--black)}
+
+  /* pinned end-states */
+  .rise,.ltile,.ltile .lf,.mcard,.citem,.csite,.sq{opacity:1!important;transform:none!important;clip-path:none!important}
+  .fixseg i{transform:scaleX(1)!important}
+  .mcol{transform:none!important}
+  .wsteps{min-height:0}
+  .wstep{position:static;opacity:1!important;transform:none!important;margin-bottom:14px}
+  .comps{aspect-ratio:auto}
+  .wcomp{position:static;clip-path:none!important;margin-bottom:12px;padding:16px}
+  .wcomp .whd{transform:none!important;opacity:1!important;height:80px}
+  .wcomp .wln{transform:scaleX(1)!important}
+  .wcomp .wcta,.wcomp .chipstat{position:static;transform:none!important;opacity:1!important;display:inline-block;margin-top:10px}
+
+  .comp{height:auto;width:min(260px,100%);aspect-ratio:4/5}
+  .browser{width:min(440px,100%)}
+  .mgrid{grid-template-columns:repeat(4,1fr);width:min(560px,100%)}
+  .mcol .mcard + .mcard{display:none}
+  .lgrid{grid-template-columns:repeat(4,minmax(70px,110px))}
+  .cgrid{grid-template-columns:repeat(4,1fr)}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01s!important;transition-duration:.01s!important;animation-iteration-count:1!important;transition-delay:0s!important}
   #lightorb,#grain,.lightband,#cdot,#cring,#dots{display:none}
