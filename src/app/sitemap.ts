@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { POSTS } from '@/components/blogs/posts'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://admirate.in'
@@ -10,24 +11,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 1,
     },
-    // Add more pages here if you create additional routes in the future
-    // {
-    //   url: `${baseUrl}/about`,
-    //   lastModified: new Date(),
-    //   changeFrequency: 'monthly',
-    //   priority: 0.8,
-    // },
-    // {
-    //   url: `${baseUrl}/services`,
-    //   lastModified: new Date(),
-    //   changeFrequency: 'monthly',
-    //   priority: 0.8,
-    // },
-    // {
-    //   url: `${baseUrl}/contact`,
-    //   lastModified: new Date(),
-    //   changeFrequency: 'monthly',
-    //   priority: 0.7,
-    // },
+    {
+      url: `${baseUrl}/services`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blogs`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...POSTS.map((p) => ({
+      url: `${baseUrl}/blogs/${p.slug}`,
+      lastModified: new Date(p.date),
+      changeFrequency: 'yearly' as const,
+      priority: 0.6,
+    })),
   ]
 }

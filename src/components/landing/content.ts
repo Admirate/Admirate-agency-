@@ -1,0 +1,650 @@
+export const LANDING_CSS = String.raw`
+:root{
+  --white:#FFFFFF;
+  --paper:#FAFAF8;
+  --black:#0B0B0C;
+  --red:#E3001B;
+  --grey:#8A8A8E;
+  --line:#E9E9E6;
+  --pad:clamp(24px,6vw,96px);
+  --display:'Archivo',sans-serif;
+  --body:'Inter',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{font-family:var(--body);background:var(--white);color:var(--black);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden;height:100vh}
+::selection{background:var(--red);color:var(--white)}
+
+/* ============ SHARED SECTION SYSTEM ============ */
+.sec{position:relative}
+.full{height:100svh;overflow:hidden}
+.shead{position:absolute;top:clamp(92px,14vh,150px);left:var(--pad);right:calc(var(--pad) + 30px);z-index:5}
+.eb{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--red);margin-bottom:14px}
+h2.light{font-family:var(--body);font-weight:500;font-size:clamp(26px,3.4vw,46px);line-height:1.22;letter-spacing:-.008em;word-spacing:.05em;color:var(--black)}
+.dark h2.light{color:var(--white)}
+.idx{position:absolute;bottom:26px;left:var(--pad);font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--grey);z-index:5}
+.dark .idx{color:#66666a}
+.rise{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.sec.active .rise{opacity:1;transform:none;transition-delay:var(--rd,0s)}
+
+/* dot nav */
+#dots{position:fixed;right:clamp(12px,2vw,24px);top:50%;transform:translateY(-50%);z-index:120;display:flex;flex-direction:column;gap:12px;mix-blend-mode:difference}
+#dots button{width:6px;height:6px;border-radius:6px;border:none;background:rgba(255,255,255,.45);cursor:pointer;padding:0;transition:height .3s,background .3s}
+#dots button.on{height:20px;background:var(--red)}
+
+/* ============ LOADER ============ */
+#loader{position:fixed;inset:0;z-index:1000;pointer-events:none}
+#loader .half{position:absolute;left:0;width:100%;height:50.5%;background:var(--black);transition:transform .9s cubic-bezier(.76,0,.24,1)}
+#loader .half.top{top:0}
+#loader .half.bot{bottom:0}
+#loader.open .half.top{transform:translateY(-101%)}
+#loader.open .half.bot{transform:translateY(101%)}
+#terminal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(780px,92vw);font-family:var(--mono);font-size:clamp(17px,3.6vw,28px);color:#CFCFCF;z-index:2;transition:opacity .3s}
+#loader.open #terminal{opacity:0}
+#terminal .ln{white-space:nowrap;overflow:hidden;height:1.7em;line-height:1.7em}
+#terminal .ln .txt{border-right:2px solid transparent}
+#terminal .ln.typing .txt{border-right:2px solid var(--red)}
+#terminal .ln.err .txt{color:var(--red);font-weight:500}
+#terminal .ln.ok .txt{color:#fff}
+#bar{margin-top:22px;height:8px;width:100%;background:#222;opacity:0}
+#bar.show{opacity:1}
+#bar i{display:block;height:100%;width:0;background:var(--red)}
+#bar.fill i{width:100%;transition:width .6s cubic-bezier(.7,0,.3,1)}
+#loader.glitch #terminal{animation:glitch .28s steps(3) 1}
+@keyframes glitch{
+  0%{transform:translate(-50%,-50%)}
+  33%{transform:translate(calc(-50% - 6px),calc(-50% + 3px)) skewX(2deg)}
+  66%{transform:translate(calc(-50% + 5px),calc(-50% - 4px)) skewX(-2deg)}
+  100%{transform:translate(-50%,-50%)}
+}
+
+/* ============ S1 HERO ============ */
+#hero{background:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad)}
+#hero .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:110px 110px;opacity:.45;pointer-events:none}
+#hero .glowbg{position:absolute;top:-20%;right:-14%;width:58vw;height:58vw;max-width:840px;max-height:840px;background:radial-gradient(circle,rgba(227,0,27,.08),transparent 62%);pointer-events:none;animation:gdrift 24s ease-in-out infinite alternate}
+@keyframes gdrift{from{transform:translate(0,0) scale(1)}to{transform:translate(-6%,8%) scale(1.12)}}
+#hero .orbit{position:absolute;top:50%;right:5%;width:46vmin;height:46vmin;border:1px solid var(--line);border-radius:50%;transform:translateY(-50%);pointer-events:none;animation:orb 36s linear infinite}
+#hero .orbit::after{content:"";position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--red)}
+@keyframes orb{to{transform:translateY(-50%) rotate(360deg)}}
+#hero .inner{position:relative;z-index:1;max-width:1080px}
+#hero h1{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(33px,6.3vw,88px);line-height:1.05;text-transform:uppercase;letter-spacing:-.01em;max-width:16ch}
+#hero h1 .w{display:inline-block;opacity:0;transform:translateY(40px);filter:blur(6px)}
+body.loaded #hero h1 .w{animation:riseIn .55s forwards cubic-bezier(.2,.8,.2,1);animation-delay:var(--d,0s)}
+#hero h1 .w.split{opacity:1;transform:none;filter:none;animation:none!important}
+.ch{display:inline-block;opacity:0;transform:translateY(.55em) rotate(6deg)}
+body.loaded .ch{animation:chIn .45s forwards cubic-bezier(.2,.8,.2,1)}
+@keyframes chIn{to{opacity:1;transform:none}}
+@keyframes riseIn{to{opacity:1;transform:translateY(0);filter:blur(0)}}
+#hero .mark{position:relative;display:inline-block}
+#hero .mark svg{position:absolute;left:-2%;bottom:-7px;width:104%;height:17px;overflow:visible}
+#hero .mark path{stroke:var(--red);stroke-width:5;fill:none;stroke-linecap:round;stroke-dasharray:600;stroke-dashoffset:600}
+body.loaded #hero .mark path{animation:draw .5s 1.35s forwards cubic-bezier(.5,0,.3,1)}
+@keyframes draw{to{stroke-dashoffset:0}}
+#hero .cursor{display:inline-block;width:.12em;height:.82em;background:var(--red);margin-left:.08em;vertical-align:baseline;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#hero .rule{width:52px;height:2px;background:var(--red);margin:36px 0 0;transform:scaleX(0);transform-origin:left}
+body.loaded #hero .rule{animation:ruleIn .5s 1.55s forwards cubic-bezier(.7,0,.3,1)}
+@keyframes ruleIn{to{transform:scaleX(1)}}
+#hero .sub{max-width:640px;margin-top:20px;font-weight:300;font-size:clamp(19px,2.3vw,29px);color:#232326;line-height:1.5;letter-spacing:-.01em;opacity:0}
+#hero .sub b{font-weight:700}
+body.loaded #hero .sub{animation:riseIn .6s 1.7s forwards}
+#scrollhint{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.34em;color:var(--grey);opacity:0}
+body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
+#scrollhint .line{width:1px;height:30px;background:#DADAD6;margin:8px auto 0;position:relative;overflow:hidden}
+#scrollhint .line i{position:absolute;left:0;top:-100%;width:100%;height:100%;background:var(--red);animation:fall 1.7s cubic-bezier(.7,0,.3,1) infinite}
+@keyframes fall{to{top:100%}}
+#ticker{position:absolute;bottom:0;left:0;right:0;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.16em;padding:8px 0;overflow:hidden;white-space:nowrap;z-index:2}
+#ticker .track{display:inline-block;animation:tick 28s linear infinite}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ============ S2 INTRO ============ */
+#intro{background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;padding:0 var(--pad)}
+#intro .ring{position:absolute;top:50%;left:50%;border:1px solid rgba(255,255,255,.07);border-radius:50%;pointer-events:none}
+#intro .ring.r1{width:90vmin;height:90vmin;transform:translate(-50%,-50%);animation:slowspin 90s linear infinite}
+#intro .ring.r2{width:64vmin;height:64vmin;transform:translate(-50%,-50%);border-style:dashed;border-color:rgba(227,0,27,.16);animation:slowspin 70s linear infinite reverse}
+@keyframes slowspin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+#intro .ring.r1::after{content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--red);opacity:.7}
+#intro .kglow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72vmin;height:72vmin;background:radial-gradient(circle,rgba(227,0,27,.11),transparent 65%);pointer-events:none;animation:glowpulse 11s ease-in-out infinite alternate}
+@keyframes glowpulse{from{opacity:.5}to{opacity:1}}
+#intro .iwrap{position:relative;z-index:1;max-width:920px;text-align:center}
+#intro .tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);margin-bottom:32px}
+#intro p.big{font-weight:300;font-size:clamp(21px,3.2vw,38px);line-height:1.5;letter-spacing:-.01em}
+#intro p.big .w{opacity:.1;transition:opacity .4s}
+#intro p.big .w.on{opacity:1}
+#intro .acc{font-weight:700;color:var(--red);white-space:nowrap}
+#intro .strike{position:relative;white-space:nowrap}
+#intro .strike::after{content:"";position:absolute;left:-1%;top:55%;width:102%;height:1.5px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s .2s cubic-bezier(.7,0,.3,1)}
+#intro .strike.on::after{transform:scaleX(1)}
+
+/* ============ S3 SERVICES ============ */
+#services{height:240vh;background:var(--paper)}
+#services .stage::before{content:"";position:absolute;inset:-40%;background-image:radial-gradient(#EBEBE7 1.2px,transparent 1.2px);background-size:34px 34px;opacity:.4;animation:dotdrift 50s linear infinite;pointer-events:none}
+@keyframes dotdrift{to{transform:translate(68px,68px)}}
+#services .svcbox{position:absolute;left:var(--pad);right:calc(var(--pad) + 44px);top:0;bottom:0}
+.svclist{position:absolute;inset:0}
+.svcline{position:absolute;left:0;top:50%;transform-origin:left center;display:flex;align-items:baseline;gap:clamp(12px,1.8vw,24px);font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;font-size:clamp(25px,4.4vw,58px);letter-spacing:-.01em;color:#DCDCD6;white-space:nowrap;will-change:transform,opacity}
+.svcline .n{font-family:var(--mono);font-weight:500;font-stretch:100%;font-size:.4em;color:#C6C6C0;letter-spacing:.12em}
+.svcline .ico{width:.62em;height:.62em;flex:0 0 auto;color:var(--red);opacity:.28;transform:scale(.72) rotate(-18deg);transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.svcline .ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.svcline.on .ico{opacity:1;transform:scale(1) rotate(0deg)}
+.svcline.on{color:var(--black)}
+.svcline.on .n{color:var(--red)}
+.svcmeta{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:14px;z-index:4}
+.svccount{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--grey)}
+.svccount b{color:var(--red);font-weight:500}
+.svctrack{width:2px;height:clamp(120px,24vh,200px);background:var(--line);position:relative}
+.svctrack i{position:absolute;left:0;top:0;width:100%;height:0;background:var(--red)}
+
+/* ============ SCRUB SECTIONS ============ */
+.scrub{position:relative}
+.scrub .stage{position:sticky;top:0;height:100svh;overflow:hidden}
+.stagewrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.4vh,22px);padding-top:clamp(70px,11vh,110px)}
+.objcap{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(28px,5vw,64px);text-transform:uppercase;letter-spacing:-.01em;color:var(--black);text-align:center;line-height:1}
+.dark .objcap{color:rgba(255,255,255,.12)}
+.float{animation:idle 6s ease-in-out infinite alternate}
+@keyframes idle{from{transform:translateY(-6px)}to{transform:translateY(6px)}}
+
+/* ---- S4 LOGOS ---- */
+#logos{height:200vh;background:var(--white)}
+#logos .grid{display:grid;grid-template-columns:repeat(3,minmax(104px,168px));gap:clamp(12px,2vw,22px)}
+.tile{aspect-ratio:1;background:var(--white);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:clamp(17px,2.2vw,27px);box-shadow:5px 5px 0 rgba(11,11,12,.05);will-change:transform,opacity;transition:box-shadow .25s,border-color .25s}
+.tile:hover{box-shadow:8px 8px 0 rgba(227,0,27,.16);border-color:var(--red)}
+.tile span{color:var(--black)}
+.tile .dot{color:var(--red)}
+.tile:nth-child(2) span,.tile:nth-child(5) span{color:var(--red)}
+.tile:nth-child(4){background:var(--black)} .tile:nth-child(4) span{color:#fff}
+
+/* ---- S5 VIDEO ---- */
+#tv{height:260vh;background:var(--paper)}
+.tvframe{width:min(560px,84vw);background:var(--black);border-radius:16px;padding:clamp(12px,2vw,22px);box-shadow:10px 10px 0 rgba(227,0,27,.1);position:relative}
+.screen{position:relative;aspect-ratio:16/9;background:#111;border-radius:8px;overflow:hidden}
+.scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px);animation:scan 8s linear infinite;pointer-events:none;z-index:5}
+@keyframes scan{to{background-position:0 120px}}
+.staticflk{position:absolute;inset:0;background:#fff;opacity:0;z-index:6;pointer-events:none;animation:flick 4s steps(1) infinite}
+@keyframes flick{0%,96%{opacity:0}97%{opacity:.06}98%{opacity:0}99%{opacity:.09}100%{opacity:0}}
+.rec{position:absolute;top:12px;left:14px;z-index:7;font-family:var(--mono);font-size:11px;color:#fff;letter-spacing:.12em}
+.rec i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px;animation:blink 1s steps(1) infinite}
+.chan{position:absolute;top:10px;right:14px;z-index:7;font-family:var(--mono);font-size:12px;color:#0f0;text-shadow:0 0 6px rgba(0,255,0,.6)}
+.tcode{position:absolute;bottom:10px;right:14px;z-index:7;font-family:var(--mono);font-size:11px;color:#0f0;text-shadow:0 0 6px rgba(0,255,0,.6);letter-spacing:.06em}
+.frame{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;opacity:0;transition:opacity .4s;padding:20px;text-align:center}
+.frame.on{opacity:1}
+.frame h3{font-family:var(--display);font-weight:900;font-stretch:110%;color:#fff;font-size:clamp(19px,3vw,32px);text-transform:uppercase;letter-spacing:-.01em}
+.frame .chip2{font-family:var(--mono);font-size:10px;color:#fff;border:1px solid var(--red);padding:5px 10px;letter-spacing:.14em}
+.frame.f1{background:linear-gradient(135deg,#1a1a1c,#2b0006)}
+.frame.f2{background:linear-gradient(135deg,#E3001B,#7e000f)}
+.frame.f3{background:#f2f2ef}.frame.f3 h3{color:var(--black)}.frame.f3 .chip2{color:var(--black);border-color:var(--black)}
+.tvbar{height:4px;background:#2a2a2c;margin-top:12px;border-radius:3px;overflow:hidden}
+.tvbar i{display:block;height:100%;width:0;background:var(--red)}
+
+/* ---- S6 WEBSITE ---- */
+#web{height:260vh;background:var(--white)}
+.browser{width:min(640px,88vw);background:var(--white);border:1px solid var(--line);box-shadow:10px 10px 0 rgba(11,11,12,.06)}
+.chrome{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:#FBFBFA}
+.chrome .b{width:10px;height:10px;border-radius:50%;background:#DCDCD8}
+.chrome .b:first-child{background:var(--red)}
+.urlbar{flex:1;background:#F0F0ED;border-radius:6px;padding:6px 12px;font-family:var(--mono);font-size:11px;color:#555;overflow:hidden;white-space:nowrap;min-height:26px}
+.site{padding:clamp(14px,2.6vw,24px)}
+.wnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;transform:translateY(-42px);opacity:0;will-change:transform,opacity}
+.wnav .wl{font-family:var(--display);font-weight:800;font-size:14px}
+.wnav .links{display:flex;gap:12px}
+.wnav .links i{display:block;width:40px;height:7px;background:#E9E9E6;border-radius:4px}
+.whero{height:108px;background:var(--black);margin-bottom:14px;position:relative;overflow:hidden;clip-path:inset(0 100% 0 0);will-change:clip-path}
+.whero::after{content:"YOUR BRAND, LOUD.";position:absolute;inset:0;display:flex;align-items:center;padding-left:20px;font-family:var(--display);font-weight:800;color:#fff;font-size:clamp(16px,2.4vw,23px);letter-spacing:-.01em}
+.whero::before{content:"";position:absolute;right:-28px;top:-28px;width:106px;height:106px;background:var(--red);border-radius:50%}
+.whero .sheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.13) 50%,transparent 58%);background-size:250% 100%;animation:sweep 3.5s linear infinite}
+@keyframes sweep{from{background-position:120% 0}to{background-position:-120% 0}}
+.wcards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.wcards .c{height:76px;border:1px solid var(--line);background:var(--white);position:relative;opacity:0;transform:scale(.75);will-change:transform,opacity}
+.wcards .c::after{content:"";position:absolute;left:11px;bottom:11px;width:55%;height:6px;background:#E9E9E6;border-radius:4px}
+.wcards .c::before{content:"";position:absolute;left:11px;top:11px;width:22px;height:22px;background:var(--red);opacity:.14}
+.wfoot{display:flex;align-items:center;gap:16px}
+.wbtn{display:inline-block;background:var(--red);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:11px 20px;transform:scale(0);will-change:transform}
+.livechip{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#0a8a2a;opacity:0;transform:translateY(8px);will-change:opacity,transform}
+.livechip i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#0a8a2a;margin-right:6px;animation:blink 1.2s steps(1) infinite}
+
+/* ---- S7 REELS ---- */
+#reels{height:280vh;background:var(--black)}
+.phone{height:min(62svh,540px);aspect-ratio:9/18.5;background:#161618;border-radius:34px;border:3px solid #2c2c2f;padding:10px;position:relative;will-change:transform;box-shadow:0 26px 70px rgba(227,0,27,.12)}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:36%;height:18px;background:#000;border-radius:12px;z-index:8}
+.pscreen{position:relative;width:100%;height:100%;border-radius:24px;overflow:hidden;background:#000}
+.rstatus{position:absolute;top:0;left:0;right:0;z-index:7;display:flex;justify-content:space-between;padding:8px 14px 0;font-family:var(--mono);font-size:9px;color:#fff;pointer-events:none}
+.tabbar{position:absolute;bottom:0;left:0;right:0;z-index:7;display:flex;justify-content:space-around;align-items:center;padding:9px 8px 11px;background:linear-gradient(transparent,rgba(0,0,0,.7));pointer-events:none}
+.tabbar svg{width:18px;height:18px;fill:none;stroke:#bbb;stroke-width:1.8}
+.tabbar .active svg{stroke:var(--red);filter:drop-shadow(0 0 5px rgba(227,0,27,.7))}
+.reeltrack{position:absolute;inset:0;will-change:transform}
+.reel{position:absolute;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:16px 14px 52px;color:#fff}
+.reel.r1{top:0;background:linear-gradient(160deg,#26262a 40%,#3b0009)}
+.reel.r2{top:100%;background:linear-gradient(200deg,#E3001B,#5c000b)}
+.reel.r3{top:200%;background:linear-gradient(160deg,#0e0e10,#26262a 60%,#001)}
+.vidfx{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.07) 50%,transparent 58%);background-size:250% 100%;animation:sweep 3.8s linear infinite;pointer-events:none}
+.ruser{position:absolute;top:32px;left:12px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px}
+.avatar{width:24px;height:24px;border-radius:50%;background:var(--red);display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:12px;color:#fff;border:1.5px solid #fff}
+.follow{border:1px solid rgba(255,255,255,.7);padding:3px 9px;font-size:8px;letter-spacing:.16em;transition:background .35s,border-color .35s}
+.reel.live .follow{background:var(--red);border-color:var(--red)}
+.reel .rtag{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:#fff;border:1px solid rgba(255,255,255,.5);padding:4px 8px;align-self:flex-start;margin-bottom:9px}
+.reel .rh{font-family:var(--display);font-weight:900;font-size:16px;text-transform:uppercase;margin-bottom:5px;line-height:1.1;max-width:80%;letter-spacing:-.01em}
+.reel .rc{font-size:11px;color:#e6e6e8;line-height:1.5;max-width:76%;font-weight:400}
+.reel .rhash{font-family:var(--mono);font-size:9px;color:var(--red);margin-top:7px}
+.reel.r2 .rhash{color:#fff}
+.stack{position:absolute;right:8px;bottom:106px;display:flex;flex-direction:column;gap:13px;align-items:center;z-index:3}
+.sicon{width:32px;text-align:center;transform:scale(0);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.reel.live .sicon{transform:scale(1)}
+.reel.live .sicon:nth-child(1){transition-delay:.12s}
+.reel.live .sicon:nth-child(2){transition-delay:.26s}
+.reel.live .sicon:nth-child(3){transition-delay:.4s}
+.sicon svg{width:24px;height:24px;fill:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.sicon.hrt svg{fill:var(--red)}
+.sicon .cnt{display:block;font-family:var(--mono);font-size:8px;color:#fff;margin-top:3px}
+.likes{position:absolute;right:20px;bottom:136px;pointer-events:none;z-index:2}
+.likes i{position:absolute;bottom:0;right:0;font-size:12px;font-style:normal;color:var(--red);opacity:0;text-shadow:0 0 6px rgba(0,0,0,.4)}
+.reel.live .likes i{animation:riseheart 2.2s linear infinite;animation-delay:var(--d)}
+@keyframes riseheart{
+  0%{opacity:0;transform:translate(0,0) scale(.7)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translate(var(--x),-130px) scale(1.15)}
+}
+.mrow{display:flex;align-items:center;gap:8px;margin-top:10px}
+.vinyl{width:18px;height:18px;flex:0 0 18px;border-radius:50%;background:conic-gradient(#3a3a3d,#111,#3a3a3d,#111,#3a3a3d);border:2px solid #555;position:relative;animation:spin 3s linear infinite}
+.vinyl::after{content:"";position:absolute;inset:35%;border-radius:50%;background:var(--red)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mticker{flex:1;overflow:hidden;white-space:nowrap;font-family:var(--mono);font-size:9px;color:#ddd}
+.mticker span{display:inline-block;animation:tick 9s linear infinite}
+.pbar{position:absolute;right:5px;top:12%;bottom:12%;width:3px;background:#2c2c2f;border-radius:2px;z-index:6}
+.pbar i{display:block;width:100%;height:0;background:var(--red);border-radius:2px}
+
+/* ============ S8 BRANDS ============ */
+#brands{background:var(--white);display:flex;flex-direction:column;justify-content:center}
+.marquee{display:flex;white-space:nowrap;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--white)}
+.marquee + .marquee{border-top:none}
+.marquee .mtrack{display:flex;flex-shrink:0;animation:mq 32s linear infinite}
+.marquee.rev .mtrack{animation:mqr 38s linear infinite}
+.marquee:hover .mtrack{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-100%)}}
+@keyframes mqr{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+.mk{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(23px,3.4vw,38px);padding:24px clamp(20px,3.2vw,40px);color:var(--black);text-transform:uppercase;display:inline-flex;align-items:center;gap:clamp(20px,3.2vw,40px);letter-spacing:-.01em}
+.mk::after{content:"—";color:var(--red);font-family:var(--body);font-weight:700;font-size:.55em}
+.note{font-family:var(--mono);font-size:10px;color:var(--grey);padding:22px var(--pad) 0}
+
+/* ============ S9 CONTACT ============ */
+#contact{background:var(--paper);display:flex;align-items:center;padding:clamp(96px,14vh,150px) var(--pad) 70px}
+#contact .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:110px 110px;opacity:.4;pointer-events:none}
+.cwrap{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;display:flex;gap:clamp(30px,6vw,90px);align-items:flex-start}
+.cleft{flex:1 1 380px;min-width:0}
+.cleft h2{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(30px,4.6vw,60px);line-height:1.04;text-transform:uppercase;letter-spacing:-.01em}
+.cleft h2 em{font-style:normal;color:var(--red)}
+.cleft .csub{margin-top:18px;font-weight:300;font-size:clamp(16px,1.7vw,20px);color:#3a3a3d;line-height:1.6;max-width:38ch}
+.cmeta{margin-top:34px;display:flex;flex-direction:column;gap:14px}
+.cmeta a,.cmeta span{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#2b2b2e;text-decoration:none;transition:color .2s}
+.cmeta a:hover{color:var(--red)}
+.cmeta b{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 26px;border:1px solid var(--line);background:var(--white);color:var(--red);font-size:12px;font-weight:400}
+.cform{flex:1 1 420px;min-width:0;background:var(--white);border:1px solid var(--line);box-shadow:10px 10px 0 rgba(11,11,12,.06);padding:clamp(22px,3vw,36px)}
+.cfield{margin-bottom:16px}
+.cfield label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--grey);margin-bottom:8px;text-transform:uppercase}
+.cfield input,.cfield textarea{width:100%;font-family:var(--body);font-size:15px;color:var(--black);background:var(--paper);border:1px solid var(--line);padding:13px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.cfield textarea{min-height:118px;resize:vertical}
+.cfield input:focus,.cfield textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(227,0,27,.09)}
+.cfield input::placeholder,.cfield textarea::placeholder{color:#b6b6ba}
+.cerr{display:none;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--red);margin-top:7px}
+.cfield.bad .cerr{display:block}
+.cfield.bad input,.cfield.bad textarea{border-color:var(--red)}
+.csend{width:100%;justify-content:center;background:var(--red);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.14em;padding:17px 20px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:transform .18s,box-shadow .18s,opacity .2s}
+.csend:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--black)}
+.csend:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.csend .ar{display:inline-block;transition:transform .18s}
+.csend:hover .ar{transform:translateX(5px)}
+.cnote{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--grey);text-align:center;min-height:1.4em}
+.cnote.ok{color:#0a8a2a}
+.cnote.bad{color:var(--red)}
+
+/* ============ S10 CTA ============ */
+#cta{background:var(--black);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 var(--pad)}
+.ghost{position:absolute;top:50%;left:0;transform:translateY(-50%);white-space:nowrap;font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(110px,20vw,260px);color:transparent;-webkit-text-stroke:1px #1c1c1e;pointer-events:none;user-select:none}
+.ghost span{display:inline-block;animation:tick 46s linear infinite}
+#cta > *:not(.ghost){position:relative;z-index:1}
+#cta h2{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(28px,5vw,64px);text-transform:uppercase;line-height:1.1;margin-bottom:18px;letter-spacing:-.01em}
+#cta h2 em{font-style:normal;color:var(--red)}
+#cta p{font-family:var(--mono);font-size:11px;color:#9a9a9e;margin-bottom:42px;letter-spacing:.12em}
+.btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:var(--body);font-weight:600;font-size:15px;text-decoration:none;padding:17px 28px;display:inline-flex;align-items:center;gap:10px;transition:transform .18s,box-shadow .18s;cursor:pointer;border:none}
+.btn .ar{display:inline-block;transition:transform .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn:hover .ar{transform:translateX(6px)}
+.btn.dark{background:var(--white);color:var(--black)}
+.btn.dark:hover{box-shadow:4px 4px 0 var(--red)}
+.btn.red{background:var(--red);color:#fff}
+.btn.red:hover{box-shadow:4px 4px 0 var(--white)}
+#cta footer{position:absolute;bottom:0;left:0;right:0;border-top:1px solid #1d1d1f;padding:18px var(--pad);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:10px;color:#77777b;letter-spacing:.12em}
+
+@media (max-width:900px){
+  .cwrap{flex-direction:column;gap:34px}
+  #contact{height:auto;min-height:100svh}
+}
+@media (max-width:640px){
+  #logos .grid{grid-template-columns:repeat(2,minmax(104px,140px))}
+  .wcards{grid-template-columns:1fr 1fr}
+  .wcards .c:nth-child(3){display:none}
+  #hero .orbit{display:none}
+  #dots{display:none}
+  h2.light{font-size:24px}
+  .svcline{font-size:21px;gap:10px}
+  .svcmeta{right:-6px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important;transition-delay:0s!important}
+  .scrub{height:auto!important}
+  .scrub .stage{position:static;height:auto;padding:90px 0}
+  .stagewrap{position:static;padding:40px 20px}
+  .shead{position:static;padding:0 var(--pad);margin-bottom:20px}
+  .full{height:auto;min-height:70vh;padding-top:90px;padding-bottom:90px}
+  #contact{height:auto}
+  #loader{display:none}
+  body.locked{overflow:auto;height:auto}
+  #hero h1 .w,#hero .kicker,#hero .sub,#hero .rule,#scrollhint,.ch{opacity:1;transform:none;filter:none}
+  .rise,.tile,.wnav,.wcards .c{opacity:1!important;transform:none!important}
+  .whero{clip-path:none!important}
+  .wbtn,.sicon,.livechip{transform:none!important;opacity:1!important}
+  #services{height:auto!important}
+  #services .svcbox{position:static;padding:10px var(--pad) 30px}
+  .svclist{position:static}
+  .svcline{position:static;transform:none!important;opacity:1!important;color:var(--black);font-size:20px;padding:6px 0}
+  .svcmeta{display:none}
+}
+`;
+
+export const LANDING_HTML = String.raw`
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="half top"></div>
+  <div class="half bot"></div>
+  <div id="terminal">
+    <div class="ln" data-text="> booting admirate.in _"></div>
+    <div class="ln" data-text="> loading campaign assets............ 100%"></div>
+    <div class="ln err" data-text="> ERROR 404: boring_ads not found"></div>
+    <div class="ln ok" data-text="> fix applied: ads_that_convert.exe ✓"></div>
+    <div id="bar"><i></i></div>
+  </div>
+</div>
+
+<div id="dots"></div>
+
+<!-- S1 HERO -->
+<section id="hero" class="sec full active">
+  <div class="grid-bg"></div>
+  <div class="glowbg"></div>
+  <div class="orbit"></div>
+  <div class="inner">
+    <h1 id="h1">
+      <span class="w">A</span> <span class="w">seriously,</span> <span class="w">seriously</span>
+      <span class="w mark">creative<svg viewBox="0 0 300 22" preserveAspectRatio="none"><path d="M4 14 C 60 4, 150 20, 296 8"/></svg></span>
+      <span class="w">advertising</span> <span class="w">agency.</span><span class="cursor"></span>
+    </h1>
+    <div class="rule"></div>
+    <p class="sub">Advertising is part <b>business</b>, part <b>instinct</b>. We work at <b>that edge</b>.</p>
+  </div>
+  <div id="scrollhint">SCROLL<div class="line"><i></i></div></div>
+  <div id="ticker"><div class="track" id="tickTrack"></div></div>
+</section>
+
+<!-- S2 INTRO -->
+<section id="intro" class="sec full dark">
+  <div class="ring r1"></div>
+  <div class="ring r2"></div>
+  <div class="kglow"></div>
+  <div class="iwrap">
+    <div class="tag">// WHAT IS ADMIRATE</div>
+    <p class="big" id="introTxt">We're a full-stack ad agency obsessed with three things: <span class="acc">good design</span>, <span class="acc">user journeys</span> and <span class="acc">quick&nbsp;leads</span>. We build strong advertising material that moves buyers to act — not <span class="strike">social media fluff</span> that just sits there looking pretty.</p>
+  </div>
+  <div class="idx">02 — 10</div>
+</section>
+
+<!-- S3 SERVICES -->
+<section id="services" class="sec scrub">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">SERVICES — WHAT WE MAKE</div>
+      <h2 class="light rise" style="--rd:.12s">Everything your brand needs to be seen.</h2>
+    </div>
+    <div class="svcbox">
+      <div class="svclist" id="svclist"></div>
+      <div class="svcmeta">
+        <div class="svccount"><b id="svcno">01</b> / 12</div>
+        <div class="svctrack"><i id="svcprog"></i></div>
+      </div>
+    </div>
+    <div class="idx">03 — 10</div>
+  </div>
+</section>
+
+<!-- S4 LOGOS (scrub) -->
+<section id="logos" class="sec scrub">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">01 / IDENTITY</div>
+      <h2 class="light rise" style="--rd:.12s">Logos &amp;<br>brand identity</h2>
+    </div>
+    <div class="stagewrap">
+      <div class="grid">
+        <div class="tile"><span>A<span class="dot">.</span></span></div>
+        <div class="tile"><span>KO</span></div>
+        <div class="tile"><span>▲RC</span></div>
+        <div class="tile"><span>NEXA</span></div>
+        <div class="tile"><span>Ø</span></div>
+        <div class="tile"><span>M/8</span></div>
+      </div>
+    </div>
+    <div class="idx">04 — 10</div>
+  </div>
+</section>
+
+<!-- S5 VIDEO (scrub) -->
+<section id="tv" class="sec scrub">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">02 / VIDEO PRODUCTION</div>
+      <h2 class="light rise" style="--rd:.12s">Films, ads &amp; brand stories</h2>
+    </div>
+    <div class="stagewrap">
+      <div class="objcap">Video Production</div>
+      <div class="tvframe">
+        <div class="screen">
+          <div class="frame f1 on"><h3>The Hook</h3><div class="chip2">SCENE 01 — STOP THE SCROLL</div></div>
+          <div class="frame f2"><h3>The Story</h3><div class="chip2">SCENE 02 — YOUR BRAND ON FILM</div></div>
+          <div class="frame f3"><h3>The Ask</h3><div class="chip2">SCENE 03 — CLEAR CALL TO ACTION</div></div>
+          <div class="scanlines"></div>
+          <div class="staticflk"></div>
+          <div class="rec"><i></i>REC</div>
+          <div class="chan" id="chan">CH 01</div>
+          <div class="tcode" id="tcode">TC 00:00:00</div>
+        </div>
+        <div class="tvbar"><i id="tvprog"></i></div>
+      </div>
+    </div>
+    <div class="idx">05 — 10</div>
+  </div>
+</section>
+
+<!-- S6 WEBSITE (scrub) -->
+<section id="web" class="sec scrub">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">03 / DIGITAL</div>
+      <h2 class="light rise" style="--rd:.12s">Websites, booking systems &amp; chatbots</h2>
+    </div>
+    <div class="stagewrap">
+      <div class="objcap">Websites</div>
+      <div class="browser">
+        <div class="chrome">
+          <div class="b"></div><div class="b"></div><div class="b"></div>
+          <div class="urlbar" id="urlbar"></div>
+        </div>
+        <div class="site">
+          <div class="wnav" id="wnav"><div class="wl">BRAND<span style="color:var(--red)">.</span></div><div class="links"><i></i><i></i><i></i></div></div>
+          <div class="whero" id="whero"><div class="sheen"></div></div>
+          <div class="wcards"><div class="c" id="c1"></div><div class="c" id="c2"></div><div class="c" id="c3"></div></div>
+          <div class="wfoot">
+            <span class="wbtn" id="wbtn">BOOK A SLOT →</span>
+            <span class="livechip" id="livechip"><i></i>LIVE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="idx">06 — 10</div>
+  </div>
+</section>
+
+<!-- S7 REELS (scrub) -->
+<section id="reels" class="sec scrub dark">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">04 / SOCIAL MEDIA</div>
+      <h2 class="light rise" style="--rd:.12s">Reels built to convert</h2>
+    </div>
+    <div class="stagewrap">
+      <div class="objcap">Social Media</div>
+      <div class="phone" id="phone">
+        <div class="notch"></div>
+        <div class="pscreen">
+          <div class="reeltrack" id="reeltrack">
+
+            <div class="reel r1">
+              <div class="vidfx"></div>
+              <div class="ruser"><span class="avatar">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
+              <div class="likes"><i style="--d:0s;--x:-14px">♥</i><i style="--d:.5s;--x:8px">♥</i><i style="--d:1s;--x:-6px">♥</i><i style="--d:1.5s;--x:12px">♥</i></div>
+              <div class="stack">
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">0</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">3.1K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
+              </div>
+              <div class="rtag">SCRIPT + SHOOT</div>
+              <div class="rh">Scripted to stop thumbs</div>
+              <div class="rc">Hooks written from audience data — planned, shot and directed in-house.</div>
+              <div class="rhash">#hooks #brandfilm #madebyadmirate</div>
+              <div class="mrow"><span class="vinyl"></span><div class="mticker"><span>♫ original audio — admirate &nbsp;&nbsp;&nbsp; ♫ original audio — admirate &nbsp;&nbsp;&nbsp;</span></div></div>
+            </div>
+
+            <div class="reel r2">
+              <div class="vidfx"></div>
+              <div class="ruser"><span class="avatar" style="background:#0B0B0C">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
+              <div class="likes"><i style="--d:.2s;--x:10px">♥</i><i style="--d:.7s;--x:-10px">♥</i><i style="--d:1.2s;--x:6px">♥</i><i style="--d:1.7s;--x:-14px">♥</i></div>
+              <div class="stack">
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">0</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">7.8K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
+              </div>
+              <div class="rtag">EDIT + MOTION</div>
+              <div class="rh">Cut to the beat</div>
+              <div class="rc">Captions, motion graphics and sound design — every frame earns the next.</div>
+              <div class="rhash">#motiongraphics #edit #sounddesign</div>
+              <div class="mrow"><span class="vinyl"></span><div class="mticker"><span>♫ original audio — admirate &nbsp;&nbsp;&nbsp; ♫ original audio — admirate &nbsp;&nbsp;&nbsp;</span></div></div>
+            </div>
+
+            <div class="reel r3">
+              <div class="vidfx"></div>
+              <div class="ruser"><span class="avatar">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
+              <div class="likes"><i style="--d:.1s;--x:-8px">♥</i><i style="--d:.6s;--x:14px">♥</i><i style="--d:1.1s;--x:-12px">♥</i><i style="--d:1.6s;--x:8px">♥</i></div>
+              <div class="stack">
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">0</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">12K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
+              </div>
+              <div class="rtag">DISTRIBUTE + CONVERT</div>
+              <div class="rh">Built to route viewers</div>
+              <div class="rc">Every reel ends with a path — profile, page, enquiry. Views become leads.</div>
+              <div class="rhash">#leadgen #convert #simplejourney</div>
+              <div class="mrow"><span class="vinyl"></span><div class="mticker"><span>♫ original audio — admirate &nbsp;&nbsp;&nbsp; ♫ original audio — admirate &nbsp;&nbsp;&nbsp;</span></div></div>
+            </div>
+
+          </div>
+          <div class="rstatus"><span>9:41</span><span>▮▮▮ ▰▰▱</span></div>
+          <div class="tabbar">
+            <span><svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"/></svg></span>
+            <span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
+            <span class="active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 9l5 3-5 3z"/></svg></span>
+            <span><svg viewBox="0 0 24 24"><path d="M6 3h12l2 5H4z"/><path d="M4 8h16v13H4z"/></svg></span>
+            <span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg></span>
+          </div>
+          <div class="pbar"><i id="pprog"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="idx">07 — 10</div>
+  </div>
+</section>
+
+<!-- S8 BRANDS -->
+<section id="brands" class="sec full">
+  <div class="shead">
+    <div class="eb rise" style="--rd:0s">CLIENTS</div>
+    <h2 class="light rise" style="--rd:.12s">Brands we've worked with</h2>
+  </div>
+  <div>
+    <div class="marquee"><div class="mtrack" id="m1"></div><div class="mtrack" aria-hidden="true" id="m1b"></div></div>
+    <div class="marquee rev"><div class="mtrack" id="m2"></div><div class="mtrack" aria-hidden="true" id="m2b"></div></div>
+  </div>
+  <div class="idx">08 — 10</div>
+</section>
+
+<!-- S9 CONTACT -->
+<section id="contact" class="sec full">
+  <div class="grid-bg"></div>
+  <div class="cwrap">
+    <div class="cleft">
+      <div class="eb rise" style="--rd:0s">GET IN TOUCH</div>
+      <h2 class="rise" style="--rd:.1s">Tell us what<br>you're <em>building.</em></h2>
+      <p class="csub rise" style="--rd:.18s">Have a project in mind? Send it over and we'll come back to you within 24 hours — usually a lot sooner.</p>
+      <div class="cmeta rise" style="--rd:.26s">
+        <a href="mailto:essentials@admirate.in"><b>✉</b>essentials@admirate.in</a>
+        <a href="https://wa.me/918374494954" target="_blank" rel="noopener noreferrer"><b>✆</b>+91 83744 94954</a>
+        <span><b>◉</b>INDIA — WORKING WORLDWIDE</span>
+      </div>
+    </div>
+
+    <form class="cform rise" id="cform" style="--rd:.34s" novalidate>
+      <div class="cfield" id="fw-name">
+        <label for="c-name">Name</label>
+        <input id="c-name" name="name" type="text" placeholder="Your name" autocomplete="name">
+        <div class="cerr" id="err-name">Name must be at least 2 characters</div>
+      </div>
+      <div class="cfield" id="fw-email">
+        <label for="c-email">Email</label>
+        <input id="c-email" name="email" type="email" placeholder="your@email.com" autocomplete="email">
+        <div class="cerr" id="err-email">Please enter a valid email address</div>
+      </div>
+      <div class="cfield" id="fw-phone">
+        <label for="c-phone">Phone <span style="color:#c9c9cc">(optional)</span></label>
+        <input id="c-phone" name="phone" type="tel" placeholder="+91" autocomplete="tel">
+        <div class="cerr" id="err-phone">Phone number is too long</div>
+      </div>
+      <div class="cfield" id="fw-message">
+        <label for="c-message">Message</label>
+        <textarea id="c-message" name="message" placeholder="Tell us about your project…"></textarea>
+        <div class="cerr" id="err-message">Message must be at least 10 characters</div>
+      </div>
+      <button type="submit" class="csend" id="csend">
+        <span id="csend-label">SEND VIA WHATSAPP</span> <span class="ar">→</span>
+      </button>
+      <div class="cnote" id="cnote">Opens WhatsApp with your message pre-filled.</div>
+    </form>
+  </div>
+  <div class="idx">09 — 10</div>
+</section>
+
+<!-- S10 CTA -->
+<section id="cta" class="sec full dark">
+  <div class="ghost"><span>ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — </span></div>
+  <h2 class="rise" style="--rd:0s">The journey starts<br>with <em>one click.</em></h2>
+  <p class="rise" style="--rd:.14s">// LESS FLUFF — MORE LEADS. TELL US YOUR GOAL.</p>
+  <div class="btns rise" style="--rd:.28s">
+    <a class="btn dark" href="/services">See our designs <span class="ar">→</span></a>
+    <a class="btn red" href="#contact">Start your project <span class="ar">→</span></a>
+  </div>
+  <footer>
+    <div>© 2026 ADMIRATE.IN</div>
+    <div>MADE TO CONVERT</div>
+  </footer>
+</section>
+
+`;

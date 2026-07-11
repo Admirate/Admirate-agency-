@@ -1,0 +1,281 @@
+import { POSTS, type Post, type Block } from "@/components/blogs/posts";
+
+const esc = (s: string) =>
+  String(s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[c] as string)
+  );
+
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+/* Shared by the index and the article pages. */
+export const BLOGS_CSS = String.raw`
+:root{
+  --white:#FFFFFF;
+  --paper:#FAFAF8;
+  --black:#0B0B0C;
+  --red:#E3001B;
+  --grey:#8A8A8E;
+  --line:#E9E9E6;
+  --pad:clamp(24px,6vw,96px);
+  --display:'Archivo',sans-serif;
+  --body:'Inter',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{font-family:var(--body);background:var(--paper);color:var(--black);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--red);color:var(--white)}
+button{font:inherit;background:none;border:none;cursor:pointer}
+
+#topline{position:fixed;top:0;left:0;height:2px;width:0;background:var(--red);z-index:200}
+#grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.026;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 var(--pad);position:relative;z-index:2}
+.eb{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.eb::before{content:"";width:22px;height:1px;background:var(--red)}
+.rise{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.rise.vis{opacity:1;transform:none;transition-delay:var(--rd,0s)}
+
+/* ============ INDEX HEAD ============ */
+.bhead{position:relative;padding:clamp(120px,17vh,170px) 0 clamp(36px,6vh,60px);overflow:hidden}
+.bhead .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:110px 110px;opacity:.4;pointer-events:none}
+.bhead .glow{position:absolute;top:-40%;right:-10%;width:52vw;height:52vw;max-width:760px;background:radial-gradient(circle,rgba(227,0,27,.07),transparent 62%);pointer-events:none;animation:gdrift 24s ease-in-out infinite alternate}
+@keyframes gdrift{from{transform:translate(0,0) scale(1)}to{transform:translate(-6%,8%) scale(1.12)}}
+.bhead h1{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(34px,6vw,78px);line-height:1.02;letter-spacing:-.015em;text-transform:uppercase;max-width:14ch}
+.bhead h1 em{font-style:normal;color:var(--red)}
+.bhead .bsub{margin-top:20px;font-weight:300;font-size:clamp(17px,1.9vw,22px);color:#2c2c2f;line-height:1.55;max-width:52ch}
+.bhead .rule{width:56px;height:2px;background:var(--red);margin-top:28px}
+
+/* ============ FILTERS ============ */
+.filters{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:clamp(26px,4vh,40px)}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.16em;padding:9px 15px;border:1px solid var(--line);border-radius:999px;color:#4a4a4d;background:var(--white);transition:border-color .2s,background .2s,color .2s,transform .18s}
+.chip:hover{border-color:var(--red);color:var(--red);transform:translateY(-1px)}
+.chip.on{background:var(--black);border-color:var(--black);color:#fff}
+.chip.on:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ============ POST GRID ============ */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2.4vw,28px);padding-bottom:clamp(60px,10vh,110px)}
+.pcard{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:6px 6px 0 rgba(11,11,12,.05);transition:box-shadow .3s,border-color .3s,transform .3s,opacity .5s}
+.pcard:hover{box-shadow:10px 10px 0 rgba(227,0,27,.16);border-color:var(--red);transform:translateY(-4px)}
+.pcard.hide{display:none}
+.pthumb{aspect-ratio:16/9;position:relative;display:flex;align-items:flex-end;padding:16px;overflow:hidden}
+.pthumb.v1{background:linear-gradient(150deg,#151517,#3b0009)}
+.pthumb.v2{background:linear-gradient(150deg,var(--red),#7e000f)}
+.pthumb.v3{background:linear-gradient(150deg,#f2f2ee,#fff);border-bottom:1px solid var(--line)}
+.pthumb.v4{background:linear-gradient(150deg,#0e0e10,#26262a)}
+.pthumb .sheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.1) 50%,transparent 58%);background-size:250% 100%;animation:sweep 4s linear infinite}
+.pthumb.v3 .sheen{display:none}
+@keyframes sweep{from{background-position:120% 0}to{background-position:-120% 0}}
+.pthumb .ptag{position:relative;z-index:1;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#fff;border:1px solid rgba(255,255,255,.55);padding:5px 10px;border-radius:999px}
+.pthumb.v3 .ptag{color:#111;border-color:rgba(0,0,0,.25)}
+.pthumb::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:var(--red);opacity:.16}
+.pthumb.v2::after{background:#fff;opacity:.12}
+.pbody{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1}
+.pcard h2{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(17px,1.6vw,21px);line-height:1.24;letter-spacing:-.01em;margin-bottom:10px}
+.pcard .pex{font-weight:300;font-size:14px;color:#4a4a4d;line-height:1.6;flex:1}
+.pmeta{display:flex;align-items:center;gap:10px;margin-top:18px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--grey)}
+.pmeta .dot{width:3px;height:3px;border-radius:50%;background:#cfcfcb}
+.pmore{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--red);display:inline-flex;align-items:center;gap:7px}
+.pmore .ar{transition:transform .2s}
+.pcard:hover .pmore .ar{transform:translateX(4px)}
+.empty{grid-column:1/-1;text-align:center;padding:60px 0;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--grey)}
+
+/* ============ ARTICLE ============ */
+.ahead{position:relative;padding:clamp(120px,17vh,170px) 0 clamp(28px,4vh,44px);overflow:hidden}
+.ahead .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:110px 110px;opacity:.4;pointer-events:none}
+.crumb{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--grey);text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;transition:color .2s}
+.crumb:hover{color:var(--red)}
+.crumb .ar{transition:transform .2s}
+.crumb:hover .ar{transform:translateX(-3px)}
+.article{max-width:760px}
+.article h1{font-family:var(--display);font-weight:900;font-stretch:108%;font-size:clamp(28px,4.4vw,54px);line-height:1.06;letter-spacing:-.015em;margin-bottom:22px}
+.ameta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--grey)}
+.ameta .atag{color:var(--red);border:1px solid var(--red);padding:5px 10px;border-radius:999px}
+.ameta .dot{width:3px;height:3px;border-radius:50%;background:#cfcfcb}
+.abanner{height:clamp(140px,22vh,220px);border-radius:10px;position:relative;overflow:hidden;margin:clamp(26px,4vh,40px) 0 0}
+.abanner.v1{background:linear-gradient(150deg,#151517,#3b0009)}
+.abanner.v2{background:linear-gradient(150deg,var(--red),#7e000f)}
+.abanner.v3{background:linear-gradient(150deg,#f2f2ee,#fff);border:1px solid var(--line)}
+.abanner.v4{background:linear-gradient(150deg,#0e0e10,#26262a)}
+.abanner::after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;background:var(--red);opacity:.18}
+.abanner.v2::after{background:#fff;opacity:.12}
+.abanner .sheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.1) 50%,transparent 58%);background-size:250% 100%;animation:sweep 4s linear infinite}
+.abanner.v3 .sheen{display:none}
+
+.abody{max-width:720px;padding:clamp(34px,6vh,56px) 0 clamp(50px,8vh,80px)}
+.abody p{font-size:clamp(16px,1.15vw,18px);line-height:1.75;color:#2c2c2f;margin-bottom:22px}
+.abody p:first-of-type{font-size:clamp(18px,1.35vw,21px);line-height:1.65;color:#151517}
+.abody h2{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(20px,2.2vw,28px);line-height:1.2;letter-spacing:-.01em;margin:clamp(30px,5vh,46px) 0 16px;padding-top:4px;position:relative}
+.abody h2::before{content:"";position:absolute;top:-14px;left:0;width:28px;height:2px;background:var(--red)}
+.abody ul{margin:0 0 24px;padding:0;list-style:none}
+.abody li{position:relative;padding-left:24px;margin-bottom:11px;font-size:clamp(15px,1.1vw,17px);line-height:1.65;color:#3a3a3d}
+.abody li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:1px;background:var(--red)}
+.abody blockquote{margin:clamp(26px,4vh,38px) 0;padding:22px 26px;border-left:3px solid var(--red);background:var(--white);border-radius:0 8px 8px 0;box-shadow:6px 6px 0 rgba(11,11,12,.05)}
+.abody blockquote p{margin:0;font-family:var(--display);font-weight:700;font-stretch:104%;font-size:clamp(17px,1.7vw,22px);line-height:1.38;letter-spacing:-.01em;color:var(--black)}
+
+/* article footer nav */
+.anext{border-top:1px solid var(--line);padding:clamp(30px,5vh,48px) 0;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.anext .nlabel{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--grey);margin-bottom:8px}
+.anext .ntitle{font-family:var(--display);font-weight:800;font-size:clamp(17px,1.8vw,22px);line-height:1.25;letter-spacing:-.01em;max-width:22ch}
+.anext a{text-decoration:none;color:inherit;transition:color .2s}
+.anext a:hover .ntitle{color:var(--red)}
+
+/* ============ CTA ============ */
+.bcta{background:var(--black);color:#fff;position:relative;overflow:hidden;padding:clamp(56px,9vh,90px) 0;text-align:center}
+.bcta .ghost{position:absolute;top:50%;left:0;transform:translateY(-50%);white-space:nowrap;font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(90px,16vw,200px);color:transparent;-webkit-text-stroke:1px #1c1c1e;pointer-events:none;user-select:none}
+.bcta .ghost span{display:inline-block;animation:tick 46s linear infinite}
+@keyframes tick{to{transform:translateX(-50%)}}
+.bcta h2{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(24px,4vw,50px);text-transform:uppercase;line-height:1.1;margin-bottom:16px;letter-spacing:-.01em;position:relative;z-index:1}
+.bcta h2 em{font-style:normal;color:var(--red)}
+.bcta p{font-family:var(--mono);font-size:11px;color:#9a9a9e;margin-bottom:34px;letter-spacing:.12em;position:relative;z-index:1}
+.btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.btn{font-family:var(--body);font-weight:600;font-size:15px;text-decoration:none;padding:16px 26px;display:inline-flex;align-items:center;gap:10px;transition:transform .18s,box-shadow .18s}
+.btn .ar{display:inline-block;transition:transform .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn:hover .ar{transform:translateX(6px)}
+.btn.dark{background:var(--white);color:var(--black)}
+.btn.dark:hover{box-shadow:4px 4px 0 var(--red)}
+.btn.red{background:var(--red);color:#fff}
+.btn.red:hover{box-shadow:4px 4px 0 var(--white)}
+footer.bfoot{border-top:1px solid var(--line);padding:18px var(--pad);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:10px;color:var(--grey);letter-spacing:.12em;background:var(--paper)}
+
+@media (max-width:980px){ .pgrid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:640px){ .pgrid{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important;transition-delay:0s!important}
+  .rise{opacity:1!important;transform:none!important}
+  #grain,#topline{display:none}
+}
+`;
+
+const card = (p: Post, i: number) => `
+  <a class="pcard rise" style="--rd:${(i % 3) * 0.08}s" href="/blogs/${p.slug}" data-tag="${esc(p.tag)}" data-h>
+    <span class="pthumb ${p.v}">
+      <span class="sheen"></span>
+      <span class="ptag">${esc(p.tag)}</span>
+    </span>
+    <span class="pbody">
+      <h2>${esc(p.title)}</h2>
+      <span class="pex">${esc(p.excerpt)}</span>
+      <span class="pmeta">
+        <span>${fmtDate(p.date)}</span><span class="dot"></span><span>${p.read} MIN READ</span>
+      </span>
+      <span class="pmore">READ <span class="ar">→</span></span>
+    </span>
+  </a>`;
+
+const CTA = `
+<section class="bcta">
+  <div class="ghost"><span>ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — </span></div>
+  <h2>The journey starts<br>with <em>one click.</em></h2>
+  <p>// LESS FLUFF — MORE LEADS. TELL US YOUR GOAL.</p>
+  <div class="btns">
+    <a class="btn dark" href="/services" data-h>See our designs <span class="ar">→</span></a>
+    <a class="btn red" href="/#contact" data-h>Start your project <span class="ar">→</span></a>
+  </div>
+</section>
+<footer class="bfoot">
+  <div>© 2026 ADMIRATE.IN</div>
+  <div>MADE TO CONVERT</div>
+</footer>`;
+
+export const blogsIndexHtml = () => {
+  const tags = [...new Set(POSTS.map((p) => p.tag))];
+
+  return String.raw`
+<div id="grain"></div>
+<div id="topline"></div>
+
+<header class="bhead">
+  <div class="grid-bg"></div>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div class="eb rise">JOURNAL</div>
+    <h1 class="rise" style="--rd:.08s">Notes from the <em>work.</em></h1>
+    <p class="bsub rise" style="--rd:.16s">What we've learned building brands, sites and campaigns that have to earn their keep — written for the people who have to sign them off.</p>
+    <div class="rule rise" style="--rd:.24s"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="filters rise" style="--rd:.3s" id="filters" role="group" aria-label="Filter posts by topic">
+    <button class="chip on" data-f="all">ALL</button>
+    ${tags.map((t) => `<button class="chip" data-f="${esc(t)}">${esc(t)}</button>`).join("\n    ")}
+  </div>
+
+  <div class="pgrid" id="pgrid">
+    ${POSTS.map(card).join("\n")}
+    <div class="empty" id="empty" hidden>NO POSTS IN THIS TOPIC YET</div>
+  </div>
+</div>
+
+${CTA}
+`;
+};
+
+const renderBlock = (b: Block): string => {
+  switch (b.t) {
+    case "h2":
+      return `<h2>${esc(b.c)}</h2>`;
+    case "quote":
+      return `<blockquote><p>${esc(b.c)}</p></blockquote>`;
+    case "list":
+      return `<ul>${b.c.map((li) => `<li>${esc(li)}</li>`).join("")}</ul>`;
+    default:
+      return `<p>${esc(b.c)}</p>`;
+  }
+};
+
+export const postHtml = (p: Post) => {
+  const i = POSTS.findIndex((x) => x.slug === p.slug);
+  const next = POSTS[(i + 1) % POSTS.length];
+
+  return String.raw`
+<div id="grain"></div>
+<div id="topline"></div>
+
+<header class="ahead">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <a class="crumb" href="/blogs" data-h><span class="ar">←</span> ALL POSTS</a>
+    <div class="article">
+      <h1>${esc(p.title)}</h1>
+      <div class="ameta">
+        <span class="atag">${esc(p.tag)}</span>
+        <span>${fmtDate(p.date)}</span><span class="dot"></span><span>${p.read} MIN READ</span>
+      </div>
+    </div>
+    <div class="abanner ${p.v}"><span class="sheen"></span></div>
+  </div>
+</header>
+
+<article class="wrap">
+  <div class="abody">
+    ${p.body.map(renderBlock).join("\n    ")}
+  </div>
+
+  <div class="anext">
+    <a href="/blogs/${next.slug}" data-h>
+      <div class="nlabel">NEXT UP</div>
+      <div class="ntitle">${esc(next.title)}</div>
+    </a>
+    <a class="btn red" href="/#contact" data-h>Start your project <span class="ar">→</span></a>
+  </div>
+</article>
+
+${CTA}
+`;
+};
