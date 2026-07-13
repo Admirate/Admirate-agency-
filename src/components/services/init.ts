@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+import { optimized } from "@/lib/cdn";
+
 export default function initServices(){
 let _dead=false, _rafId=0, _curRaf=0;
 const _winListeners=[];
@@ -147,41 +149,110 @@ const wticks=[...document.querySelectorAll('.wticks i')];
 let lastWi=0;
 
 /* ---------- CLIENT SHOWCASE ---------- */
-/* Seeded with the live client roster. If /api/portfolio returns projects
-   (managed from the dashboard's Portfolio page), they replace this list. */
-const VARIANTS=['v1','v4','v2','v3'];
+/* One browser frame, one rail. Copy here is written from the live sites, not
+   invented: Patil Group is railway infrastructure (it was previously described
+   as real estate, which it is not).
+   If /api/portfolio returns projects (managed from the dashboard's Portfolio
+   page), they replace this seeded roster. */
 let CLIENTS=[
-  {name:'SPORTEX', v:'v1', tag:'SPORTS EXPO — HITEX', url:'sportex.in', hd:'THE GAME, HOSTED.', cta:'SEE THE EVENT', shot:'',
-   desc:'An event site built for launch-week traffic — schedules, exhibitor listings and registration in one clean path.',
-   chips:['WEB','BRAND','EVENT','REGISTRATION']},
-  {name:'PATIL GROUP', v:'v4', tag:'REAL ESTATE', url:'patilgroup.com', hd:'SPACE, CONSIDERED.', cta:'VIEW PROJECTS', shot:'',
-   desc:'A property portfolio that lets the developments speak — full-bleed projects, quiet type, and an enquiry path that respects a buyer\'s time.',
-   chips:['REAL ESTATE','WEB','CAMPAIGN','ENQUIRY FORM']},
-  {name:'HOPE TRUST INDIA', v:'v2', tag:'NGO — REHABILITATION', url:'hopetrustindia.com', hd:'HELP, WITHIN REACH.', cta:'GET SUPPORT', shot:'',
-   desc:'A trust-first digital presence: clear programmes, honest copy and a contact route that works for someone reaching out at their lowest.',
-   chips:['NGO','BRAND','DIGITAL','CONTENT']},
-  {name:'SOUTH GLASS', v:'v3', tag:'GLASS & FACADES', url:'southglass.in', hd:'CLARITY, ENGINEERED.', cta:'REQUEST A QUOTE', shot:'',
-   desc:'An identity and site that make a technical product feel premium — product ranges, finishes and a quote request that actually converts.',
-   chips:['IDENTITY','WEB','PRODUCT PAGES','QUOTES']},
+  {name:'SPORTEX', tag:'Sports expo', url:'sportex.in', shot:'/shots/sportex.jpeg',
+   desc:"India's largest sports, fitness and wellness expo. Built to hold up under launch-week traffic, with visitor registration and exhibitor enquiries on one clean path.",
+   chips:['WEB','EVENT','REGISTRATION']},
+  {name:'PATIL GROUP', tag:'Railway infrastructure', url:'patilgroup.com', shot:'/shots/patil.jpeg',
+   desc:"The world's largest sleeper manufacturer, fifty years on the job. A corporate site that carries the scale of the work without raising its voice.",
+   chips:['WEB','CORPORATE','PROJECTS']},
+  {name:'HOPE TRUST INDIA', tag:'Mental health & rehab', url:'hopetrustindia.com', shot:'/shots/hopetrust.jpeg',
+   desc:'Addiction and mental-health care. This site had to work for someone reaching out at their lowest — clear programmes, honest copy, a therapist one click away.',
+   chips:['WEB','BRAND','CONTENT']},
+  {name:'SOUTH GLASS', tag:'Premium glass', url:'southglass.in', shot:'/shots/southglass.jpeg',
+   desc:'Glass and facades, established 2014. A technical product made to feel premium — product ranges, finishes, and a quote request that actually converts.',
+   chips:['IDENTITY','WEB','QUOTES']},
 ];
 
-const cgrid=document.getElementById('cgrid');
-const cwin=document.getElementById('cwin'), cpanel=document.getElementById('cpanel');
-const curl=document.getElementById('curl'), bhd=document.getElementById('bhd'), bcta=document.getElementById('bcta');
-const ctag=document.getElementById('ctag'), cname=document.getElementById('cname'), cdesc=document.getElementById('cdesc'), cchips=document.getElementById('cchips');
-const cvisit=document.getElementById('cvisit');
-let ci=0, winOpen=false;
+const bframe=document.getElementById('bframe'), bshot=document.getElementById('bshot');
+const baddr=document.getElementById('baddr'), bgo=document.getElementById('bgo');
+const crail=document.getElementById('crail');
+const cdesc=document.getElementById('cdesc'), cchips=document.getElementById('cchips');
+const cvisit=document.getElementById('cvisit'), cvisitd=document.getElementById('cvisitd');
+let ci=-1, typeTimer=0, loadTimer=0;
 
-function renderGrid(){
-  cgrid.innerHTML=CLIENTS.map((c,i)=>`
-    <button class="csite ${c.v}${c.shot?' hasshot':''}" style="--i:${i}" data-i="${i}" data-h>
-      <span class="cchrome"><i></i><i></i><i></i></span>
-      <span class="cthumb">${c.shot?`<img class="cshot" src="${esc(c.shot)}" alt="" loading="lazy" onerror="this.remove()">`:`<span class="cwm">${esc(c.name)}</span>`}</span>
-      <span class="cfoot"><b>${esc(c.name)}</b><span>${esc(c.tag)}</span></span>
+const hrefOf=c=>c.href||('https://'+c.url);
+
+function renderRail(){
+  crail.innerHTML=CLIENTS.map((c,i)=>
+    `<button class="cli" data-i="${i}" data-h aria-pressed="false">
+      <span class="cln">${esc(c.name)}</span>
+      <span class="cls">${esc(c.tag)}</span>
     </button>`).join('');
-  if(dot && finePointer && !reduced) bindHover(cgrid);
+  if(dot && finePointer && !reduced) bindHover(crail);
 }
-renderGrid();
+
+/* The shot is taller than the frame; --pan is exactly how far it may travel so it
+   comes to rest flush with its own bottom edge rather than over-scrolling. */
+function measurePan(){
+  const view=bshot.parentElement;
+  if(!view || !bshot.naturalWidth) return;
+  /* Read the height the image actually renders at, so the CSS that widens it to
+     crop the scrollbar is accounted for rather than guessed around. */
+  const imgH=bshot.getBoundingClientRect().height;
+  bframe.style.setProperty('--pan', `-${Math.max(0, Math.round(imgH-view.clientHeight))}px`);
+}
+
+/* Typing the domain is the section's one flourish: the frame navigates, like the
+   thing it is showing. Under reduced motion it simply appears. */
+function typeUrl(text){
+  clearInterval(typeTimer);
+  if(reduced){ baddr.textContent=text; return; }
+  baddr.textContent='';
+  let i=0;
+  typeTimer=setInterval(()=>{
+    if(_dead){clearInterval(typeTimer);return;}
+    baddr.textContent=text.slice(0,++i);
+    if(i>=text.length) clearInterval(typeTimer);
+  },26);
+}
+
+function selectClient(i){
+  if(i===ci) return;
+  ci=(i+CLIENTS.length)%CLIENTS.length;
+  const c=CLIENTS[ci];
+
+  [...crail.children].forEach((b,j)=>{
+    b.classList.toggle('on',j===ci);
+    b.setAttribute('aria-pressed',j===ci?'true':'false');
+  });
+
+  typeUrl(c.url);
+  if(!reduced){
+    bframe.classList.remove('loading');
+    void bframe.offsetWidth;
+    bframe.classList.add('loading');
+    clearTimeout(loadTimer);
+    loadTimer=setTimeout(()=>{ if(!_dead) bframe.classList.remove('loading'); },950);
+  }
+
+  bshot.classList.remove('in');
+  bshot.alt=c.name+' website';
+  /* Print-scale screenshots go through Next's optimizer rather than down the wire. */
+  bshot.src=c.shot?optimized(c.shot,1200):'';
+
+  cdesc.textContent=c.desc;
+  cchips.innerHTML=c.chips.map(x=>`<span>${esc(x)}</span>`).join('');
+  cvisit.href=hrefOf(c);
+  cvisitd.textContent=c.url;
+  bgo.href=hrefOf(c);
+}
+
+bshot.addEventListener('load',()=>{ measurePan(); bshot.classList.add('in'); });
+bshot.addEventListener('error',()=>{ bshot.classList.remove('in'); });
+
+crail.addEventListener('click',e=>{
+  const b=e.target.closest('.cli');
+  if(b) selectClient(+b.dataset.i);
+});
+
+renderRail();
+selectClient(0);
 
 /* Pull the dashboard-managed portfolio; keep the seeded roster if it's empty. */
 (async ()=>{
@@ -190,74 +261,26 @@ renderGrid();
     if(!res.ok) return;
     const data=await res.json();
     if(_dead || !Array.isArray(data) || data.length===0) return;
-    CLIENTS=data.map((p,i)=>({
+    CLIENTS=data.map(p=>({
       name:p.title,
-      v:VARIANTS[i%VARIANTS.length],
-      tag:(p.tags&&p.tags[0])||'CLIENT WEBSITE',
+      tag:(p.tags&&p.tags[0])||'Client website',
       url:String(p.external_url||'').replace(/^https?:\/\//,'').replace(/\/$/,''),
       href:p.external_url,
-      hd:String(p.title||'').toUpperCase(),
-      cta:'VISIT SITE',
       shot:p.image_url||'',
       desc:p.description,
       chips:(p.tags||[]).map(t=>String(t).toUpperCase()),
     }));
-    renderGrid();
+    renderRail();
+    ci=-1;
+    selectClient(0);
   }catch{
     /* keep the seeded roster */
   }
 })();
 
-function fillClient(i){
-  ci=(i+CLIENTS.length)%CLIENTS.length;
-  const c=CLIENTS[ci];
-  cpanel.className='cpanel '+c.v+(c.shot?' hasshot':'');
-  curl.textContent=c.url;
-  bhd.dataset.t=c.hd;
-  bhd.innerHTML=c.shot?`<img class="cshot" src="${esc(c.shot)}" alt="" onerror="this.remove()">`:'';
-  bcta.textContent=c.cta;
-  ctag.textContent=c.tag;
-  cname.textContent=c.name;
-  cdesc.textContent=c.desc;
-  cchips.innerHTML=c.chips.map(x=>`<span>${esc(x)}</span>`).join('');
-  cvisit.href=c.href||('https://'+c.url);
-}
-function replayBuild(){
-  cwin.classList.remove('show');
-  void cwin.offsetWidth;
-  cwin.classList.add('show');
-}
-function openClient(i){
-  fillClient(i);
-  winOpen=true;
-  cwin.classList.add('openw');
-  document.body.style.overflow='hidden';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>cwin.classList.add('show')));
-}
-function closeClient(){
-  winOpen=false;
-  cwin.classList.remove('show');
-  setTimeout(()=>{cwin.classList.remove('openw');document.body.style.overflow='';},420);
-}
-cgrid.addEventListener('click',e=>{
-  const b=e.target.closest('.csite');
-  if(b) openClient(+b.dataset.i);
-});
-document.getElementById('cclose').addEventListener('click',closeClient);
-document.getElementById('cbk').addEventListener('click',closeClient);
-document.getElementById('cprev').addEventListener('click',()=>{fillClient(ci-1);replayBuild();});
-document.getElementById('cnext').addEventListener('click',()=>{fillClient(ci+1);replayBuild();});
-const _onKey=e=>{
-  if(!winOpen)return;
-  if(e.key==='Escape')closeClient();
-  if(e.key==='ArrowLeft'){fillClient(ci-1);replayBuild();}
-  if(e.key==='ArrowRight'){fillClient(ci+1);replayBuild();}
-};
-addEventListener('keydown',_onKey); _winListeners.push(['keydown',_onKey]);
-
-/* ---------- SOCIAL scrub + tilts ---------- */
-const sSoc=document.getElementById('social');
-const cols=[...document.querySelectorAll('.mcol')];
+/* ---------- SOCIAL card tilts ----------
+   The columns used to be scrubbed up and down against scroll. They are static
+   now — the only motion left here is the pointer-driven tilt below. */
 if(!reduced && finePointer){
   document.querySelectorAll('.mcard').forEach(card=>{
     card.addEventListener('mousemove',e=>{
@@ -281,7 +304,7 @@ if(!reduced && finePointer){
    On mobile the gradient interpolation is dropped for a per-zone colour swap
    — a phone repaints a full-viewport gradient far too slowly to do it live. */
 const topline=document.getElementById('topline');
-let Y=scrollY, dirty=true, VH=innerHeight, DOCH=1, AMPF=1, IS_M=false, lastZone=-1;
+let Y=scrollY, dirty=true, VH=innerHeight, DOCH=1, IS_M=false, lastZone=-1;
 const GEOMAP={};
 function measure(){
   VH=innerHeight;
@@ -289,8 +312,8 @@ function measure(){
   secs.forEach(el=>{GEOMAP[el.id]={top:el.offsetTop,h:el.offsetHeight};});
   zones.forEach(z=>{z.t=z.el.offsetTop;});
   IS_M=matchMedia('(max-width:768px)').matches;
-  AMPF=IS_M?0.45:1;
   buildGaze();
+  measurePan();
   dirty=true;
 }
 const P=id=>{const g=GEOMAP[id];return g?clamp((Y-g.top)/((g.h-VH)||1),0,1):0;};
@@ -342,9 +365,6 @@ function render(){
   wsteps.forEach((s,i)=>s.classList.toggle('on',i===wi));
   wticks.forEach((t,i)=>t.classList.toggle('on',i<=wi));
 
-  /* social parallax — damped on mobile, where the full throw reads as jitter */
-  const psc=P('social');
-  cols.forEach(c=>{c.style.transform=`translateY(${(0.5-psc)*2*parseFloat(c.dataset.amp)*AMPF}px)`;});
 }
 
 const _onScroll=()=>{dirty=true;};
@@ -371,6 +391,7 @@ if(staticScrub){ Y=scrollY; updateDots(); }
 function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId); cancelAnimationFrame(_curRaf);
+  clearInterval(typeTimer); clearTimeout(loadTimer);
   try{ioS.disconnect();}catch(e){}
   try{stopRecog();}catch(e){}
   document.removeEventListener('visibilitychange',_onVis);

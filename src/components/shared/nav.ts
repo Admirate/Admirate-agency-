@@ -7,16 +7,26 @@
  * light and the black sections without any per-section handling.
  */
 
+import { asset } from "@/lib/cdn";
+
+const LOGO = asset("admirate logo.webp");
+
 export const NAV_CSS = String.raw`
 /* Surface sits just above pure black, with a hairline highlight, so the pill
    still reads as a distinct object over the black sections (#intro, #reels,
    #cta, #web, #collat) as well as over the light ones. */
+/* width:max-content is load-bearing. Fixed + left:50% makes the pill shrink-to-
+   fit against the space right of the 50% line, which on a phone is narrower than
+   its own contents — the box then lands smaller than its children and clips the
+   CTA off the right edge. max-content sizes it to what it actually holds; the
+   media queries below are what keep that under max-width. */
 .pnav{
   position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:150;
   display:flex;align-items:center;gap:clamp(6px,1.4vw,18px);
+  width:max-content;
   background:rgba(20,20,23,.92);border:1px solid rgba(255,255,255,.1);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-radius:999px;padding:7px 7px 7px 16px;max-width:calc(100vw - 24px);
+  border-radius:999px;padding:7px;max-width:calc(100vw - 24px);
   box-shadow:0 8px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05);
   transition:box-shadow .3s,transform .3s,background .3s,border-color .3s;
 }
@@ -28,16 +38,18 @@ export const NAV_CSS = String.raw`
 
 /* min-height on every hit area keeps the tap targets ~40px on touch, rather
    than the ~20-26px the text alone would give. */
-.pnav .pbrand{display:flex;align-items:center;gap:9px;text-decoration:none;flex:0 0 auto;min-height:40px}
-.pnav .pmark{
-  width:26px;height:26px;flex:0 0 26px;border-radius:8px;
-  background:linear-gradient(150deg,#FF3B4E,#E3001B 55%,#9c0013);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-weight:900;font-size:14px;color:#fff;line-height:1;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+.pnav .pbrand{display:flex;align-items:center;text-decoration:none;flex:0 0 auto;min-height:40px}
+/* The lockup is a red mark next to a near-black wordmark, so it cannot sit
+   directly on the dark pill — the wordmark would vanish. It rides on a white
+   chip instead, which keeps both halves exactly as drawn. The chip echoes the
+   pill's own radius and the CTA's shape at the other end. */
+.pnav .pchip{
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  background:#fff;border-radius:999px;padding:6px 12px;
+  transition:transform .18s,box-shadow .18s;
 }
-.pnav .pword{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:15px;letter-spacing:.01em;color:#fff;white-space:nowrap}
-.pnav .pword b{color:var(--red);-webkit-text-fill-color:var(--red)}
+.pnav .pbrand:hover .pchip{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.32)}
+.pnav .plogo{display:block;height:18px;width:auto}
 
 .pnav .plinks{display:flex;align-items:center;gap:clamp(2px,.9vw,8px);margin-left:clamp(4px,1vw,14px)}
 .pnav .plink{
@@ -68,24 +80,37 @@ export const NAV_CSS = String.raw`
 
 /* Tablet — drop the gaps before anything has to shrink. */
 @media (max-width:860px){
-  .pnav{gap:8px;padding:6px 6px 6px 14px}
+  .pnav{gap:8px;padding:6px}
   .pnav .plink{padding:8px 10px}
 }
-/* Phone — the wordmark and the long half of the CTA label are the first things
-   to go, so the three links survive at a tappable size. */
+/* Phone — the logo chip tightens and the long half of the CTA label goes, so
+   the three links survive at a tappable size. */
 @media (max-width:640px){
-  .pnav{gap:2px;padding:4px 4px 4px 10px;top:10px}
-  .pnav .pword{display:none}
-  .pnav .plink{padding:0 9px;font-size:12.5px}
-  .pnav .pcta{padding:0 13px;font-size:12.5px;gap:5px}
+  .pnav{gap:2px;padding:4px;top:10px}
+  .pnav .pchip{padding:5px 8px}
+  .pnav .plogo{height:14px}
+  .pnav .plink{padding:0 7px;font-size:12.5px}
+  .pnav .pcta{padding:0 12px;font-size:12.5px;gap:5px}
   .pnav .pcta .ctalong{display:none}
 }
 @media (max-width:380px){
-  .pnav .plink{padding:0 7px;font-size:12px}
-  .pnav .pcta{padding:0 11px}
+  .pnav .pchip{padding:4px 7px}
+  .pnav .plogo{height:12px}
+  .pnav .plink{padding:0 6px;font-size:12px}
+  .pnav .pcta{padding:0 10px}
+}
+/* Last stop before the CTA would be pushed past the pill's edge (320px-class
+   phones). Everything gives up a couple of pixels rather than any one element
+   collapsing. */
+@media (max-width:340px){
+  .pnav{gap:1px}
+  .pnav .pchip{padding:3px 6px}
+  .pnav .plogo{height:11px}
+  .pnav .plink{padding:0 5px;font-size:11.5px}
+  .pnav .pcta{padding:0 9px;font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){
-  .pnav,.pnav .pcta,.pnav .pcta .ar{transition:none}
+  .pnav,.pnav .pchip,.pnav .pcta,.pnav .pcta .ar{transition:none}
 }
 `;
 
@@ -101,8 +126,7 @@ const LINKS: { id: NavPage; label: string; href: string }[] = [
 export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
 <nav class="pnav" id="pnav" aria-label="Primary">
   <a class="pbrand" href="/" data-h aria-label="ADMIRATE home">
-    <span class="pmark" aria-hidden="true">A</span>
-    <span class="pword">ADMIRATE<b>.</b></span>
+    <span class="pchip"><img class="plogo" src="${LOGO}" alt="" width="213" height="46" decoding="async"></span>
   </a>
   <div class="plinks">
     ${LINKS.map(

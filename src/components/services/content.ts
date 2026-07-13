@@ -1,3 +1,5 @@
+import { creative, optimized } from "@/lib/cdn";
+
 export const SERVICES_CSS = String.raw`
 :root{
   --white:#FFFFFF;
@@ -180,108 +182,89 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .wcomp.c2 .whd{background:linear-gradient(135deg,var(--red),#7e000f)}
 .wcomp.c3 .whd{background:#f0f0ec}.wcomp.c3 .whd::after{color:#111}
 
-/* ============ S5 CLIENT WEBSITES (full) ============ */
-.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2vw,24px);width:min(1040px,100%)}
-.csite{text-align:left;background:var(--white);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 rgba(11,11,12,.05);opacity:0;transform:translateY(30px);transition:opacity .6s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s;padding:0;display:block;width:100%}
-.sec.active .csite{opacity:1;transform:none;transition-delay:calc(var(--i)*90ms + .2s),calc(var(--i)*90ms + .2s),0s,0s}
-.csite:hover{box-shadow:9px 9px 0 rgba(227,0,27,.16);border-color:var(--red);transform:translateY(-4px)}
-.csite .cchrome{display:flex;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line);background:#FBFBFA}
-.csite .cchrome i{width:7px;height:7px;border-radius:50%;background:#DDD}
-.csite .cchrome i:first-child{background:var(--red)}
-.csite .cthumb{aspect-ratio:16/11;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.v1 .cthumb{background:linear-gradient(150deg,#151517,#3b0009)}
-.v2 .cthumb{background:linear-gradient(150deg,var(--red),#7e000f)}
-.v3 .cthumb{background:linear-gradient(150deg,#f2f2ee,#fff)}
-.v4 .cthumb{background:linear-gradient(150deg,#0e0e10,#26262a)}
-.csite .cthumb .cwm{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(13px,1.7vw,20px);color:#fff;letter-spacing:.01em;text-align:center;line-height:1.15;padding:0 10px}
-.v3 .cthumb .cwm{color:#111}
-.cshot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
-.csite .cthumb::after{content:"OPEN CASE →";position:absolute;left:50%;bottom:12px;transform:translate(-50%,8px);font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#fff;opacity:0;transition:opacity .3s,transform .3s;z-index:2;text-shadow:0 1px 6px rgba(0,0,0,.6)}
-.v3 .cthumb::after{color:#111;text-shadow:none}
-.csite.hasshot .cthumb::after{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.6)}
-.csite:hover .cthumb::after{opacity:1;transform:translate(-50%,0)}
-.csite .cfoot{padding:11px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--grey);display:flex;justify-content:space-between;gap:8px}
-.csite .cfoot b{color:var(--black);font-weight:500}
-.csite .cfoot span{text-align:right}
+/* ============ S5 CLIENT WEBSITES (full) ============
+   This section has to prove the studio ships real websites, so it shows real
+   websites. One large browser frame holds an actual screenshot of the live page;
+   a rail switches which site is loaded. Picking a client retypes the domain in
+   the address bar and sweeps a load bar under it — the section behaves like the
+   thing it is showing. Hovering the frame scrolls the page inside it, so what
+   you get is the site, not a thumbnail of it.
 
-/* client overlay */
-.cwin{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px)}
-.cwin.openw{display:flex}
-.cbk{position:absolute;inset:0;background:rgba(11,11,12,.72);backdrop-filter:blur(6px);opacity:0;transition:opacity .4s}
-.cwin.show .cbk{opacity:1}
-.cpanel{position:relative;background:var(--white);border-radius:12px;width:min(1020px,100%);max-height:88svh;overflow:auto;display:flex;gap:clamp(20px,3vw,44px);padding:clamp(20px,3vw,40px);opacity:0;transform:translateY(34px) scale(.96);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
-.cwin.show .cpanel{opacity:1;transform:none}
-.cmedia{flex:1 1 480px;min-width:0}
-.bwin{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 24px 60px rgba(11,11,12,.18)}
-.bwin .cchrome{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid var(--line);background:#FBFBFA}
-.bwin .cchrome i{width:8px;height:8px;border-radius:50%;background:#DDD}
-.bwin .cchrome i:first-child{background:var(--red)}
-.bwin .curl{flex:1;background:#F0F0ED;border-radius:4px;padding:4px 10px;font-family:var(--mono);font-size:10px;color:#555;white-space:nowrap;overflow:hidden}
-.bbody{padding:18px;aspect-ratio:16/10.5}
-.bhd{height:34%;border-radius:6px;position:relative;overflow:hidden;margin-bottom:13px;transform:translateX(-26px);opacity:0;transition:transform .6s .25s cubic-bezier(.2,.8,.2,1),opacity .6s .25s}
-.cwin.show .bhd{transform:none;opacity:1}
-.bhd::after{content:attr(data-t);position:absolute;left:14px;bottom:11px;font-family:var(--display);font-weight:900;color:#fff;font-size:clamp(13px,1.6vw,19px);z-index:2;text-shadow:0 1px 8px rgba(0,0,0,.55)}
-.cpanel.v1 .bhd{background:linear-gradient(150deg,#151517,#3b0009)}
-.cpanel.v2 .bhd{background:linear-gradient(150deg,var(--red),#7e000f)}
-.cpanel.v3 .bhd{background:linear-gradient(150deg,#e9e9e4,#fff)}.cpanel.v3 .bhd::after{color:#111;text-shadow:none}
-.cpanel.v4 .bhd{background:linear-gradient(150deg,#0e0e10,#26262a)}
-.cpanel.hasshot .bhd::after{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.55)}
-.bln{height:8px;background:#EFEFEC;border-radius:4px;margin-bottom:8px;transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.7,0,.3,1) .45s}
-.cwin.show .bln{transform:scaleX(1)}
-.cwin.show .bln:nth-of-type(2){transition-delay:.55s}
-.cwin.show .bln:nth-of-type(3){transition-delay:.65s}
-.bln:nth-of-type(3){width:60%}
-.bcta{display:inline-block;margin-top:6px;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:9px 16px;border-radius:3px;transform:scale(0);transition:transform .4s .8s cubic-bezier(.34,1.56,.64,1)}
-.cwin.show .bcta{transform:scale(1)}
-.ctext{flex:1 1 300px;min-width:260px;display:flex;flex-direction:column}
-.ctag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--red);margin-bottom:10px}
-.ctext h3{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(24px,3vw,38px);letter-spacing:-.01em;margin-bottom:12px}
-.ctext .cdesc{font-weight:300;font-size:15px;color:#4a4a4d;line-height:1.65;margin-bottom:18px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-.chips span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;border:1px solid var(--line);padding:7px 12px;border-radius:20px;color:#3a3a3d}
-.cvisit{align-self:flex-start;font-family:var(--body);font-weight:600;font-size:14px;text-decoration:none;background:var(--black);color:#fff;padding:13px 22px;display:inline-flex;gap:9px;align-items:center;transition:transform .18s,box-shadow .18s}
+   It replaces four gradient tiles that carried nothing but the client's name in
+   type, plus a modal that repeated them. */
+.showcase{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(230px,.85fr);gap:clamp(20px,2.8vw,40px);width:min(1120px,100%);align-items:start}
+
+/* ---- the browser ---- */
+.bframe{position:relative;background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 26px 60px rgba(11,11,12,.13),6px 6px 0 rgba(11,11,12,.05);opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.sec.active .bframe{opacity:1;transform:none;transition-delay:.2s}
+.bbar{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);background:#FBFBFA}
+.bdots{display:flex;gap:6px;flex:0 0 auto}
+.bdots i{width:8px;height:8px;border-radius:50%;background:#DDD}
+.bdots i:first-child{background:var(--red)}
+.baddr{flex:1;min-width:0;display:flex;align-items:center;background:#F0F0ED;border-radius:5px;padding:6px 11px;font-family:var(--mono);font-size:11px;color:#55555a;white-space:nowrap;overflow:hidden}
+.baddr b{font-weight:400;color:#2a2a2e}
+/* The caret only blinks while the domain is being typed — it is a state, not decoration. */
+.bcaret{width:1px;height:12px;background:var(--red);margin-left:2px;opacity:0;flex:0 0 1px}
+.bframe.loading .bcaret{opacity:1;animation:bcar .66s steps(2) infinite}
+@keyframes bcar{50%{opacity:0}}
+.bgo{flex:0 0 auto;width:27px;height:27px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--grey);text-decoration:none;font-size:13px;transition:background .2s,color .2s}
+.bgo:hover{background:var(--red);color:#fff}
+.bload{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--red);transform:scaleX(0);transform-origin:left;opacity:0}
+.bframe.loading .bload{animation:bload .9s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes bload{0%{opacity:1;transform:scaleX(0)}72%{opacity:1;transform:scaleX(.92)}100%{opacity:0;transform:scaleX(1)}}
+
+.bview{position:relative;aspect-ratio:16/10;overflow:hidden;background:#EFEFEC}
+/* --pan is how far this particular shot can travel inside the frame. JS measures
+   it per image, so a dashboard-supplied screenshot of any height still lands
+   flush at the bottom instead of over- or under-scrolling. */
+/* The captures include the browser's own scrollbar down their right edge. The
+   extra width pushes that strip past the frame instead of showing it.
+   max-width:none is required — Tailwind's preflight sets img{max-width:100%}
+   globally from globals.css, which silently clamps the overhang back to zero. */
+.bview img{position:absolute;top:0;left:0;width:calc(100% + 18px);max-width:none;height:auto;display:block;opacity:0;transition:opacity .5s ease,transform 7s linear}
+.bview img.in{opacity:1}
+@media (hover:hover){
+  .bframe:hover .bview img.in{transform:translateY(var(--pan,0px))}
+}
+.bhint{position:absolute;right:11px;bottom:10px;z-index:2;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:#fff;background:rgba(11,11,12,.55);backdrop-filter:blur(4px);padding:5px 10px;border-radius:20px;opacity:0;transition:opacity .35s;pointer-events:none}
+.sec.active .bframe .bhint{opacity:1;transition-delay:1.2s}
+.sec.active .bframe:hover .bhint{opacity:0;transition-delay:0s}
+@media (pointer:coarse){.bhint{display:none}}
+
+/* ---- the client rail ---- */
+.cside{display:flex;flex-direction:column;gap:18px;opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.sec.active .cside{opacity:1;transform:none;transition-delay:.32s}
+.crail{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.cli{position:relative;width:100%;text-align:left;background:none;padding:13px 14px 13px 17px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:3px;transition:background .25s}
+.cli::before{content:"";position:absolute;left:0;top:-1px;bottom:-1px;width:2px;background:var(--red);transform:scaleY(0);transform-origin:top;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.cli.on::before{transform:scaleY(1)}
+.cli:hover{background:rgba(11,11,12,.03)}
+.cln{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--grey);transition:color .25s}
+.cli.on .cln,.cli:hover .cln{color:var(--black)}
+.cls{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--grey);transition:color .25s}
+.cli.on .cls{color:var(--red)}
+
+.cdesc{font-weight:300;font-size:14px;line-height:1.62;color:#4a4a4d}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chips span{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;border:1px solid var(--line);padding:6px 10px;border-radius:20px;color:#3a3a3d}
+.cvisit{align-self:flex-start;font-family:var(--body);font-weight:600;font-size:13.5px;text-decoration:none;background:var(--black);color:#fff;padding:12px 18px;display:inline-flex;gap:8px;align-items:center;transition:transform .18s,box-shadow .18s}
+.cvisit .ar{transition:transform .18s}
 .cvisit:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--red)}
-.cctrl{margin-top:auto;padding-top:26px;display:flex;gap:10px}
-.cbtn{width:40px;height:40px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--black);transition:border-color .25s,background .25s,color .25s}
-.cbtn:hover{border-color:var(--red);background:var(--red);color:#fff}
-.cclose{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;transition:border-color .25s,background .25s,color .25s;background:var(--white);z-index:3}
-.cclose:hover{border-color:var(--red);background:var(--red);color:#fff}
+.cvisit:hover .ar{transform:translate(2px,-2px)}
+.cli:focus-visible,.bgo:focus-visible,.cvisit:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 
-/* ============ S6 SOCIAL (scrub) ============ */
-#social{height:220vh}
-.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:min(920px,100%,calc((100svh - 340px)*1.7));perspective:1200px}
-.mcol{display:flex;flex-direction:column;gap:14px;will-change:transform}
-.mcard{background:var(--white);border:1px solid var(--line);border-radius:6px;aspect-ratio:4/4.6;position:relative;overflow:hidden;opacity:0;transform:rotateX(14deg) translateY(50px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);box-shadow:4px 4px 0 rgba(11,11,12,.05);will-change:transform}
-.sec.active .mcard{opacity:1;transform:none;transition-delay:calc(var(--i)*90ms + .15s)}
-/* padding-bottom reserves the strip the .rprog scrubber sits in, so a title that
-   wraps to two lines can't run underneath it. */
-.mcard .mhd{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:13px 13px 24px;color:#fff}
-.mcard .mhd::before{content:"";position:absolute;inset:0;z-index:0}
-.mcard.g1 .mhd::before{background:linear-gradient(160deg,#1c1c1e,#3b0009)}
-.mcard.g2 .mhd::before{background:linear-gradient(160deg,var(--red),#7e000f)}
-.mcard.g3 .mhd::before{background:linear-gradient(160deg,#f2f2ee,#fff)}
-.mcard.g3 .mhd{color:#111}
-.mcard.g4 .mhd::before{background:linear-gradient(160deg,#0e0e10,#26262a)}
-.mcard .mhd *{position:relative;z-index:1}
-.mcard .mtag{font-family:var(--mono);font-size:9px;letter-spacing:.16em;opacity:.85;margin-bottom:5px}
-.mcard .mttl{font-family:var(--display);font-weight:800;font-size:14px;text-transform:uppercase}
-.mcard .sticker{position:absolute;top:11px;right:11px;z-index:1;background:#fff;color:var(--red);font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:5px 9px;border-radius:20px;transform:rotate(6deg)}
-.mcard.g3 .sticker{background:var(--black);color:#fff}
-.mcard .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:1;animation:ppulse 2s ease-in-out infinite}
-.mcard .play::after{content:"";border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent #fff;margin-left:3px}
-@keyframes ppulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 0 12px rgba(255,255,255,0)}}
-.mcard .rprog{position:absolute;left:11px;right:11px;bottom:11px;height:2.5px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden;z-index:1}
-.mcard .rprog i{display:block;height:100%;width:40%;background:#fff;animation:rp 3.2s linear infinite}
-@keyframes rp{from{transform:translateX(-110%)}to{transform:translateX(260%)}}
-.sbars{position:absolute;top:11px;left:11px;right:44px;display:flex;gap:5px;z-index:1}
-.sbars i{flex:1;height:2.5px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;position:relative}
-.sbars i::after{content:"";position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
-.sbars i:nth-child(1)::after{animation:sf1 6s linear infinite}
-.sbars i:nth-child(2)::after{animation:sf2 6s linear infinite}
-.sbars i:nth-child(3)::after{animation:sf3 6s linear infinite}
-@keyframes sf1{0%{transform:scaleX(0)}30%{transform:scaleX(1)}100%{transform:scaleX(1)}}
-@keyframes sf2{0%,30%{transform:scaleX(0)}63%{transform:scaleX(1)}100%{transform:scaleX(1)}}
-@keyframes sf3{0%,63%{transform:scaleX(0)}96%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+/* ============ S6 SOCIAL (full) ============
+   Real client creatives, held still. This was a 220vh pinned scrub whose only
+   job was to slide the four columns against each other; with that motion gone
+   the extra scroll height had nothing to drive, so the section flows normally
+   and simply grows to fit the work. The cards keep their native proportions
+   (--ar: 1 for the square posts, .8 for the 4:5 ones) rather than being forced
+   into one ratio — a cropped creative is a misrepresented creative. */
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:min(1040px,100%);perspective:1200px}
+.mcol{display:flex;flex-direction:column;gap:14px}
+.mcard{background:var(--white);border:1px solid var(--line);border-radius:6px;aspect-ratio:var(--ar,1);position:relative;overflow:hidden;opacity:0;transform:rotateX(14deg) translateY(50px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);box-shadow:4px 4px 0 rgba(11,11,12,.05);will-change:transform}
+.sec.active .mcard{opacity:1;transform:none;transition-delay:calc(var(--i)*70ms + .15s)}
+.mcard img{display:block;width:100%;height:100%;object-fit:cover}
 
 /* ============ S7 COLLATERALS (full) ============ */
 .shelfwrap{position:relative}
@@ -355,12 +338,11 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   /* Less scroll travel per scrub — coarser input, same choreography. */
   #eye{height:240vh}
   #web{height:270vh}
-  #social{height:190vh}
 
   .full,.scrub .stage{padding-right:calc(var(--pad) + 30px)}
   .lgrid{grid-template-columns:repeat(4,minmax(78px,120px));gap:12px}
-  .cgrid{grid-template-columns:repeat(2,1fr);width:min(720px,100%)}
-  .mgrid{width:min(680px,100%)}
+  .showcase{grid-template-columns:minmax(0,1.5fr) minmax(200px,1fr);width:min(880px,100%)}
+  .mgrid{width:min(760px,100%)}
   .comp{height:min(52svh,420px)}
   .citem{width:clamp(120px,20vw,170px)}
   .shead p{font-size:14.5px}
@@ -393,14 +375,15 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .wticks{margin-top:16px}
   .browser{width:min(560px,100%)}
 
-  .cpanel{flex-direction:column;max-height:90svh}
-  .cmedia,.ctext{flex:0 0 auto;min-width:0}
-  .cctrl{margin-top:24px}
+  /* Frame over rail. The rail turns into a two-up row of tabs so all four
+     clients stay reachable without a scroll. */
+  .showcase{grid-template-columns:1fr;width:min(620px,100%)}
+  .crail{display:grid;grid-template-columns:1fr 1fr}
+  .cli{padding-left:15px}
 
-  /* Four columns of two cards each is 8 cards deep on a 2-col grid — far taller
-     than the stage. Show one card per column so the grid stays 2x2. */
-  .mgrid{grid-template-columns:repeat(2,1fr);width:min(420px,100%);gap:12px}
-  .mcol .mcard + .mcard{display:none}
+  /* Two columns on a phone. Nothing is hidden any more — the section flows, so
+     it can be as tall as the work is. */
+  .mgrid{grid-template-columns:repeat(2,1fr);width:min(460px,100%);gap:12px}
 
   .lgrid{grid-template-columns:repeat(4,minmax(64px,100px));gap:10px}
   .shelf{gap:clamp(16px,4vw,32px)}
@@ -418,19 +401,17 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   #scrollhint{margin-top:30px}
 
   .lgrid{grid-template-columns:repeat(2,minmax(96px,132px));gap:12px}
-  .cgrid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .csite .cfoot{flex-direction:column;gap:3px}
-  .csite .cfoot span{text-align:left}
-  .mgrid{width:min(300px,100%)}
+  .showcase{gap:16px}
+  .cln{font-size:12.5px}
+  .cls{font-size:9px;letter-spacing:.08em}
+  .baddr{font-size:10px}
+  .mgrid{width:min(340px,100%);gap:10px}
   .citem{width:clamp(120px,40vw,150px)}
   .shelfring{display:none}
   .comp{height:min(100%,300px);padding:16px}
   .comp .ccta{padding:10px 16px;font-size:10px}
   .sq{width:22px;height:22px}
   #consist h2{font-size:clamp(23px,6.4vw,32px)}
-  .ctext h3{font-size:26px}
-  .cpanel{padding:20px}
-  .cclose{top:10px;right:10px;width:34px;height:34px}
 }
 
 /* ---------- MOBILE (matches admirate-design-mobile-v2.html) ----------
@@ -455,7 +436,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   /* Human-length scrubs: same choreography over less travel. */
   #eye{height:200vh}
   #web{height:220vh}
-  #social{height:170vh}
 
   /* Let the logo grid breathe past one screen; snap still lands on its top. */
   #logos{height:auto;min-height:100svh}
@@ -489,9 +469,8 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   #web,#collat{background:var(--black)}
 
   /* pinned end-states */
-  .rise,.ltile,.ltile .lf,.mcard,.citem,.csite,.sq{opacity:1!important;transform:none!important;clip-path:none!important}
+  .rise,.ltile,.ltile .lf,.mcard,.citem,.bframe,.cside,.sq{opacity:1!important;transform:none!important;clip-path:none!important}
   .fixseg i{transform:scaleX(1)!important}
-  .mcol{transform:none!important}
   .wsteps{min-height:0}
   .wstep{position:static;opacity:1!important;transform:none!important;margin-bottom:14px}
   .comps{aspect-ratio:auto}
@@ -503,9 +482,8 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .comp{height:auto;width:min(260px,100%);aspect-ratio:4/5}
   .browser{width:min(440px,100%)}
   .mgrid{grid-template-columns:repeat(4,1fr);width:min(560px,100%)}
-  .mcol .mcard + .mcard{display:none}
   .lgrid{grid-template-columns:repeat(4,minmax(70px,110px))}
-  .cgrid{grid-template-columns:repeat(4,1fr)}
+  .showcase{grid-template-columns:minmax(0,1.6fr) minmax(190px,1fr);width:min(760px,100%)}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -516,7 +494,9 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .full{height:auto;min-height:70vh;padding-top:90px;padding-bottom:90px}
   .stagewrap,.duo{flex:none;height:auto;padding:20px 0 0}
   .full,.scrub .stage{padding:80px var(--pad)}
-  .rise,#hero h1 .w,#hero .tag,#hero .sub,#hero .rule,#scrollhint,.ltile,.ltile .lf,.mcard,.citem,.sq,.wstep,.wcomp,.fix,.csite{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;animation:none!important}
+  .rise,#hero h1 .w,#hero .tag,#hero .sub,#hero .rule,#scrollhint,.ltile,.ltile .lf,.mcard,.citem,.sq,.wstep,.wcomp,.fix,.bframe,.cside{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;animation:none!important}
+  /* No page-pan without motion — the shot simply sits at the top of the frame. */
+  .bview img{transform:none!important;transition:none!important}
   .wcomp{position:static;margin-bottom:20px}
   .wstep{position:static;margin-bottom:20px}
   #bgfade{display:none}
@@ -524,6 +504,52 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   #web,#collat{background:var(--black)}
 }
 `;
+
+/**
+ * Real client creatives for #social, laid out as four independent columns.
+ *
+ * `ar` is each image's true aspect ratio — 1 for the square posts, .8 for the
+ * 4:5 ones — so nothing is cropped to fit a single card shape. The columns are
+ * split to come out roughly level in height (a 4:5 card is 1.25x the height of
+ * a square at the same width), not simply 4/4/3/3 down the list.
+ */
+const CREATIVE_COLS: { file: string; ar: number; alt: string }[][] = [
+  [
+    { file: "adivaramangadi2.png", ar: 0.8, alt: "Adivara Mangadi — campaign creative" },
+    { file: "handloomexpo2.png", ar: 0.8, alt: "Handloom Expo — campaign creative" },
+    { file: "1.jpg", ar: 1, alt: "Client social creative" },
+  ],
+  [
+    { file: "parkinsons.png", ar: 0.8, alt: "Parkinson's awareness — campaign creative" },
+    { file: "sastriyayoga2.png", ar: 0.8, alt: "Sastriya Yoga — campaign creative" },
+    { file: "ms.jpg", ar: 1, alt: "Client social creative" },
+  ],
+  [
+    { file: "veganmarket2.png", ar: 0.8, alt: "Vegan Market — campaign creative" },
+    { file: "1@72x-100.jpg", ar: 1, alt: "Client social creative" },
+    { file: "Artboard 1 copy.jpg", ar: 1, alt: "Client social creative" },
+    { file: "f1@72x-100.jpg", ar: 1, alt: "Client social creative" },
+  ],
+  [
+    { file: "Artboard 1@100x-100.jpg", ar: 0.8, alt: "Client social creative" },
+    { file: "Artboard 6@100x-100.jpg", ar: 1, alt: "Client social creative" },
+    { file: "Artboard 1@72x-100.jpg", ar: 1, alt: "Client social creative" },
+    { file: "Find Your game_1080x1080.jpg", ar: 1, alt: "Find Your Game — campaign creative" },
+  ],
+];
+
+/* --i drives the reveal stagger, so it counts across the row, not down a column. */
+const MGRID_HTML = CREATIVE_COLS.map(
+  (col, ci) =>
+    `<div class="mcol">${col
+      .map(
+        (c, ri) =>
+          `<div class="mcard" style="--i:${ri * CREATIVE_COLS.length + ci};--ar:${c.ar}" data-h><img src="${optimized(
+            creative(c.file)
+          )}" alt="${c.alt}" loading="lazy" decoding="async"></div>`
+      )
+      .join("")}</div>`
+).join("");
 
 export const SERVICES_HTML = String.raw`
 
@@ -651,44 +677,45 @@ export const SERVICES_HTML = String.raw`
   <div class="shead">
     <div class="eb rise" style="--rd:0s">CLIENT WEBSITES</div>
     <h2 class="rise" style="--rd:.1s">Sites we've shipped, ready to open.</h2>
-    <p class="rise" style="--rd:.2s">Tap any build to open the case — what the client needed, what we made, and the live link.</p>
+    <p class="rise" style="--rd:.2s">Pick a client and their site loads here. Every one of them is live right now — open it and judge the work yourself.</p>
   </div>
   <div class="stagewrap">
-    <div class="cgrid" id="cgrid"></div>
+    <div class="showcase">
+      <div class="bframe" id="bframe">
+        <div class="bbar">
+          <span class="bdots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="baddr"><b id="baddr"></b><em class="bcaret" aria-hidden="true"></em></span>
+          <a class="bgo" id="bgo" target="_blank" rel="noopener noreferrer" data-h aria-label="Open this site in a new tab">↗</a>
+          <span class="bload" aria-hidden="true"></span>
+        </div>
+        <div class="bview">
+          <img id="bshot" alt="">
+          <span class="bhint" aria-hidden="true">HOVER TO SCROLL THE PAGE</span>
+        </div>
+      </div>
+
+      <aside class="cside">
+        <div class="crail" id="crail"></div>
+        <p class="cdesc" id="cdesc"></p>
+        <div class="chips" id="cchips"></div>
+        <a class="cvisit" id="cvisit" target="_blank" rel="noopener noreferrer" data-h>Open <span id="cvisitd"></span> <span class="ar">↗</span></a>
+      </aside>
+    </div>
   </div>
   <div class="idx">05 — 09</div>
 </section>
 
-<!-- S6 SOCIAL (scrub) -->
-<section id="social" class="sec scrub" data-bg="#FBF7F1">
-  <div class="stage">
-    <div class="shead">
-      <div class="eb rise" style="--rd:0s">SOCIAL CREATIVES</div>
-      <h2 class="rise" style="--rd:.1s">Creatives that actually ship — not just get planned.</h2>
-      <p class="rise" style="--rd:.2s">This is where real client work lands as projects go out the door — posts, reel covers and campaign creative that carry your identity into every feed.</p>
-    </div>
-    <div class="stagewrap">
-      <div class="mgrid" id="mgrid">
-        <div class="mcol" data-amp="120">
-          <div class="mcard g1" style="--i:0" data-h><div class="mhd"><div class="mtag">CAMPAIGN</div><div class="mttl">Launch Post</div></div><span class="sticker">NEW</span></div>
-          <div class="mcard g3" style="--i:4" data-h><div class="mhd"><div class="mtag">CAROUSEL</div><div class="mttl">How It Works</div></div></div>
-        </div>
-        <div class="mcol" data-amp="-80">
-          <div class="mcard g2" style="--i:1" data-h><div class="mhd"><div class="mtag">REEL</div><div class="mttl">Behind the Scenes</div></div><div class="play"></div><div class="rprog"><i></i></div></div>
-          <div class="mcard g4" style="--i:5" data-h><div class="sbars"><i></i><i></i><i></i></div><div class="mhd"><div class="mtag">STORY</div><div class="mttl">Product Drop</div></div></div>
-        </div>
-        <div class="mcol" data-amp="160">
-          <div class="mcard g4" style="--i:2" data-h><div class="mhd"><div class="mtag">PROMO</div><div class="mttl">Weekend Offer</div></div><span class="sticker">-20%</span></div>
-          <div class="mcard g2" style="--i:6" data-h><div class="mhd"><div class="mtag">QUOTE</div><div class="mttl">Client Feedback</div></div></div>
-        </div>
-        <div class="mcol" data-amp="-110">
-          <div class="mcard g3" style="--i:3" data-h><div class="mhd"><div class="mtag">TEASER</div><div class="mttl">Coming Soon</div></div></div>
-          <div class="mcard g1" style="--i:7" data-h><div class="mhd"><div class="mtag">EVENT</div><div class="mttl">Save the Date</div></div><span class="sticker">RSVP</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="idx">06 — 09</div>
+<!-- S6 SOCIAL (full) -->
+<section id="social" class="sec full" data-bg="#FBF7F1">
+  <div class="shead">
+    <div class="eb rise" style="--rd:0s">SOCIAL CREATIVES</div>
+    <h2 class="rise" style="--rd:.1s">Creatives that actually ship — not just get planned.</h2>
+    <p class="rise" style="--rd:.2s">This is where real client work lands as projects go out the door — posts, reel covers and campaign creative that carry your identity into every feed.</p>
   </div>
+  <div class="stagewrap">
+    <div class="mgrid" id="mgrid">${MGRID_HTML}</div>
+  </div>
+  <div class="idx">06 — 09</div>
 </section>
 
 <!-- S7 COLLATERALS (full) -->
@@ -749,32 +776,4 @@ export const SERVICES_HTML = String.raw`
 </section>
 
 <!-- CLIENT OVERLAY -->
-<div class="cwin" id="cwin" role="dialog" aria-modal="true">
-  <div class="cbk" id="cbk"></div>
-  <div class="cpanel" id="cpanel">
-    <button class="cclose" id="cclose" data-h aria-label="Close">✕</button>
-    <div class="cmedia">
-      <div class="bwin">
-        <div class="cchrome"><i></i><i></i><i></i><div class="curl" id="curl"></div></div>
-        <div class="bbody">
-          <div class="bhd" id="bhd" data-t=""></div>
-          <div class="bln"></div><div class="bln"></div><div class="bln"></div>
-          <span class="bcta" id="bcta"></span>
-        </div>
-      </div>
-    </div>
-    <div class="ctext">
-      <div class="ctag" id="ctag"></div>
-      <h3 id="cname"></h3>
-      <p class="cdesc" id="cdesc"></p>
-      <div class="chips" id="cchips"></div>
-      <a class="cvisit" href="#" id="cvisit" target="_blank" rel="noopener noreferrer" data-h>Visit site <span>→</span></a>
-      <div class="cctrl">
-        <button class="cbtn" id="cprev" data-h aria-label="Previous">‹</button>
-        <button class="cbtn" id="cnext" data-h aria-label="Next">›</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 `;

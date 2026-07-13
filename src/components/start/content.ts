@@ -1,3 +1,7 @@
+import { asset } from "@/lib/cdn";
+
+const LOGO = asset("admirate logo.webp");
+
 export const START_CSS = String.raw`
 :root{
   --white:#FFFFFF;
@@ -29,11 +33,21 @@ input,textarea{font:inherit;color:inherit}
 }
 @media (pointer:coarse){#cdot,#cring{display:none}}
 
-/* —— nav: blend-difference so it reads on both black and paper —— */
-nav{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;justify-content:space-between;align-items:center;padding:20px var(--pad);mix-blend-mode:difference;color:#fff}
-nav .logo{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:18px;letter-spacing:.02em;text-decoration:none;color:#fff}
-nav .logo b{color:var(--red);-webkit-text-fill-color:var(--red)}
-nav a.back{font-family:var(--mono);font-size:11px;text-decoration:none;color:#fff;border:1px solid rgba(255,255,255,.85);padding:9px 16px;letter-spacing:.12em}
+/* —— nav —— */
+/* This nav used to ride mix-blend-mode:difference so it stayed legible as the
+   background morphs ink -> paper. The logo cannot survive that: under difference
+   the mark's red inverts to cyan on paper. The blend is gone, and both children
+   now carry their own contrast instead — a white chip for the logo, a solid ink
+   chip for the back link. Both read on either background, with no blending.
+   (Moving the blend down onto .back alone does NOT work: nav is a fixed,
+   z-indexed stacking context, so a child blends against nav's own transparent
+   backdrop rather than the page, and the link washes out to white on paper.) */
+nav{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;justify-content:space-between;align-items:center;padding:20px var(--pad);color:#fff}
+nav .logo{display:flex;align-items:center;background:#fff;border-radius:999px;padding:6px 12px;text-decoration:none;transition:transform .18s,box-shadow .18s}
+nav .logo:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+nav .logo img{display:block;height:18px;width:auto}
+nav a.back{font-family:var(--mono);font-size:11px;text-decoration:none;color:#fff;background:var(--black);border:1px solid rgba(255,255,255,.28);padding:9px 16px;letter-spacing:.12em;transition:background .2s,border-color .2s}
+nav a.back:hover{background:var(--red);border-color:var(--red)}
 
 main{position:relative;z-index:3}
 
@@ -146,7 +160,9 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);padding:16px
   h1{font-size:clamp(34px,9.6vw,52px)}
   .frow{grid-template-columns:1fr}
   #scrollhint{bottom:22px}
-  nav{mix-blend-mode:normal;background:rgba(11,11,12,.85);backdrop-filter:blur(8px);border-bottom:1px solid #1d1d1f}
+  nav{background:rgba(11,11,12,.85);backdrop-filter:blur(8px);border-bottom:1px solid #1d1d1f;padding:12px var(--pad)}
+  nav .logo{padding:5px 10px}
+  nav .logo img{height:16px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01s!important;transition-duration:.01s!important;animation-delay:0s!important;transition-delay:0s!important}
@@ -164,7 +180,7 @@ export const START_HTML = String.raw`
 <div id="cdot"></div><div id="cring"></div>
 
 <nav>
-  <a class="logo" href="/" data-h>ADMIRATE<b>.</b></a>
+  <a class="logo" href="/" data-h aria-label="ADMIRATE home"><img src="${LOGO}" alt="" width="213" height="46" decoding="async"></a>
   <a class="back" href="/" data-h>← BACK TO SITE</a>
 </nav>
 

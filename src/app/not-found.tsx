@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { asset } from '@/lib/cdn'
 
 export default function NotFound() {
   return (
@@ -7,10 +8,10 @@ export default function NotFound() {
       className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center font-inter"
     >
       <Image
-        src="/redadmiratelogo.png"
+        src={asset('admirate logo.webp')}
         alt="ADMIRATE"
-        width={200}
-        height={60}
+        width={213}
+        height={46}
         className="mb-12 object-contain"
         priority
       />

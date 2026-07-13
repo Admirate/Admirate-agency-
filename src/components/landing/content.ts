@@ -267,8 +267,23 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 .marquee:hover .mtrack{animation-play-state:paused}
 @keyframes mq{to{transform:translateX(-100%)}}
 @keyframes mqr{from{transform:translateX(-100%)}to{transform:translateX(0)}}
-.mk{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(23px,3.4vw,38px);padding:24px clamp(20px,3.2vw,40px);color:var(--black);text-transform:uppercase;display:inline-flex;align-items:center;gap:clamp(20px,3.2vw,40px);letter-spacing:-.01em}
-.mk::after{content:"—";color:var(--red);font-family:var(--body);font-weight:700;font-size:.55em}
+/* Real client marks, not their names set in type. They arrive at wildly different
+   proportions (0.99 to 2.93 wide), so they are sized by a common height and left
+   to take whatever width that gives — the standard logo-wall treatment. The
+   square marks would otherwise read as tiny next to the wordmarks. */
+.mk{padding:24px clamp(20px,3.2vw,40px);display:inline-flex;align-items:center;gap:clamp(20px,3.2vw,40px)}
+/* Bounded by height AND width, not height alone. Height alone lets a long
+   wordmark (Samyoga, 5.7:1) sprawl while a stacked mark (Seniors for Change,
+   1:1, icon over two lines) shrinks to nothing. Capping both makes the set
+   self-balancing: wide marks bind on width, square ones on height.
+   --s then nudges any file that carries heavy empty padding (Sportex). */
+.mk img{display:block;width:auto;height:auto;object-fit:contain;
+  max-height:calc(clamp(34px,4vw,52px) * var(--s,1));
+  max-width:calc(clamp(110px,13vw,180px) * var(--s,1))}
+/* Zythum's mark is white-on-transparent and would be invisible on this white
+   row. It is a single-colour mark, so inverting it yields a clean black one. */
+.mk img.inv{filter:invert(1)}
+.mk::after{content:"—";color:var(--red);font-family:var(--body);font-weight:700;font-size:20px}
 .note{font-family:var(--mono);font-size:10px;color:var(--grey);padding:22px var(--pad) 0}
 
 /* ============ S9 CTA ============ */
@@ -358,7 +373,8 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .reel .rh{font-size:14px}
   .reel .rc{font-size:10.5px}
 
-  .mk{font-size:22px;padding:18px 20px;gap:20px}
+  .mk{padding:18px 20px;gap:20px}
+  .mk img{max-height:calc(32px * var(--s,1));max-width:calc(104px * var(--s,1))}
 }
 
 /* ---------- MOBILE (matches admirate-landing-mobile-v3.html) ---------- */
