@@ -17,6 +17,16 @@ const contactSchema = z.object({
     .string()
     .min(10, "Message must be at least 10 characters")
     .max(2000, "Message must be under 2000 characters"),
+  // Collected only by the /start-project brief. Optional, so the plain contact
+  // path — which never sends them — validates exactly as it did before.
+  company: z
+    .string()
+    .max(120, "Company name is too long")
+    .optional()
+    .or(z.literal("")),
+  services: z.array(z.string().max(60)).max(20).optional(),
+  budget: z.string().max(40).optional().or(z.literal("")),
+  timeline: z.string().max(40).optional().or(z.literal("")),
 });
 
 export async function POST(request: NextRequest) {
@@ -31,6 +41,10 @@ export async function POST(request: NextRequest) {
       email: validated.email,
       phone: validated.phone || null,
       message: validated.message,
+      company: validated.company || null,
+      services: validated.services ?? [],
+      budget: validated.budget || null,
+      timeline: validated.timeline || null,
     });
 
     if (error) {

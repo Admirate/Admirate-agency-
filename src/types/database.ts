@@ -17,6 +17,10 @@ export interface Database {
           phone: string | null;
           message: string;
           status: string;
+          company: string | null;
+          services: string[];
+          budget: string | null;
+          timeline: string | null;
           created_at: string;
         };
         Insert: {
@@ -26,6 +30,10 @@ export interface Database {
           phone?: string | null;
           message: string;
           status?: string;
+          company?: string | null;
+          services?: string[];
+          budget?: string | null;
+          timeline?: string | null;
           created_at?: string;
         };
         Update: {
@@ -35,6 +43,10 @@ export interface Database {
           phone?: string | null;
           message?: string;
           status?: string;
+          company?: string | null;
+          services?: string[];
+          budget?: string | null;
+          timeline?: string | null;
           created_at?: string;
         };
         Relationships: [];
