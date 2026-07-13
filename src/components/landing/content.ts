@@ -123,23 +123,22 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 #intro .strike.on::after{transform:scaleX(1)}
 
 /* ============ S3 SERVICES ============ */
-#services{height:240vh;background:var(--paper)}
-#services .stage::before{content:"";position:absolute;inset:-40%;background-image:radial-gradient(#EBEBE7 1.2px,transparent 1.2px);background-size:34px 34px;opacity:.4;animation:dotdrift 50s linear infinite;pointer-events:none}
+#services{background:var(--paper)}
+#services::before{content:"";position:absolute;inset:-40%;background-image:radial-gradient(#EBEBE7 1.2px,transparent 1.2px);background-size:34px 34px;opacity:.4;animation:dotdrift 50s linear infinite;pointer-events:none}
 @keyframes dotdrift{to{transform:translate(68px,68px)}}
-#services .svcbox{position:absolute;left:var(--pad);right:calc(var(--pad) + 44px);top:0;bottom:0}
-.svclist{position:absolute;inset:0}
-.svcline{position:absolute;left:0;top:50%;transform-origin:left center;display:flex;align-items:baseline;gap:clamp(12px,1.8vw,24px);font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;font-size:clamp(25px,4.4vw,58px);letter-spacing:-.01em;color:#DCDCD6;white-space:nowrap;will-change:transform,opacity}
-.svcline .n{font-family:var(--mono);font-weight:500;font-stretch:100%;font-size:.4em;color:#C6C6C0;letter-spacing:.12em}
-.svcline .ico{width:.62em;height:.62em;flex:0 0 auto;color:var(--red);opacity:.28;transform:scale(.72) rotate(-18deg);transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
-.svcline .ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.svcline.on .ico{opacity:1;transform:scale(1) rotate(0deg)}
-.svcline.on{color:var(--black)}
-.svcline.on .n{color:var(--red)}
-.svcmeta{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:14px;z-index:4}
-.svccount{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--grey)}
-.svccount b{color:var(--red);font-weight:500}
-.svctrack{width:2px;height:clamp(120px,24vh,200px);background:var(--line);position:relative}
-.svctrack i{position:absolute;left:0;top:0;width:100%;height:0;background:var(--red)}
+#services .stagewrap{padding-top:clamp(150px,22vh,200px)}
+.svcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,18px);width:min(1000px,calc(100% - 2*var(--pad)))}
+.svcblock{opacity:0;transform:translateY(26px) scale(.96);transition:opacity .55s cubic-bezier(.2,.8,.2,1),transform .55s cubic-bezier(.2,.8,.2,1)}
+.sec.active .svcblock{opacity:1;transform:none;transition-delay:calc(var(--i)*50ms + .15s)}
+.svcin{height:100%;background:var(--white);border:1px solid var(--line);box-shadow:5px 5px 0 rgba(11,11,12,.05);padding:clamp(14px,1.6vw,20px);display:flex;flex-direction:column;gap:12px;transition:background .25s,border-color .25s,box-shadow .25s,transform .25s;cursor:default}
+.svcin:hover{background:var(--red);border-color:var(--red);box-shadow:7px 7px 0 rgba(11,11,12,.85);transform:translateY(-4px)}
+.srow{display:flex;align-items:center;justify-content:space-between}
+.svcblock .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--red);transition:color .25s}
+.svcblock .ico{width:22px;height:22px;color:var(--red);transition:color .25s,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.svcblock .ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.svcblock .nm{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(12px,1.25vw,16px);letter-spacing:.02em;text-transform:uppercase;color:var(--black);transition:color .25s;line-height:1.25}
+.svcin:hover .n,.svcin:hover .nm{color:#fff}
+.svcin:hover .ico{color:#fff;transform:rotate(-8deg) scale(1.12)}
 
 /* ============ SCRUB SECTIONS ============ */
 .scrub{position:relative}
@@ -151,9 +150,10 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 @keyframes idle{from{transform:translateY(-6px)}to{transform:translateY(6px)}}
 
 /* ---- S4 LOGOS ---- */
-#logos{height:200vh;background:var(--white)}
+#logos{background:var(--white)}
 #logos .grid{display:grid;grid-template-columns:repeat(3,minmax(104px,168px));gap:clamp(12px,2vw,22px)}
-.tile{aspect-ratio:1;background:var(--white);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:clamp(17px,2.2vw,27px);box-shadow:5px 5px 0 rgba(11,11,12,.05);will-change:transform,opacity;transition:box-shadow .25s,border-color .25s}
+.tile{aspect-ratio:1;background:var(--white);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:clamp(17px,2.2vw,27px);box-shadow:5px 5px 0 rgba(11,11,12,.05);opacity:0;transform:translateX(var(--dx,-130px)) rotate(var(--dr,-7deg)) scale(.82);transition:box-shadow .25s,border-color .25s,opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1)}
+.sec.active .tile{opacity:1;transform:none;transition-delay:0s,0s,calc(var(--i)*85ms + .15s),calc(var(--i)*85ms + .15s)}
 .tile:hover{box-shadow:8px 8px 0 rgba(227,0,27,.16);border-color:var(--red)}
 .tile span{color:var(--black)}
 .tile .dot{color:var(--red)}
@@ -271,40 +271,7 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 .mk::after{content:"—";color:var(--red);font-family:var(--body);font-weight:700;font-size:.55em}
 .note{font-family:var(--mono);font-size:10px;color:var(--grey);padding:22px var(--pad) 0}
 
-/* ============ S9 CONTACT ============ */
-/* Overrides .full's fixed 100svh + overflow:hidden. The form is taller than a
-   short laptop viewport, and a clipped contact form is a lost lead. */
-#contact{background:var(--paper);display:flex;align-items:center;height:auto;min-height:100svh;overflow:visible;padding:clamp(112px,15vh,150px) var(--pad) 84px}
-#contact .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:110px 110px;opacity:.4;pointer-events:none}
-.cwrap{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;display:flex;gap:clamp(30px,6vw,90px);align-items:flex-start}
-.cleft{flex:1 1 380px;min-width:0}
-.cleft h2{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(30px,4.6vw,60px);line-height:1.04;text-transform:uppercase;letter-spacing:-.01em}
-.cleft h2 em{font-style:normal;color:var(--red)}
-.cleft .csub{margin-top:18px;font-weight:300;font-size:clamp(16px,1.7vw,20px);color:#3a3a3d;line-height:1.6;max-width:38ch}
-.cmeta{margin-top:34px;display:flex;flex-direction:column;gap:14px}
-.cmeta a,.cmeta span{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#2b2b2e;text-decoration:none;transition:color .2s}
-.cmeta a:hover{color:var(--red)}
-.cmeta b{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 26px;border:1px solid var(--line);background:var(--white);color:var(--red);font-size:12px;font-weight:400}
-.cform{flex:1 1 420px;min-width:0;background:var(--white);border:1px solid var(--line);box-shadow:10px 10px 0 rgba(11,11,12,.06);padding:clamp(22px,3vw,36px)}
-.cfield{margin-bottom:16px}
-.cfield label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--grey);margin-bottom:8px;text-transform:uppercase}
-.cfield input,.cfield textarea{width:100%;font-family:var(--body);font-size:15px;color:var(--black);background:var(--paper);border:1px solid var(--line);padding:13px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
-.cfield textarea{min-height:118px;resize:vertical}
-.cfield input:focus,.cfield textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(227,0,27,.09)}
-.cfield input::placeholder,.cfield textarea::placeholder{color:#b6b6ba}
-.cerr{display:none;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--red);margin-top:7px}
-.cfield.bad .cerr{display:block}
-.cfield.bad input,.cfield.bad textarea{border-color:var(--red)}
-.csend{width:100%;justify-content:center;background:var(--red);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.14em;padding:17px 20px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:transform .18s,box-shadow .18s,opacity .2s}
-.csend:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--black)}
-.csend:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
-.csend .ar{display:inline-block;transition:transform .18s}
-.csend:hover .ar{transform:translateX(5px)}
-.cnote{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--grey);text-align:center;min-height:1.4em}
-.cnote.ok{color:#0a8a2a}
-.cnote.bad{color:var(--red)}
-
-/* ============ S10 CTA ============ */
+/* ============ S9 CTA ============ */
 #cta{background:var(--black);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 var(--pad)}
 .ghost{position:absolute;top:50%;left:0;transform:translateY(-50%);white-space:nowrap;font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(110px,20vw,260px);color:transparent;-webkit-text-stroke:1px #1c1c1e;pointer-events:none;user-select:none}
 .ghost span{display:inline-block;animation:tick 46s linear infinite}
@@ -338,8 +305,6 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 @media (max-width:1024px){
   /* Shorten the scroll distance: the same animation over less travel keeps the
      pacing right on a touch device, where scrolling is coarser. */
-  #services{height:210vh}
-  #logos{height:175vh}
   #tv{height:215vh}
   #web{height:215vh}
   #reels{height:235vh}
@@ -349,15 +314,11 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .phone{height:min(56svh,470px)}
   .objcap{font-size:clamp(24px,4.6vw,44px)}
   #logos .grid{grid-template-columns:repeat(3,minmax(92px,140px));gap:14px}
-  .svcline{font-size:clamp(22px,3.8vw,40px);gap:14px}
-  .cwrap{gap:clamp(28px,4vw,50px)}
+  .svcgrid{gap:12px}
 }
 
 /* ---------- TABLET / PHONE: restructure the slides ---------- */
 @media (max-width:900px){
-  .cwrap{flex-direction:column;gap:34px}
-  .cform{width:100%}
-
   .scrub .stage{
     display:flex;flex-direction:column;
     padding:clamp(84px,11vh,104px) var(--pad) 34px;
@@ -365,9 +326,11 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .shead{position:static;flex:0 0 auto;margin-bottom:14px}
   .stagewrap{position:static;flex:1;min-height:0;padding-top:0;gap:clamp(10px,2vh,16px)}
 
-  /* #services has no .stagewrap — its list is an absolute layer, so instead of
-     restructuring it, push the layer below the heading. */
-  #services .svcbox{left:var(--pad);right:calc(var(--pad) + 30px);top:clamp(150px,22vh,200px)}
+  /* .full sections (#services, #logos) flow rather than centre-absolutely here,
+     so the desktop stand-off that cleared the absolute .shead would just be a
+     dead gap under a heading that now sits in the flow. */
+  #services .stagewrap{padding-top:0}
+  #services,#logos{padding:clamp(84px,11vh,104px) var(--pad) 40px}
 
   .objcap{font-size:clamp(22px,4.4vw,32px)}
   .phone{height:min(48svh,420px)}
@@ -382,11 +345,7 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .wcards{grid-template-columns:1fr 1fr}
   .wcards .c:nth-child(3){display:none}
   #hero .orbit{display:none}
-  #dots{display:none}
   h2.light{font-size:22px}
-  .svcline{font-size:20px;gap:10px}
-  .svcmeta{right:-6px}
-  .svccount{font-size:10px}
 
   #hero{padding:0 var(--pad) 40px}
   #hero .sub{font-size:17px;margin-top:16px}
@@ -399,10 +358,50 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .reel .rh{font-size:14px}
   .reel .rc{font-size:10.5px}
 
-  .cform{padding:20px}
-  .cfield textarea{min-height:96px}
-  .cleft h2{font-size:clamp(28px,8vw,38px)}
   .mk{font-size:22px;padding:18px 20px;gap:20px}
+}
+
+/* ---------- MOBILE (matches admirate-landing-mobile-v3.html) ---------- */
+@media (max-width:768px){
+  html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+  .sec{scroll-snap-align:start}
+  .full{scroll-snap-stop:always}
+
+  /* The dot rail stays on mobile, just smaller (the 640px block hides it; this
+     later rule brings it back for the supplied design). */
+  #dots{display:flex;right:7px;gap:9px}
+  #dots button{width:5px;height:5px}
+  #dots button.on{height:16px}
+
+  #terminal{width:92vw;font-size:13px}
+
+  /* Two-up service blocks, laid out as a row so the label reads beside the icon. */
+  .svcgrid{grid-template-columns:1fr 1fr;gap:10px;width:100%}
+  .svcin{flex-direction:row;align-items:center;gap:9px;padding:10px 12px}
+  .srow{gap:8px;justify-content:flex-start}
+  .svcblock .n{font-size:9px}
+  .svcblock .ico{width:15px;height:15px}
+  .svcblock .nm{font-size:10px;letter-spacing:.01em}
+
+  #logos .grid{grid-template-columns:repeat(2,minmax(0,132px))}
+
+  /* Human-length scrubs. */
+  #tv{height:220vh}
+  #web{height:230vh}
+  #reels{height:240vh}
+
+  .browser{width:min(450px,92vw)}
+  .tvframe{width:min(430px,90vw)}
+  .phone{height:min(64svh,480px)}
+}
+
+@media (max-width:400px){
+  .svcin{padding:9px 10px}
+  .svcblock .nm{font-size:9.5px}
+  #logos .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .tvframe,.browser{width:94vw}
+  .objcap{font-size:22px}
+  .phone{height:min(62svh,440px)}
 }
 
 /* ---------- SHORT VIEWPORTS ----------
@@ -426,18 +425,14 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .stagewrap{position:static;padding:18px 0 0;gap:14px}
   .full{min-height:0;padding-top:80px;padding-bottom:56px}
   #hero{min-height:100svh;padding-top:92px}
-  #contact{min-height:0}
   .objcap,#scrollhint{display:none}
 
-  /* pinned end-states */
-  .rise,.tile,.wnav,.wcards .c{opacity:1!important;transform:none!important}
+  /* pinned end-states — the scrub JS is off here, so anything it would have
+     animated (and anything CSS only reveals on .sec.active) has to be pinned. */
+  .rise,.tile,.wnav,.wcards .c,.svcblock{opacity:1!important;transform:none!important}
   .whero{clip-path:none!important}
   .wbtn,.sicon,.livechip{transform:none!important;opacity:1!important}
-  #services{height:auto!important}
-  #services .svcbox{position:static;padding:6px 0 16px}
-  .svclist{position:static}
-  .svcline{position:static;transform:none!important;opacity:1!important;color:var(--black);font-size:19px;padding:5px 0}
-  .svcmeta{display:none}
+  #services .stagewrap{padding-top:0}
 
   /* the mocks, sized for a short screen */
   .phone{height:min(82svh,330px)}
@@ -456,18 +451,13 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .stagewrap{position:static;padding:40px 20px}
   .shead{position:static;padding:0 var(--pad);margin-bottom:20px}
   .full{height:auto;min-height:70vh;padding-top:90px;padding-bottom:90px}
-  #contact{height:auto}
   #loader{display:none}
   body.locked{overflow:auto;height:auto}
   #hero h1 .w,#hero .kicker,#hero .sub,#hero .rule,#scrollhint,.ch{opacity:1;transform:none;filter:none}
-  .rise,.tile,.wnav,.wcards .c{opacity:1!important;transform:none!important}
+  .rise,.tile,.wnav,.wcards .c,.svcblock{opacity:1!important;transform:none!important}
   .whero{clip-path:none!important}
   .wbtn,.sicon,.livechip{transform:none!important;opacity:1!important}
-  #services{height:auto!important}
-  #services .svcbox{position:static;padding:10px var(--pad) 30px}
-  .svclist{position:static}
-  .svcline{position:static;transform:none!important;opacity:1!important;color:var(--black);font-size:20px;padding:6px 0}
-  .svcmeta{display:none}
+  #services .stagewrap{padding-top:0}
 }
 `;
 
@@ -515,46 +505,38 @@ export const LANDING_HTML = String.raw`
     <div class="tag">// WHAT IS ADMIRATE</div>
     <p class="big" id="introTxt">We're a full-stack ad agency obsessed with three things: <span class="acc">good design</span>, <span class="acc">user journeys</span> and <span class="acc">quick&nbsp;leads</span>. We build strong advertising material that moves buyers to act — not <span class="strike">social media fluff</span> that just sits there looking pretty.</p>
   </div>
-  <div class="idx">02 — 10</div>
+  <div class="idx">02 — 09</div>
 </section>
 
 <!-- S3 SERVICES -->
-<section id="services" class="sec scrub">
-  <div class="stage">
-    <div class="shead">
-      <div class="eb rise" style="--rd:0s">SERVICES — WHAT WE MAKE</div>
-      <h2 class="light rise" style="--rd:.12s">Everything your brand needs to be seen.</h2>
-    </div>
-    <div class="svcbox">
-      <div class="svclist" id="svclist"></div>
-      <div class="svcmeta">
-        <div class="svccount"><b id="svcno">01</b> / 12</div>
-        <div class="svctrack"><i id="svcprog"></i></div>
-      </div>
-    </div>
-    <div class="idx">03 — 10</div>
+<section id="services" class="sec full">
+  <div class="shead">
+    <div class="eb rise" style="--rd:0s">SERVICES — WHAT WE MAKE</div>
+    <h2 class="light rise" style="--rd:.12s">Everything your brand needs to be seen.</h2>
   </div>
+  <div class="stagewrap">
+    <div class="svcgrid" id="svcgrid"></div>
+  </div>
+  <div class="idx">03 — 09</div>
 </section>
 
-<!-- S4 LOGOS (scrub) -->
-<section id="logos" class="sec scrub">
-  <div class="stage">
-    <div class="shead">
-      <div class="eb rise" style="--rd:0s">01 / IDENTITY</div>
-      <h2 class="light rise" style="--rd:.12s">Logos &amp;<br>brand identity</h2>
-    </div>
-    <div class="stagewrap">
-      <div class="grid">
-        <div class="tile"><span>A<span class="dot">.</span></span></div>
-        <div class="tile"><span>KO</span></div>
-        <div class="tile"><span>▲RC</span></div>
-        <div class="tile"><span>NEXA</span></div>
-        <div class="tile"><span>Ø</span></div>
-        <div class="tile"><span>M/8</span></div>
-      </div>
-    </div>
-    <div class="idx">04 — 10</div>
+<!-- S4 LOGOS -->
+<section id="logos" class="sec full">
+  <div class="shead">
+    <div class="eb rise" style="--rd:0s">01 / IDENTITY</div>
+    <h2 class="light rise" style="--rd:.12s">Logos &amp;<br>brand identity</h2>
   </div>
+  <div class="stagewrap">
+    <div class="grid">
+      <div class="tile" style="--i:0;--dx:-130px;--dr:-7deg"><span>A<span class="dot">.</span></span></div>
+      <div class="tile" style="--i:1;--dx:130px;--dr:7deg"><span>KO</span></div>
+      <div class="tile" style="--i:2;--dx:-130px;--dr:-7deg"><span>▲RC</span></div>
+      <div class="tile" style="--i:3;--dx:130px;--dr:7deg"><span>NEXA</span></div>
+      <div class="tile" style="--i:4;--dx:-130px;--dr:-7deg"><span>Ø</span></div>
+      <div class="tile" style="--i:5;--dx:130px;--dr:7deg"><span>M/8</span></div>
+    </div>
+  </div>
+  <div class="idx">04 — 09</div>
 </section>
 
 <!-- S5 VIDEO (scrub) -->
@@ -580,7 +562,7 @@ export const LANDING_HTML = String.raw`
         <div class="tvbar"><i id="tvprog"></i></div>
       </div>
     </div>
-    <div class="idx">05 — 10</div>
+    <div class="idx">05 — 09</div>
   </div>
 </section>
 
@@ -611,7 +593,7 @@ export const LANDING_HTML = String.raw`
         </div>
       </div>
     </div>
-    <div class="idx">06 — 10</div>
+    <div class="idx">06 — 09</div>
   </div>
 </section>
 
@@ -690,7 +672,7 @@ export const LANDING_HTML = String.raw`
         </div>
       </div>
     </div>
-    <div class="idx">07 — 10</div>
+    <div class="idx">07 — 09</div>
   </div>
 </section>
 
@@ -704,62 +686,17 @@ export const LANDING_HTML = String.raw`
     <div class="marquee"><div class="mtrack" id="m1"></div><div class="mtrack" aria-hidden="true" id="m1b"></div></div>
     <div class="marquee rev"><div class="mtrack" id="m2"></div><div class="mtrack" aria-hidden="true" id="m2b"></div></div>
   </div>
-  <div class="idx">08 — 10</div>
+  <div class="idx">08 — 09</div>
 </section>
 
-<!-- S9 CONTACT -->
-<section id="contact" class="sec full">
-  <div class="grid-bg"></div>
-  <div class="cwrap">
-    <div class="cleft">
-      <div class="eb rise" style="--rd:0s">GET IN TOUCH</div>
-      <h2 class="rise" style="--rd:.1s">Tell us what<br>you're <em>building.</em></h2>
-      <p class="csub rise" style="--rd:.18s">Have a project in mind? Send it over and we'll come back to you within 24 hours — usually a lot sooner.</p>
-      <div class="cmeta rise" style="--rd:.26s">
-        <a href="mailto:essentials@admirate.in"><b>✉</b>essentials@admirate.in</a>
-        <a href="https://wa.me/918374494954" target="_blank" rel="noopener noreferrer"><b>✆</b>+91 83744 94954</a>
-        <span><b>◉</b>INDIA — WORKING WORLDWIDE</span>
-      </div>
-    </div>
-
-    <form class="cform rise" id="cform" style="--rd:.34s" novalidate>
-      <div class="cfield" id="fw-name">
-        <label for="c-name">Name</label>
-        <input id="c-name" name="name" type="text" placeholder="Your name" autocomplete="name">
-        <div class="cerr" id="err-name">Name must be at least 2 characters</div>
-      </div>
-      <div class="cfield" id="fw-email">
-        <label for="c-email">Email</label>
-        <input id="c-email" name="email" type="email" placeholder="your@email.com" autocomplete="email">
-        <div class="cerr" id="err-email">Please enter a valid email address</div>
-      </div>
-      <div class="cfield" id="fw-phone">
-        <label for="c-phone">Phone <span style="color:#c9c9cc">(optional)</span></label>
-        <input id="c-phone" name="phone" type="tel" placeholder="+91" autocomplete="tel">
-        <div class="cerr" id="err-phone">Phone number is too long</div>
-      </div>
-      <div class="cfield" id="fw-message">
-        <label for="c-message">Message</label>
-        <textarea id="c-message" name="message" placeholder="Tell us about your project…"></textarea>
-        <div class="cerr" id="err-message">Message must be at least 10 characters</div>
-      </div>
-      <button type="submit" class="csend" id="csend">
-        <span id="csend-label">SEND VIA WHATSAPP</span> <span class="ar">→</span>
-      </button>
-      <div class="cnote" id="cnote">Opens WhatsApp with your message pre-filled.</div>
-    </form>
-  </div>
-  <div class="idx">09 — 10</div>
-</section>
-
-<!-- S10 CTA -->
+<!-- S9 CTA -->
 <section id="cta" class="sec full dark">
   <div class="ghost"><span>ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — </span></div>
   <h2 class="rise" style="--rd:0s">The journey starts<br>with <em>one click.</em></h2>
   <p class="rise" style="--rd:.14s">// LESS FLUFF — MORE LEADS. TELL US YOUR GOAL.</p>
   <div class="btns rise" style="--rd:.28s">
     <a class="btn dark" href="/services">See our designs <span class="ar">→</span></a>
-    <a class="btn red" href="#contact">Start your project <span class="ar">→</span></a>
+    <a class="btn red" href="/start-project">Start your project <span class="ar">→</span></a>
   </div>
   <footer>
     <div>© 2026 ADMIRATE.IN</div>
