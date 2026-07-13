@@ -50,11 +50,12 @@ const ioS=new IntersectionObserver(es=>{
   });
 },{threshold:.35});
 secs.forEach(s=>ioS.observe(s));
+let lastDot=-1;
 function updateDots(){
-  const mid=innerHeight/2;
+  const mid=Y+VH/2;
   let cur=0;
-  secs.forEach((s,i)=>{const r=s.getBoundingClientRect();if(r.top<=mid&&r.bottom>mid)cur=i;});
-  dots.forEach((d,j)=>d.classList.toggle('on',j===cur));
+  secs.forEach((sc,i)=>{const g=GEOMAP[sc.id];if(g&&mid>=g.top&&mid<g.top+g.h)cur=i;});
+  if(cur!==lastDot){lastDot=cur;dots.forEach((d,j)=>d.classList.toggle('on',j===cur));}
 }
 
 /* ---------- custom cursor ---------- */
@@ -85,16 +86,15 @@ if(!reduced && finePointer){
 
 /* ---------- background morph ---------- */
 const bg=document.getElementById('bgfade');
-const zones=[...document.querySelectorAll('[data-bg]')].map(el=>({el,c:el.dataset.bg}));
+const zones=[...document.querySelectorAll('[data-bg]')].map(el=>({el,c:el.dataset.bg,t:0}));
 function hex2rgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
 function mix(a,b,t){const A=hex2rgb(a),B=hex2rgb(b);return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`;}
-function bgMorph(){
-  const mid=scrollY+innerHeight*0.5;
+function bgMorph(mid){
   let cur=zones[0],next=null,t=0;
   for(let i=0;i<zones.length;i++){
-    if(mid>=zones[i].el.offsetTop){cur=zones[i];next=zones[i+1]||null;}
+    if(mid>=zones[i].t){cur=zones[i];next=zones[i+1]||null;}
   }
-  if(next){const win=innerHeight*0.5;t=seg(mid,next.el.offsetTop-win,next.el.offsetTop+win*0.2);}
+  if(next){const win=VH*0.5;t=seg(mid,next.t-win,next.t+win*0.2);}
   bg.style.backgroundColor=next?mix(cur.c,next.c,t):cur.c;
 }
 
@@ -132,7 +132,7 @@ function buildGaze(){
   fixEls.forEach((f,i)=>{f.style.left=pts[i][0]+'px';f.style.top=pts[i][1]+'px';});
 }
 buildGaze();
-addEventListener('resize',buildGaze); _winListeners.push(['resize',buildGaze]);
+/* measure() rebuilds the gaze path on resize — see the render engine below. */
 const FIXP=[.1,.42,.7,.94];
 const fixsegs=[0,1,2,3].map(n=>document.getElementById('fs'+n));
 
@@ -274,68 +274,106 @@ if(!reduced && finePointer){
   });
 }
 
-/* ---------- master rAF ---------- */
-function progressOf(section){
-  const r=section.getBoundingClientRect();
-  return clamp(-r.top/(r.height-innerHeight),0,1);
-}
+/* ---------- render engine: cached geometry, event-gated frames ----------
+   The old loop read getBoundingClientRect() per section per frame and
+   repainted the bg gradient + orb every frame. Geometry is now measured once
+   (and on resize), and a frame is only rendered when scroll marked it dirty.
+   On mobile the gradient interpolation is dropped for a per-zone colour swap
+   — a phone repaints a full-viewport gradient far too slowly to do it live. */
 const topline=document.getElementById('topline');
+let Y=scrollY, dirty=true, VH=innerHeight, DOCH=1, AMPF=1, IS_M=false, lastZone=-1;
+const GEOMAP={};
+function measure(){
+  VH=innerHeight;
+  DOCH=document.documentElement.scrollHeight;
+  secs.forEach(el=>{GEOMAP[el.id]={top:el.offsetTop,h:el.offsetHeight};});
+  zones.forEach(z=>{z.t=z.el.offsetTop;});
+  IS_M=matchMedia('(max-width:768px)').matches;
+  AMPF=IS_M?0.45:1;
+  buildGaze();
+  dirty=true;
+}
+const P=id=>{const g=GEOMAP[id];return g?clamp((Y-g.top)/((g.h-VH)||1),0,1):0;};
+
+function render(){
+  const gp=clamp(Y/((DOCH-VH)||1),0,1);
+  topline.style.width=(gp*100)+'%';
+  updateDots();
+
+  const mid=Y+VH*0.5;
+  if(IS_M){
+    let zi=0;
+    for(let i=0;i<zones.length;i++){ if(mid>=zones[i].t) zi=i; }
+    if(zi!==lastZone){ lastZone=zi; bg.style.backgroundColor=zones[zi].c; }
+  } else {
+    bgMorph(mid);
+    orbTick(gp);
+  }
+
+  /* eye */
+  const pe=P('eye');
+  gpath.style.strokeDashoffset=(1-pe)*plen;
+  gtrail.style.strokeDashoffset=(1-pe)*plen;
+  if(plen>0){
+    const pt=gpath.getPointAtLength(pe*plen);
+    gdot.style.left=pt.x+'px';gdot.style.top=pt.y+'px';
+    gdot.style.opacity=pe>0.02?1:0;
+  }
+  let fi=0;
+  FIXP.forEach((fp,i)=>{
+    fixEls[i].classList.toggle('on',pe>=fp); // hidden but keeps JS clean
+    fixsegs[i].classList.toggle('on',pe>=fp);
+    if(pe>=fp)fi=i;
+  });
+  fixno.textContent=String(fi+1).padStart(2,'0');
+  comp.classList.toggle('done',pe>=FIXP[3]);
+
+  /* web */
+  const pw=P('web');
+  const wi=Math.min(2,Math.floor(pw*3));
+  if(wi!==lastWi){
+    lastWi=wi;
+    urlbar.textContent=URLS[wi];
+    browser.classList.remove('loading');
+    void browser.offsetWidth;
+    browser.classList.add('loading');
+  }
+  wcomps.forEach((c,i)=>c.classList.toggle('on',i===wi));
+  wsteps.forEach((s,i)=>s.classList.toggle('on',i===wi));
+  wticks.forEach((t,i)=>t.classList.toggle('on',i<=wi));
+
+  /* social parallax — damped on mobile, where the full throw reads as jitter */
+  const psc=P('social');
+  cols.forEach(c=>{c.style.transform=`translateY(${(0.5-psc)*2*parseFloat(c.dataset.amp)*AMPF}px)`;});
+}
+
+const _onScroll=()=>{dirty=true;};
+addEventListener('scroll',_onScroll,{passive:true}); _winListeners.push(['scroll',_onScroll]);
+const _onResize=()=>{measure();};
+addEventListener('resize',_onResize,{passive:true}); _winListeners.push(['resize',_onResize]);
+const _onOrient=()=>{setTimeout(measure,250);};
+addEventListener('orientationchange',_onOrient,{passive:true}); _winListeners.push(['orientationchange',_onOrient]);
+const _onVis=()=>{if(!document.hidden) measure();};
+document.addEventListener('visibilitychange',_onVis);
+const _onLoad=()=>setTimeout(measure,300);
+addEventListener('load',_onLoad,{once:true});
+
+measure();
+
 function raf(){
   if(_dead)return;
-  if(!staticScrub){
-    const doc=document.documentElement;
-    const gp=clamp(scrollY/(doc.scrollHeight-innerHeight||1),0,1);
-    topline.style.width=(gp*100)+'%';
-    updateDots();
-    bgMorph();
-    orbTick(gp);
-
-    /* eye */
-    const pe=progressOf(sEye);
-    gpath.style.strokeDashoffset=(1-pe)*plen;
-    gtrail.style.strokeDashoffset=(1-pe)*plen;
-    if(plen>0){
-      const pt=gpath.getPointAtLength(pe*plen);
-      gdot.style.left=pt.x+'px';gdot.style.top=pt.y+'px';
-      gdot.style.opacity=pe>0.02?1:0;
-    }
-    let fi=0;
-    FIXP.forEach((fp,i)=>{
-      fixEls[i].classList.toggle('on',pe>=fp); // hidden but keeps JS clean
-      fixsegs[i].classList.toggle('on',pe>=fp);
-      if(pe>=fp)fi=i;
-    });
-    fixno.textContent=String(fi+1).padStart(2,'0');
-    comp.classList.toggle('done',pe>=FIXP[3]);
-
-    /* web */
-    const pw=progressOf(sWeb);
-    const wi=Math.min(2,Math.floor(pw*3));
-    if(wi!==lastWi){
-      lastWi=wi;
-      urlbar.textContent=URLS[wi];
-      browser.classList.remove('loading');
-      void browser.offsetWidth;
-      browser.classList.add('loading');
-    }
-    wcomps.forEach((c,i)=>c.classList.toggle('on',i===wi));
-    wsteps.forEach((s,i)=>s.classList.toggle('on',i===wi));
-    wticks.forEach((t,i)=>t.classList.toggle('on',i<=wi));
-
-    /* social parallax */
-    const psc=progressOf(sSoc);
-    cols.forEach(c=>{c.style.transform=`translateY(${(0.5-psc)*2*parseFloat(c.dataset.amp)}px)`;});
-  }
+  if(!staticScrub && !document.hidden && dirty){ dirty=false; Y=scrollY; render(); }
   _rafId=requestAnimationFrame(raf);
 }
 _rafId=requestAnimationFrame(raf);
-if(staticScrub){updateDots();}
+if(staticScrub){ Y=scrollY; updateDots(); }
 
 function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId); cancelAnimationFrame(_curRaf);
   try{ioS.disconnect();}catch(e){}
   try{stopRecog();}catch(e){}
+  document.removeEventListener('visibilitychange',_onVis);
   _winListeners.forEach(([t,h])=>removeEventListener(t,h));
   document.body.style.overflow='';
   document.body.classList.remove('ready','hovering');
