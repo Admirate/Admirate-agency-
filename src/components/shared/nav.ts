@@ -98,7 +98,7 @@ const LINKS: { id: NavPage; label: string; href: string }[] = [
 ];
 
 /** `active` marks the current page; `ctaHref` differs per page (in-page anchor vs cross-page). */
-export const navHtml = (active: NavPage, ctaHref = "/#contact") => `
+export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
 <nav class="pnav" id="pnav" aria-label="Primary">
   <a class="pbrand" href="/" data-h aria-label="ADMIRATE home">
     <span class="pmark" aria-hidden="true">A</span>

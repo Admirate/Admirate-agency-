@@ -9,7 +9,7 @@ export default function LandingClient() {
   return (
     <RawPage
       css={LANDING_CSS + NAV_CSS}
-      html={navHtml("home", "#contact") + LANDING_HTML}
+      html={navHtml("home", "/start-project") + LANDING_HTML}
       init={() => {
         const stopNav = initNav();
         const stopPage = initLanding();

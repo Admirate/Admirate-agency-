@@ -10,6 +10,12 @@ type Submission = {
   phone: string | null;
   message: string;
   status: string;
+  // Only the /start-project brief sends these. Rows predating that page have
+  // them null/absent, so every render below is conditional.
+  company: string | null;
+  services: string[] | null;
+  budget: string | null;
+  timeline: string | null;
   created_at: string;
 };
 
@@ -135,6 +141,47 @@ const SubmissionsPage = () => {
                   <p className="text-sm text-gray-700 line-clamp-2">
                     {submission.message}
                   </p>
+
+                  {submission.company && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      {submission.company}
+                    </p>
+                  )}
+
+                  {submission.services && submission.services.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {submission.services.map((s) => (
+                        <span
+                          key={s}
+                          className="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {(submission.budget || submission.timeline) && (
+                    <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                      {submission.budget && (
+                        <span>
+                          Budget:{" "}
+                          <b className="font-medium text-gray-700">
+                            {submission.budget}
+                          </b>
+                        </span>
+                      )}
+                      {submission.timeline && (
+                        <span>
+                          Timeline:{" "}
+                          <b className="font-medium text-gray-700">
+                            {submission.timeline}
+                          </b>
+                        </span>
+                      )}
+                    </div>
+                  )}
+
                   <p className="text-xs text-gray-400 mt-2">
                     {new Date(submission.created_at).toLocaleDateString(
                       "en-IN",

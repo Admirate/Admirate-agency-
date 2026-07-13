@@ -740,7 +740,7 @@ export const SERVICES_HTML = String.raw`
   <p class="rise" style="--rd:.14s">// LESS FLUFF — MORE LEADS. TELL US YOUR GOAL.</p>
   <div class="btns rise" style="--rd:.28s">
     <a class="btn dark" href="/" data-h>Back to home <span class="ar">→</span></a>
-    <a class="btn red" href="/#contact" data-h>Start your project <span class="ar">→</span></a>
+    <a class="btn red" href="/start-project" data-h>Start your project <span class="ar">→</span></a>
   </div>
   <footer>
     <div>© 2026 ADMIRATE.IN</div>

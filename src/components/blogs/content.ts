@@ -216,7 +216,7 @@ const CTA = `
   <p>// LESS FLUFF — MORE LEADS. TELL US YOUR GOAL.</p>
   <div class="btns">
     <a class="btn dark" href="/services" data-h>See our designs <span class="ar">→</span></a>
-    <a class="btn red" href="/#contact" data-h>Start your project <span class="ar">→</span></a>
+    <a class="btn red" href="/start-project" data-h>Start your project <span class="ar">→</span></a>
   </div>
 </section>
 <footer class="bfoot">
@@ -304,7 +304,7 @@ export const postHtml = (p: Post) => {
       <div class="nlabel">NEXT UP</div>
       <div class="ntitle">${esc(next.title)}</div>
     </a>
-    <a class="btn red" href="/#contact" data-h>Start your project <span class="ar">→</span></a>
+    <a class="btn red" href="/start-project" data-h>Start your project <span class="ar">→</span></a>
   </div>
 </article>
 
