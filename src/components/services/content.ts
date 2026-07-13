@@ -433,6 +433,34 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .cclose{top:10px;right:10px;width:34px;height:34px}
 }
 
+/* ---------- MOBILE (matches admirate-design-mobile-v2.html) ----------
+   Single-hand rhythm: sections settle rather than land mid-scrub. The bg is
+   faded in CSS per section instead of being repainted per frame (see IS_M in
+   init.ts), and the light-orb — a 900px blurred radial — is dropped outright:
+   it is the single most expensive thing on the page to composite on a phone. */
+@media (max-width:768px){
+  html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+  .sec{scroll-snap-align:start}
+  .full{scroll-snap-stop:always}
+
+  #bgfade{transition:background-color .6s ease}
+  #lightorb{display:none}
+
+  /* The dot rail stays on mobile — the supplied design keeps it, just smaller.
+     (The 900px block above hides it; this re-declares it below 768px.) */
+  #dots{display:flex;right:7px;gap:9px}
+  #dots button{width:5px;height:5px}
+  #dots button.on{height:16px}
+
+  /* Human-length scrubs: same choreography over less travel. */
+  #eye{height:200vh}
+  #web{height:220vh}
+  #social{height:170vh}
+
+  /* Let the logo grid breathe past one screen; snap still lands on its top. */
+  #logos{height:auto;min-height:100svh}
+}
+
 /* ---------- SHORT VIEWPORTS ----------
    See the landing sheet: below 600px tall there isn't enough room for a heading,
    a paragraph and a device mock inside one sticky slide, so the scrub is
