@@ -107,15 +107,17 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 
 /* ============ S2 INTRO ============ */
 #intro{background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;padding:0 var(--pad)}
-#intro .ring{position:absolute;top:50%;left:50%;border:1px solid rgba(255,255,255,.07);border-radius:50%;pointer-events:none}
+#intro .ring{position:absolute;top:50%;left:50%;border:1px solid rgba(255,255,255,.018);border-radius:50%;pointer-events:none}
 #intro .ring.r1{width:90vmin;height:90vmin;transform:translate(-50%,-50%);animation:slowspin 90s linear infinite}
-#intro .ring.r2{width:64vmin;height:64vmin;transform:translate(-50%,-50%);border-style:dashed;border-color:rgba(227,0,27,.16);animation:slowspin 70s linear infinite reverse}
+#intro .ring.r2{width:64vmin;height:64vmin;transform:translate(-50%,-50%);border-style:dashed;border-color:rgba(227,0,27,.05);animation:slowspin 70s linear infinite reverse}
 @keyframes slowspin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-#intro .ring.r1::after{content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--red);opacity:.7}
+#intro .ring.r1::after{content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--red);opacity:.55}
 #intro .kglow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72vmin;height:72vmin;background:radial-gradient(circle,rgba(227,0,27,.11),transparent 65%);pointer-events:none;animation:glowpulse 11s ease-in-out infinite alternate}
 @keyframes glowpulse{from{opacity:.5}to{opacity:1}}
 #intro .iwrap{position:relative;z-index:1;max-width:920px;text-align:center}
-#intro .tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);margin-bottom:32px}
+/* Sits higher and reads larger than the other eyebrows on the page — this is the
+   only one that has to hold the centre of an otherwise empty black field. */
+#intro .tag{font-family:var(--mono);font-size:14px;letter-spacing:.24em;color:var(--red);margin-bottom:56px}
 #intro p.big{font-weight:300;font-size:clamp(21px,3.2vw,38px);line-height:1.5;letter-spacing:-.01em}
 #intro p.big .w{opacity:.1;transition:opacity .4s}
 #intro p.big .w.on{opacity:1}
@@ -562,7 +564,6 @@ export const LANDING_HTML = String.raw`
   <div class="stage">
     <div class="shead">
       <div class="eb rise" style="--rd:0s">VIDEO PRODUCTION</div>
-      <h2 class="light rise" style="--rd:.12s">Films, ads &amp; brand stories</h2>
     </div>
     <div class="stagewrap">
       <div class="objcap">Video Production</div>
@@ -588,7 +589,6 @@ export const LANDING_HTML = String.raw`
   <div class="stage">
     <div class="shead">
       <div class="eb rise" style="--rd:0s">DIGITAL</div>
-      <h2 class="light rise" style="--rd:.12s">Websites, booking systems &amp; chatbots</h2>
     </div>
     <div class="stagewrap">
       <div class="objcap">Websites</div>

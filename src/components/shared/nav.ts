@@ -244,10 +244,10 @@ const LINKS: { id: NavPage; label: string; href: string }[] = [
 type SvcItem = { label: string; href: string };
 
 const SERVICES: SvcItem[] = [
-  { label: "Design", href: "/services#eye" },
   { label: "Identity", href: "/services#logos" },
-  { label: "Digital", href: "/services#web" },
+  { label: "Design", href: "/services#eye" },
   { label: "Social Media", href: "/services#reels" },
+  { label: "Digital", href: "/services#web" },
   { label: "Video Production", href: "/services#tv" },
   { label: "Brand Collaterals", href: "/services#collat" },
 ];
