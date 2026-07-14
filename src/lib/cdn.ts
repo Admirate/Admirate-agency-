@@ -21,6 +21,17 @@ export const creative = (path: string) =>
   `${CDN_HOST}${STORAGE_PATH}/creatives%20new/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
 
 /**
+ * Post artwork, keyed by the object name in the "blogs images" bucket.
+ *
+ * The names are the post titles verbatim — spaces, commas, apostrophes,
+ * brackets, and in several cases a trailing full stop before the extension.
+ * encodeURIComponent leaves `'` and `()` alone and escapes `,` to %2C; the
+ * bucket serves either form, so the raw title can be passed straight through.
+ */
+export const blogImage = (path: string) =>
+  `${CDN_HOST}${STORAGE_PATH}/blogs%20images/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
+
+/**
  * Sends a remote image through Next's image optimizer.
  *
  * The raw creatives are print-scale (one is 4500x5625 / 5MB) and are displayed

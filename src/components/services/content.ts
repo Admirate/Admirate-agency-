@@ -114,8 +114,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .onblack .fixseg{background:rgba(255,255,255,.12)}
 .fixseg i{position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.7,0,.3,1)}
 .fixseg.on i{transform:scaleX(1)}
-.fixlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--grey);margin-top:10px}
-.fixlabel b{color:var(--red);font-weight:500}
 
 /* ============ S3 LOGOS (full) ============ */
 .stopchip{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--grey);display:flex;align-items:center;gap:9px}
@@ -145,7 +143,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .wsteps{position:relative;min-height:180px}
 .wstep{position:absolute;inset:0;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
 .wstep.on{opacity:1;transform:none}
-.wstep .wnum{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--red);margin-bottom:10px}
 .wstep h3{font-family:var(--display);font-weight:700;font-size:clamp(19px,2.3vw,26px);line-height:1.2;margin-bottom:10px;letter-spacing:-.01em;color:#fff}
 .wstep p{font-weight:300;font-size:15px;color:#b0b0b3;line-height:1.6;max-width:36ch}
 .wticks{display:flex;gap:8px;margin-top:26px}
@@ -220,7 +217,9 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
    extra width pushes that strip past the frame instead of showing it.
    max-width:none is required — Tailwind's preflight sets img{max-width:100%}
    globally from globals.css, which silently clamps the overhang back to zero. */
-.bview img{position:absolute;top:0;left:0;width:calc(100% + 18px);max-width:none;height:auto;display:block;opacity:0;transition:opacity .5s ease,transform 7s linear}
+/* --pandur is set per shot in init.ts (measurePan), so the pan holds a constant
+   speed across screenshots of very different heights. 7s is the fallback only. */
+.bview img{position:absolute;top:0;left:0;width:calc(100% + 18px);max-width:none;height:auto;display:block;opacity:0;transition:opacity .5s ease,transform var(--pandur,7s) linear}
 .bview img.in{opacity:1}
 @media (hover:hover){
   .bframe:hover .bview img.in{transform:translateY(var(--pan,0px))}
@@ -607,24 +606,36 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
  * split to come out roughly level in height (a 4:5 card is 1.25x the height of
  * a square at the same width), not simply 4/4/3/3 down the list.
  */
+/* The five "Design trends 2026" slides are ADMIRATE's own carousel and live in a
+   subfolder of the same bucket — note the double space in "admirate  creatives",
+   which is part of the real object name. They are led into separate columns
+   rather than stacked together, so the set reads as work in the grid instead of
+   a block of house marketing bolted onto the end. All five are 4:5. */
+const TRENDS = "admirate  creatives";
+
 const CREATIVE_COLS: { file: string; ar: number; alt: string }[][] = [
   [
+    { file: `${TRENDS}/1.jpg`, ar: 0.8, alt: "ADMIRATE — Design Trends 2026 carousel cover" },
     { file: "adivaramangadi2.png", ar: 0.8, alt: "Adivara Mangadi — campaign creative" },
     { file: "handloomexpo2.png", ar: 0.8, alt: "Handloom Expo — campaign creative" },
-    { file: "1.jpg", ar: 1, alt: "Client social creative" },
+    { file: `${TRENDS}/5.jpg`, ar: 0.8, alt: "Design Trends 2026 — surveillance design" },
   ],
   [
+    { file: `${TRENDS}/2.jpg`, ar: 0.8, alt: "Design Trends 2026 — exaggerated, bold text" },
     { file: "parkinsons.png", ar: 0.8, alt: "Parkinson's awareness — campaign creative" },
     { file: "sastriyayoga2.png", ar: 0.8, alt: "Sastriya Yoga — campaign creative" },
     { file: "ms.jpg", ar: 1, alt: "Client social creative" },
+    { file: "1.jpg", ar: 1, alt: "Client social creative" },
   ],
   [
+    { file: `${TRENDS}/3.jpg`, ar: 0.8, alt: "Design Trends 2026 — collage-style compositions" },
     { file: "veganmarket2.png", ar: 0.8, alt: "Vegan Market — campaign creative" },
     { file: "1@72x-100.jpg", ar: 1, alt: "Client social creative" },
     { file: "Artboard 1 copy.jpg", ar: 1, alt: "Client social creative" },
     { file: "f1@72x-100.jpg", ar: 1, alt: "Client social creative" },
   ],
   [
+    { file: `${TRENDS}/4.jpg`, ar: 0.8, alt: "Design Trends 2026 — imperfect design" },
     { file: "Artboard 1@100x-100.jpg", ar: 0.8, alt: "Client social creative" },
     { file: "Artboard 6@100x-100.jpg", ar: 1, alt: "Client social creative" },
     { file: "Artboard 1@72x-100.jpg", ar: 1, alt: "Client social creative" },
@@ -690,7 +701,6 @@ export const SERVICES_HTML = String.raw`
             <div class="fixseg" id="fs2"><i></i></div>
             <div class="fixseg" id="fs3"><i></i></div>
           </div>
-          <div class="fixlabel"><b id="fixno">01</b> / 04</div>
         </div>
       </div>
       <div class="duomedia">
@@ -743,9 +753,9 @@ export const SERVICES_HTML = String.raw`
     <div class="duo">
       <div class="duotext">
         <div class="wsteps">
-          <div class="wstep on"><div class="wnum">01</div><h3>A homepage that gets to the point</h3><p>One clear promise above the fold, one clear next step — no scavenger hunt to find what you offer.</p></div>
-          <div class="wstep"><div class="wnum">02</div><h3>Booking &amp; enquiry, built in</h3><p>Calendars, forms and chat — wired directly into the pages, not bolted on as an afterthought.</p></div>
-          <div class="wstep"><div class="wnum">03</div><h3>Fast on the connection your customer has</h3><p>Lightweight by default, so it still feels instant on an average phone, an average network, an average day.</p></div>
+          <div class="wstep on"><h3>A homepage that gets to the point</h3><p>One clear promise above the fold, one clear next step — no scavenger hunt to find what you offer.</p></div>
+          <div class="wstep"><h3>Booking &amp; enquiry, built in</h3><p>Calendars, forms and chat — wired directly into the pages, not bolted on as an afterthought.</p></div>
+          <div class="wstep"><h3>Fast on the connection your customer has</h3><p>Lightweight by default, so it still feels instant on an average phone, an average network, an average day.</p></div>
         </div>
         <div class="wticks"><i class="on"><b></b></i><i><b></b></i><i><b></b></i></div>
       </div>

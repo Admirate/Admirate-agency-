@@ -10,7 +10,20 @@ export type Post = {
   excerpt: string;
   tag: string;
   date: string; // ISO — rendered as en-IN
-  v: "v1" | "v2" | "v3" | "v4"; // thumbnail treatment
+  /**
+   * Thumbnail treatment. Still meaningful with artwork in place: it picks the
+   * gradient scrim laid over the image, so the tag chip stays legible whether
+   * the art underneath is a white-background vector or a dark photo.
+   */
+  v: "v1" | "v2" | "v3" | "v4";
+  /** Object name in the "blogs images" bucket — see lib/cdn.ts `blogImage`. */
+  img: string;
+  /**
+   * Optional distinct artwork for the article hero. Only the two posts that
+   * were shot with a second frame set this; everything else reuses `img` in
+   * both places, which is why the renderer falls back rather than requiring it.
+   */
+  imgHero?: string;
   body: Block[];
 };
 
@@ -49,6 +62,7 @@ export const POSTS: Post[] = [
     tag: "WEBSITES",
     date: "2026-07-14",
     v: "v3",
+    img: "Your website is slow, and it is costing you the enquiry..jpg",
     body: [
       {
         t: "p",
@@ -136,6 +150,8 @@ export const POSTS: Post[] = [
     tag: "BRANDING",
     date: "2026-07-10",
     v: "v1",
+    img: "What you are actually paying for when you buy a logo.1.jpg",
+    imgHero: "What you are actually paying for when you buy a logo.2.jpg",
     body: [
       {
         t: "p",
@@ -212,6 +228,8 @@ export const POSTS: Post[] = [
     tag: "BRANDING",
     date: "2026-07-07",
     v: "v2",
+    img: "Your packaging gets three seconds, and forty rivals.1.jpg",
+    imgHero: "Your packaging gets three seconds, and forty rivals.2.jpg",
     body: [
       {
         t: "p",
@@ -288,6 +306,7 @@ export const POSTS: Post[] = [
     tag: "SOCIAL",
     date: "2026-07-03",
     v: "v4",
+    img: "What a social media manager actually does all month..jpg",
     body: [
       {
         t: "p",
@@ -365,6 +384,7 @@ export const POSTS: Post[] = [
     tag: "IDENTITY",
     date: "2026-06-30",
     v: "v1",
+    img: "How to tell it is your brand, and not your business..png",
     body: [
       {
         t: "p",
@@ -437,6 +457,7 @@ export const POSTS: Post[] = [
     tag: "CREATIVE",
     date: "2026-06-27",
     v: "v3",
+    img: "What actually costs money in a brand film..jpg",
     body: [
       {
         t: "p",
@@ -509,6 +530,7 @@ export const POSTS: Post[] = [
     tag: "IDENTITY",
     date: "2026-06-24",
     v: "v1",
+    img: "Your logo has half a second. That's the whole brief.jpg",
     body: [
       {
         t: "p",
@@ -560,6 +582,7 @@ export const POSTS: Post[] = [
     tag: "WEBSITES",
     date: "2026-06-10",
     v: "v2",
+    img: "Stop making your homepage a scavenger hunt.jpg",
     body: [
       {
         t: "p",
@@ -615,6 +638,7 @@ export const POSTS: Post[] = [
     tag: "CREATIVE",
     date: "2026-05-28",
     v: "v4",
+    img: "Where the eye actually goes (and why your CTA is invisible).jpg",
     body: [
       {
         t: "p",
@@ -657,6 +681,7 @@ export const POSTS: Post[] = [
     tag: "SOCIAL",
     date: "2026-05-14",
     v: "v3",
+    img: "A reel that gets views isn't the same as a reel that gets leads.jpg",
     body: [
       {
         t: "p",
@@ -698,6 +723,7 @@ export const POSTS: Post[] = [
     tag: "BRANDING",
     date: "2026-04-30",
     v: "v1",
+    img: "Consistency isn't a brand rule. It's the entire strategy.png",
     body: [
       {
         t: "p",
@@ -735,6 +761,7 @@ export const POSTS: Post[] = [
     tag: "PROCESS",
     date: "2026-04-16",
     v: "v2",
+    img: "The brief is the work. The design is just what's left.png",
     body: [
       {
         t: "p",

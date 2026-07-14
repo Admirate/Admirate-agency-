@@ -4,6 +4,18 @@ import {
   type Post,
   type Block,
 } from "@/components/blogs/posts";
+import { blogImage, optimized } from "@/lib/cdn";
+
+/**
+ * Post artwork, run through Next's image optimizer.
+ *
+ * The source files are print-scale (one packaging shot is 3624x2417) and are
+ * displayed in a 380px card, so serving them raw would cost several MB on the
+ * index alone. `w` must be one of Next's configured deviceSizes and `q` one of
+ * `images.qualities` — see lib/cdn.ts `optimized`.
+ */
+const thumbSrc = (p: Post) => optimized(blogImage(p.img), 640);
+const heroSrc = (p: Post) => optimized(blogImage(p.imgHero ?? p.img), 1200);
 
 const esc = (s: string) =>
   String(s ?? "").replace(
@@ -96,18 +108,28 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 .pcard{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:6px 6px 0 rgba(11,11,12,.05);transition:box-shadow .3s,border-color .3s,transform .3s,opacity .5s}
 .pcard:hover{box-shadow:10px 10px 0 rgba(227,0,27,.16);border-color:var(--red);transform:translateY(-4px)}
 .pcard.hide{display:none}
-.pthumb{aspect-ratio:16/9;position:relative;display:flex;align-items:flex-end;padding:16px;overflow:hidden}
-.pthumb.v1{background:linear-gradient(150deg,#151517,#3b0009)}
-.pthumb.v2{background:linear-gradient(150deg,var(--red),#7e000f)}
-.pthumb.v3{background:linear-gradient(150deg,#f2f2ee,#fff);border-bottom:1px solid var(--line)}
-.pthumb.v4{background:linear-gradient(150deg,#0e0e10,#26262a)}
-.pthumb .sheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.1) 50%,transparent 58%);background-size:250% 100%;animation:sweep 4s linear infinite}
-.pthumb.v3 .sheen{display:none}
-@keyframes sweep{from{background-position:120% 0}to{background-position:-120% 0}}
+/* The artwork is mixed stock — flat white-background vectors next to dark
+   photographs. The gradient that used to *be* the thumbnail is now a scrim laid
+   over the image: it pulls every card back toward the brand palette so the grid
+   reads as one set, and it guarantees the white tag chip has something dark to
+   sit on regardless of what the photo does in that corner. The post's "v" still
+   selects which scrim, so the four treatments stay meaningful. */
+.pthumb{aspect-ratio:16/9;position:relative;display:flex;align-items:flex-end;padding:16px;overflow:hidden;background:#151517}
+.pthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.pcard:hover .pthumb img{transform:scale(1.04)}
+/* Two layers, and the order matters. The first is a bottom-up darkening carried
+   by every card — it is what the tag chip sits on, so the chip stays legible
+   even where the art goes white in that corner. The second is the brand tint,
+   kept deliberately light: enough to bind a white-background vector and a warm
+   desk photograph into one grid, not enough to flatten either into a monochrome
+   wash. An earlier pass ran the tint at ~.6 and the packaging shot came out as
+   a solid red rectangle. */
+.pthumb .scrim{position:absolute;inset:0}
+.pthumb.v1 .scrim{background:linear-gradient(180deg,transparent 45%,rgba(11,11,12,.62)),linear-gradient(150deg,rgba(21,21,23,.3),rgba(59,0,9,.34))}
+.pthumb.v2 .scrim{background:linear-gradient(180deg,transparent 45%,rgba(11,11,12,.62)),linear-gradient(150deg,rgba(227,0,27,.26),rgba(126,0,15,.34))}
+.pthumb.v3 .scrim{background:linear-gradient(180deg,transparent 45%,rgba(11,11,12,.62))}
+.pthumb.v4 .scrim{background:linear-gradient(180deg,transparent 45%,rgba(11,11,12,.62)),linear-gradient(150deg,rgba(14,14,16,.3),rgba(38,38,42,.34))}
 .pthumb .ptag{position:relative;z-index:1;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#fff;border:1px solid rgba(255,255,255,.55);padding:5px 10px;border-radius:999px}
-.pthumb.v3 .ptag{color:#111;border-color:rgba(0,0,0,.25)}
-.pthumb::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:var(--red);opacity:.16}
-.pthumb.v2::after{background:#fff;opacity:.12}
 .pbody{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1}
 .pcard h2{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(17px,1.6vw,21px);line-height:1.24;letter-spacing:-.01em;margin-bottom:10px}
 .pcard .pex{font-weight:300;font-size:14px;color:#4a4a4d;line-height:1.6;flex:1}
@@ -130,15 +152,15 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 .ameta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--grey)}
 .ameta .atag{color:var(--red);border:1px solid var(--red);padding:5px 10px;border-radius:999px}
 .ameta .dot{width:3px;height:3px;border-radius:50%;background:#cfcfcb}
-.abanner{height:clamp(140px,22vh,220px);border-radius:10px;position:relative;overflow:hidden;margin:clamp(26px,4vh,40px) 0 0}
-.abanner.v1{background:linear-gradient(150deg,#151517,#3b0009)}
-.abanner.v2{background:linear-gradient(150deg,var(--red),#7e000f)}
-.abanner.v3{background:linear-gradient(150deg,#f2f2ee,#fff);border:1px solid var(--line)}
-.abanner.v4{background:linear-gradient(150deg,#0e0e10,#26262a)}
-.abanner::after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;background:var(--red);opacity:.18}
-.abanner.v2::after{background:#fff;opacity:.12}
-.abanner .sheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.1) 50%,transparent 58%);background-size:250% 100%;animation:sweep 4s linear infinite}
-.abanner.v3 .sheen{display:none}
+/* Taller than the card thumb, and scrimmed far more lightly — here the artwork
+   is the point, not a texture behind a label. */
+.abanner{height:clamp(200px,34vh,380px);border-radius:10px;position:relative;overflow:hidden;margin:clamp(26px,4vh,40px) 0 0;background:#151517}
+.abanner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.abanner .scrim{position:absolute;inset:0}
+.abanner.v1 .scrim{background:linear-gradient(150deg,rgba(21,21,23,.3),rgba(59,0,9,.4))}
+.abanner.v2 .scrim{background:linear-gradient(150deg,rgba(227,0,27,.28),rgba(126,0,15,.42))}
+.abanner.v3 .scrim{background:linear-gradient(180deg,transparent 55%,rgba(11,11,12,.28))}
+.abanner.v4 .scrim{background:linear-gradient(150deg,rgba(14,14,16,.3),rgba(38,38,42,.4))}
 
 .abody{max-width:720px;padding:clamp(34px,6vh,56px) 0 clamp(50px,8vh,80px)}
 .abody p{font-size:clamp(16px,1.15vw,18px);line-height:1.75;color:#2c2c2f;margin-bottom:22px}
@@ -226,7 +248,10 @@ footer.bfoot{border-top:1px solid var(--line);padding:18px var(--pad);display:fl
 const card = (p: Post, i: number) => `
   <a class="pcard rise" style="--rd:${(i % 3) * 0.08}s" href="/blogs/${p.slug}" data-tag="${esc(p.tag)}" data-h>
     <span class="pthumb ${p.v}">
-      <span class="sheen"></span>
+      <img src="${esc(thumbSrc(p))}" alt="" width="640" height="360" loading="${
+        i < 3 ? "eager" : "lazy"
+      }" decoding="async">
+      <span class="scrim"></span>
       <span class="ptag">${esc(p.tag)}</span>
     </span>
     <span class="pbody">
@@ -322,7 +347,10 @@ export const postHtml = (p: Post) => {
         <time datetime="${esc(p.date)}">${fmtDate(p.date)}</time><span class="dot"></span><span>${readingMinutes(p)} MIN READ</span>
       </div>
     </div>
-    <div class="abanner ${p.v}"><span class="sheen"></span></div>
+    <div class="abanner ${p.v}">
+      <img src="${esc(heroSrc(p))}" alt="${esc(p.title)}" width="1200" height="675" fetchpriority="high" decoding="async">
+      <span class="scrim"></span>
+    </div>
   </div>
 </header>
 

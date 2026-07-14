@@ -200,12 +200,6 @@ body.smopen{overflow:hidden}
 .sitem:hover .st,.sitem:focus-visible .st{transform:translateX(clamp(6px,1vw,14px))}
 .sitem:hover .sar,.sitem:focus-visible .sar{opacity:1;transform:none}
 
-/* Websites sits under Digital — indented, quieter, and marked as a child. */
-.sitem.ssub{padding-left:clamp(34px,7vw,110px);border-top:1px dashed rgba(255,255,255,.09)}
-.sitem.ssub .st{font-size:clamp(15px,2.1vw,24px);font-weight:700}
-.sitem.ssub .sn{font-size:13px;color:rgba(255,255,255,.35)}
-.sitem.ssub:hover .sn{color:#fff}
-
 .smenu .smfoot{
   flex:0 0 auto;padding-top:clamp(14px,2.4vw,26px);
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
@@ -229,7 +223,6 @@ body.smopen{overflow:hidden}
 @media (max-height:600px){
   .smenu .smlist{justify-content:flex-start}
   .sitem .st{font-size:clamp(18px,4vw,26px)}
-  .sitem.ssub .st{font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){
   .smenu,.sitem,.sitem::before,.sitem .st,.sitem .sar,.smenu .smclose{transition:none}
@@ -246,34 +239,27 @@ const LINKS: { id: NavPage; label: string; href: string }[] = [
 
 /**
  * The services menu. Every entry points at a section that exists on /services,
- * so the panel never promises a page we haven't built. `sub` items render
- * indented beneath their parent (Websites under Digital).
+ * so the panel never promises a page we haven't built.
  */
-type SvcItem = { label: string; href: string; sub?: boolean };
+type SvcItem = { label: string; href: string };
 
 const SERVICES: SvcItem[] = [
   { label: "Design", href: "/services#eye" },
   { label: "Identity", href: "/services#logos" },
   { label: "Digital", href: "/services#web" },
-  { label: "Websites", href: "/services#clients", sub: true },
   { label: "Social Media", href: "/services#reels" },
   { label: "Video Production", href: "/services#tv" },
   { label: "Brand Collaterals", href: "/services#collat" },
 ];
 
-const svcItemsHtml = () => {
-  let n = 0;
-  return SERVICES.map((s, i) => {
-    // Sub-items are not numbered — they carry a branch mark instead, so the
-    // top-level run still reads 01…06.
-    const mark = s.sub ? "└" : String(++n).padStart(2, "0");
-    return `<a class="sitem${s.sub ? " ssub" : ""}" href="${s.href}" style="--i:${i}" data-h>
-      <span class="sn">${mark}</span>
+const svcItemsHtml = () =>
+  SERVICES.map(
+    (s, i) => `<a class="sitem" href="${s.href}" style="--i:${i}" data-h>
+      <span class="sn">${String(i + 1).padStart(2, "0")}</span>
       <span class="st">${s.label}</span>
       <span class="sar">→</span>
-    </a>`;
-  }).join("\n    ");
-};
+    </a>`
+  ).join("\n    ");
 
 /** `active` marks the current page; `ctaHref` differs per page (in-page anchor vs cross-page). */
 export const navHtml = (active: NavPage, ctaHref = "/start-project") => `

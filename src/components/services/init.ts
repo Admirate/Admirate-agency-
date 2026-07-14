@@ -117,7 +117,6 @@ const comp=document.getElementById('comp');
 const gsvg=document.getElementById('gazesvg'),gpath=document.getElementById('gazepath'),gtrail=document.getElementById('gazetrail'),gdot=document.getElementById('gdot');
 const fixEls=[1,2,3,4].map(n=>document.getElementById('fx'+n));
 const anchors=[['fx1a',.5,.5],['fx2a',.5,.45],['fx3a',.5,.5],['fx4a',.5,.5]];
-const fixno=document.getElementById('fixno');
 let plen=0;
 function buildGaze(){
   const cr=comp.getBoundingClientRect();
@@ -164,6 +163,9 @@ let CLIENTS=[
   {name:'HOPE TRUST INDIA', tag:'Mental health & rehab', url:'hopetrustindia.com', shot:'/shots/hopetrust.jpeg',
    desc:'Addiction and mental-health care. This site had to work for someone reaching out at their lowest — clear programmes, honest copy, a therapist one click away.',
    chips:['WEB','BRAND','CONTENT']},
+  {name:'OUR SACRED SPACE', tag:'Arts & culture venue', url:'oursacredspace.com', shot:'/shots/oss.jpeg',
+   desc:'Art, movement and mindful living. A venue whose calendar is the product — events, classes and workshops up front, and booking a space never more than one click away.',
+   chips:['WEB','EVENTS','BOOKINGS']},
   {name:'SOUTH GLASS', tag:'Premium glass', url:'southglass.in', shot:'/shots/southglass.jpeg',
    desc:'Glass and facades, established 2014. A technical product made to feel premium — product ranges, finishes, and a quote request that actually converts.',
    chips:['IDENTITY','WEB','QUOTES']},
@@ -207,7 +209,14 @@ function measurePan(){
   /* Read the height the image actually renders at, so the CSS that widens it to
      crop the scrollbar is accounted for rather than guessed around. */
   const imgH=bshot.getBoundingClientRect().height;
-  bframe.style.setProperty('--pan', `-${Math.max(0, Math.round(imgH-view.clientHeight))}px`);
+  const pan=Math.max(0, Math.round(imgH-view.clientHeight));
+  bframe.style.setProperty('--pan', `-${pan}px`);
+  /* Pan at a constant speed rather than in a constant time. The shots are real
+     full-page captures and their heights differ by more than 2x, so a fixed
+     duration made the tall ones race and the short ones crawl — the same gesture
+     reading as a different speed per client. ~230px/s is roughly a human scroll;
+     clamped so nothing is over in a blink or outstays its welcome. */
+  bframe.style.setProperty('--pandur', `${Math.min(16, Math.max(4, pan/230)).toFixed(1)}s`);
 }
 
 /* Typing the domain is the section's one flourish: the frame navigates, like the
@@ -380,13 +389,10 @@ function render(){
     gdot.style.left=pt.x+'px';gdot.style.top=pt.y+'px';
     gdot.style.opacity=pe>0.02?1:0;
   }
-  let fi=0;
   FIXP.forEach((fp,i)=>{
     fixEls[i].classList.toggle('on',pe>=fp); // hidden but keeps JS clean
     fixsegs[i].classList.toggle('on',pe>=fp);
-    if(pe>=fp)fi=i;
   });
-  fixno.textContent=String(fi+1).padStart(2,'0');
   comp.classList.toggle('done',pe>=FIXP[3]);
 
   /* web */
