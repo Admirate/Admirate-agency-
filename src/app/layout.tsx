@@ -4,12 +4,10 @@ import Script from "next/script";
 import { SITE } from "@/lib/seo";
 import { organizationSchema, websiteSchema, ld } from "@/lib/schema";
 
-const LOGO_URL = SITE.logo;
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — ${SITE.tagline}`,
+    default: SITE.title,
     template: `%s | ${SITE.name}`,
   },
   description: SITE.description,
@@ -18,16 +16,16 @@ export const metadata: Metadata = {
   creator: SITE.name,
   publisher: SITE.name,
   alternates: { canonical: "/" },
-  icons: {
-    icon: [{ url: LOGO_URL, type: "image/webp" }],
-    shortcut: LOGO_URL,
-    apple: LOGO_URL,
-  },
+  // No `icons` block on purpose. It used to point at the wordmark on
+  // supabase.co — not square, so Google rejected it and showed the generic
+  // globe. The square monogram in app/icon.tsx and app/apple-icon.tsx is picked
+  // up by Next's file convention; declaring `icons` here would override it.
+
   // Pages override these through pageMeta() in lib/seo.ts. The og:image is not
   // set here — each route ships its own opengraph-image, which Next resolves
   // per page, so a share of /services no longer falls back to the homepage's.
   openGraph: {
-    title: `${SITE.name} — ${SITE.tagline}`,
+    title: SITE.title,
     description: SITE.description,
     url: SITE.url,
     siteName: SITE.name,
@@ -36,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE.name} — ${SITE.tagline}`,
+    title: SITE.title,
     description: SITE.description,
   },
   robots: {

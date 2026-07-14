@@ -19,6 +19,9 @@ export const SITE = {
   name: "ADMIRATE",
   url: "https://admirate.in",
   locale: "en_IN",
+  /** The homepage's exact <title>, and the title on its social cards. */
+  title: "ADMIRATE: Design & Marketing Agency",
+  /** Descriptive line used on the OG card footer — not the page title. */
   tagline: "Strategic Design & Marketing Agency",
   description:
     "ADMIRATE is a strategic design and marketing agency. Branding, web design, social media, video production, and digital advertising — done the right way.",

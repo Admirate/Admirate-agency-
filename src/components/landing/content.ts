@@ -129,7 +129,10 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 #services::before{content:"";position:absolute;inset:-40%;background-image:radial-gradient(#EBEBE7 1.2px,transparent 1.2px);background-size:34px 34px;opacity:.4;animation:dotdrift 50s linear infinite;pointer-events:none}
 @keyframes dotdrift{to{transform:translate(68px,68px)}}
 #services .stagewrap{padding-top:clamp(150px,22vh,200px)}
-.svcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,18px);width:min(1000px,calc(100% - 2*var(--pad)))}
+/* Ten services, 5-up: two full rows. A 4-up grid would leave a trailing row of
+   two, which reads as an unfinished list rather than a deliberate one. Slightly
+   wider than before so the five tiles do not get pinched. */
+.svcgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,1.3vw,16px);width:min(1140px,calc(100% - 2*var(--pad)))}
 .svcblock{opacity:0;transform:translateY(26px) scale(.96);transition:opacity .55s cubic-bezier(.2,.8,.2,1),transform .55s cubic-bezier(.2,.8,.2,1)}
 .sec.active .svcblock{opacity:1;transform:none;transition-delay:calc(var(--i)*50ms + .15s)}
 .svcin{height:100%;background:var(--white);border:1px solid var(--line);box-shadow:5px 5px 0 rgba(11,11,12,.05);padding:clamp(14px,1.6vw,20px);display:flex;flex-direction:column;gap:12px;transition:background .25s,border-color .25s,box-shadow .25s,transform .25s;cursor:default}
