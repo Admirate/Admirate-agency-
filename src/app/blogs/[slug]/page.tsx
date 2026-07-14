@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PostClient from "@/components/blogs/PostClient";
 import { POSTS, getPost } from "@/components/blogs/posts";
+import { pageMeta } from "@/lib/seo";
+import { blogPostingSchema, breadcrumbSchema, ld } from "@/lib/schema";
 
 export const dynamicParams = false;
 
@@ -18,18 +20,13 @@ export async function generateMetadata({
   const post = getPost(slug);
   if (!post) return { title: "Post not found" };
 
-  return {
+  return pageMeta({
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: `/blogs/${post.slug}` },
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      url: `https://admirate.in/blogs/${post.slug}`,
-      type: "article",
-      publishedTime: post.date,
-    },
-  };
+    path: `/blogs/${post.slug}`,
+    type: "article",
+    publishedTime: post.date,
+  });
 }
 
 export default async function PostPage({
@@ -41,5 +38,22 @@ export default async function PostPage({
   const post = getPost(slug);
   if (!post) notFound();
 
-  return <PostClient post={post} />;
+  const jsonLd = [
+    blogPostingSchema(post),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Journal", path: "/blogs" },
+      { name: post.title, path: `/blogs/${post.slug}` },
+    ]),
+  ];
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ld(jsonLd) }}
+      />
+      <PostClient post={post} />
+    </>
+  );
 }

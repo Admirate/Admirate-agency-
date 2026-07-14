@@ -1,77 +1,65 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Script from "next/script";
+import { SITE } from "@/lib/seo";
+import { organizationSchema, websiteSchema, ld } from "@/lib/schema";
 
-const LOGO_URL =
-  "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp";
+const LOGO_URL = SITE.logo;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://admirate.in"),
+  metadataBase: new URL(SITE.url),
   title: {
-    default: "ADMIRATE — Strategic Design & Marketing Agency",
-    template: "%s | ADMIRATE",
+    default: `${SITE.name} — ${SITE.tagline}`,
+    template: `%s | ${SITE.name}`,
   },
-  description:
-    "ADMIRATE is a strategic design and marketing agency. Branding, web design, social media, video production, and digital advertising — done the right way.",
+  description: SITE.description,
+  applicationName: SITE.name,
+  authors: [{ name: SITE.name, url: SITE.url }],
+  creator: SITE.name,
+  publisher: SITE.name,
+  alternates: { canonical: "/" },
   icons: {
     icon: [{ url: LOGO_URL, type: "image/webp" }],
     shortcut: LOGO_URL,
     apple: LOGO_URL,
   },
+  // Pages override these through pageMeta() in lib/seo.ts. The og:image is not
+  // set here — each route ships its own opengraph-image, which Next resolves
+  // per page, so a share of /services no longer falls back to the homepage's.
   openGraph: {
-    title: "ADMIRATE — Strategic Design & Marketing Agency",
-    description:
-      "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
-    url: "https://admirate.in",
-    siteName: "ADMIRATE",
-    images: [LOGO_URL],
+    title: `${SITE.name} — ${SITE.tagline}`,
+    description: SITE.description,
+    url: SITE.url,
+    siteName: SITE.name,
     type: "website",
-    locale: "en_IN",
+    locale: SITE.locale,
   },
   twitter: {
     card: "summary_large_image",
-    title: "ADMIRATE — Strategic Design & Marketing Agency",
-    description:
-      "Strategic design and marketing agency specializing in branding, web design, social media, video production, and digital advertising.",
-    images: [LOGO_URL],
+    title: `${SITE.name} — ${SITE.tagline}`,
+    description: SITE.description,
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
+
+/* One connected graph rather than a lone Organization: the WebSite points at
+   the Organization as its publisher, and every article's author/publisher
+   resolves to the same @id. */
+const jsonLd = [organizationSchema, websiteSchema];
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "ADMIRATE",
-  url: "https://admirate.in",
-  logo: LOGO_URL,
-  description: "Strategic Design & Marketing Agency",
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: "+91-8374494954",
-    contactType: "customer service",
-    availableLanguage: ["English", "Hindi"],
-  },
-  sameAs: [],
-  serviceArea: {
-    "@type": "Country",
-    name: "India",
-  },
-  knowsAbout: [
-    "Social Media Management",
-    "Web Design",
-    "Video Production",
-    "Digital Advertising",
-    "Brand Identity",
-    "Packaging Design",
-  ],
 };
 
 export default function RootLayout({
@@ -124,7 +112,7 @@ export default function RootLayout({
 
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: ld(jsonLd) }}
         />
 
         <Script id="ms-clarity" strategy="afterInteractive">

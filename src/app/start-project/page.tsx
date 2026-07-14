@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
 import StartClient from "@/components/start/StartClient";
+import { pageMeta } from "@/lib/seo";
+import { breadcrumbSchema, ld } from "@/lib/schema";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Start a Project",
   description:
     "Tell us about your project — branding, websites, social, video or packaging. We reply within one working day.",
-  alternates: { canonical: "/start-project" },
-  openGraph: {
-    title: "Start a Project | ADMIRATE",
-    description:
-      "Send us the brief. We call within one working day, with a plan and a quote to follow.",
-    url: "https://admirate.in/start-project",
-    type: "website",
-  },
-};
+  path: "/start-project",
+});
+
+const jsonLd = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Start a Project", path: "/start-project" },
+]);
 
 export default function StartProjectPage() {
-  return <StartClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ld(jsonLd) }}
+      />
+      <StartClient />
+    </>
+  );
 }

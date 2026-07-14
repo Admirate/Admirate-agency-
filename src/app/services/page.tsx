@@ -1,19 +1,32 @@
 import type { Metadata } from "next";
 import ServicesClient from "@/components/services/ServicesClient";
+import { pageMeta } from "@/lib/seo";
+import { servicesSchema, breadcrumbSchema, ld } from "@/lib/schema";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Design That Moves With You",
+  // Kept under ~160 characters — past that Google truncates it mid-sentence.
   description:
-    "Our design work — logos and brand identity, websites, social creatives, and every other collateral your brand needs to show up looking like itself, everywhere.",
-  alternates: { canonical: "/services" },
-  openGraph: {
-    title: "ADMIRATE — Design That Moves With You",
-    description:
-      "Logos, websites, social creatives and brand collaterals from ADMIRATE, a strategic design and marketing agency.",
-    url: "https://admirate.in/services",
-  },
-};
+    "Logos and brand identity, websites, social creatives, video production and brand collaterals — everything your brand needs to show up looking like itself.",
+  path: "/services",
+});
+
+const jsonLd = [
+  servicesSchema,
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+  ]),
+];
 
 export default function ServicesPage() {
-  return <ServicesClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ld(jsonLd) }}
+      />
+      <ServicesClient />
+    </>
+  );
 }

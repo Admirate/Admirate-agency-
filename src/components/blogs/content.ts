@@ -1,4 +1,9 @@
-import { POSTS, type Post, type Block } from "@/components/blogs/posts";
+import {
+  POSTS,
+  readingMinutes,
+  type Post,
+  type Block,
+} from "@/components/blogs/posts";
 
 const esc = (s: string) =>
   String(s ?? "").replace(
@@ -11,6 +16,26 @@ const esc = (s: string) =>
         '"': "&quot;",
         "'": "&#39;",
       }[c] as string)
+  );
+
+/**
+ * Body copy, with internal links.
+ *
+ * Post bodies are escaped, which meant they could not contain a link at all —
+ * so nothing in the journal ever pointed at /services or /start-project, and a
+ * search engine had no path from an article to the pages that actually sell.
+ * This escapes first, then turns our own `[text](/path)` syntax back into an
+ * anchor.
+ *
+ * Only root-relative paths survive: an off-site URL or a "javascript:" href is
+ * left as plain text. Escaping-then-unescaping a known-good shape is safe;
+ * allowing arbitrary hrefs from content would not be.
+ */
+const INTERNAL_HREF = /^\/[A-Za-z0-9\-._~/#?=&;]*$/;
+
+const inline = (s: string) =>
+  esc(s).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, text, href) =>
+    INTERNAL_HREF.test(href) ? `<a href="${href}" data-h>${text}</a>` : text
   );
 
 const fmtDate = (iso: string) =>
@@ -125,6 +150,11 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 .abody li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:1px;background:var(--red)}
 .abody blockquote{margin:clamp(26px,4vh,38px) 0;padding:22px 26px;border-left:3px solid var(--red);background:var(--white);border-radius:0 8px 8px 0;box-shadow:6px 6px 0 rgba(11,11,12,.05)}
 .abody blockquote p{margin:0;font-family:var(--display);font-weight:700;font-stretch:104%;font-size:clamp(17px,1.7vw,22px);line-height:1.38;letter-spacing:-.01em;color:var(--black)}
+/* In-body links. Underlined rather than colour-only, so they are still
+   identifiable as links without relying on colour vision. */
+.abody a{color:var(--black);text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:3px;text-decoration-thickness:2px;transition:color .2s,background .2s}
+.abody a:hover{color:var(--red)}
+.abody a:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 
 /* article footer nav */
 .anext{border-top:1px solid var(--line);padding:clamp(30px,5vh,48px) 0;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -203,7 +233,7 @@ const card = (p: Post, i: number) => `
       <h2>${esc(p.title)}</h2>
       <span class="pex">${esc(p.excerpt)}</span>
       <span class="pmeta">
-        <span>${fmtDate(p.date)}</span><span class="dot"></span><span>${p.read} MIN READ</span>
+        <time datetime="${esc(p.date)}">${fmtDate(p.date)}</time><span class="dot"></span><span>${readingMinutes(p)} MIN READ</span>
       </span>
       <span class="pmore">READ <span class="ar">→</span></span>
     </span>
@@ -260,14 +290,16 @@ ${CTA}
 
 const renderBlock = (b: Block): string => {
   switch (b.t) {
+    // Headings stay link-free — a link inside an h2 muddies the outline a
+    // crawler builds from the page.
     case "h2":
       return `<h2>${esc(b.c)}</h2>`;
     case "quote":
-      return `<blockquote><p>${esc(b.c)}</p></blockquote>`;
+      return `<blockquote><p>${inline(b.c)}</p></blockquote>`;
     case "list":
-      return `<ul>${b.c.map((li) => `<li>${esc(li)}</li>`).join("")}</ul>`;
+      return `<ul>${b.c.map((li) => `<li>${inline(li)}</li>`).join("")}</ul>`;
     default:
-      return `<p>${esc(b.c)}</p>`;
+      return `<p>${inline(b.c)}</p>`;
   }
 };
 
@@ -287,7 +319,7 @@ export const postHtml = (p: Post) => {
       <h1>${esc(p.title)}</h1>
       <div class="ameta">
         <span class="atag">${esc(p.tag)}</span>
-        <span>${fmtDate(p.date)}</span><span class="dot"></span><span>${p.read} MIN READ</span>
+        <time datetime="${esc(p.date)}">${fmtDate(p.date)}</time><span class="dot"></span><span>${readingMinutes(p)} MIN READ</span>
       </div>
     </div>
     <div class="abanner ${p.v}"><span class="sheen"></span></div>
