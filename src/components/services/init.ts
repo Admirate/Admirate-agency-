@@ -176,7 +176,19 @@ const cdesc=document.getElementById('cdesc'), cchips=document.getElementById('cc
 const cvisit=document.getElementById('cvisit'), cvisitd=document.getElementById('cvisitd');
 let ci=-1, typeTimer=0, loadTimer=0;
 
-const hrefOf=c=>c.href||('https://'+c.url);
+/* Only http(s) may ever reach an href here. `external_url` arrives from the
+   portfolio table, and /api/portfolio accepts writes without authentication, so
+   a stored "javascript:" URL would otherwise execute on this public page the
+   moment a visitor clicked the link. Anything that is not http(s) is refused
+   rather than rendered — a dead link beats a script sink. */
+const hrefOf=c=>{
+  const raw=String(c.href||('https://'+String(c.url||''))).trim();
+  try{
+    const u=new URL(raw);
+    if(u.protocol==='http:'||u.protocol==='https:') return u.href;
+  }catch(e){/* unparseable — fall through */}
+  return '#';
+};
 
 function renderRail(){
   crail.innerHTML=CLIENTS.map((c,i)=>

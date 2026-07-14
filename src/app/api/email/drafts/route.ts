@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
+import { requireAdmin } from "@/lib/api-auth";
 
 type DraftUpdate = Database["public"]["Tables"]["email_drafts"]["Update"];
 
 export async function GET() {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -33,6 +37,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { subject, body, status = "draft" } = await request.json();
 
     if (!subject || !body) {
@@ -70,6 +77,9 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { id, subject, body, status } = await request.json();
 
     if (!id) {
@@ -111,6 +121,9 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { id } = await request.json();
 
     if (!id) {

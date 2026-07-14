@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/api-auth";
 
+/* GET is intentionally public — the client showcase on /services renders from
+   it (see components/services/init.ts). The writes below are admin-only: an
+   open POST here put an attacker-controlled `external_url` on a public page. */
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -30,6 +34,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { title, description, image_url, external_url, tags, order } =
       await request.json();
 
@@ -75,6 +82,9 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { id, ...updates } = await request.json();
 
     if (!id) {
@@ -111,6 +121,9 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { id } = await request.json();
 
     if (!id) {

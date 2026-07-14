@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { resend } from "@/lib/resend";
 import { createClient } from "@/lib/supabase/server";
 import { EmailTemplate } from "@/components/email/template";
+import { requireAdmin } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const { subject, body, draftId } = await request.json();
 
     if (!subject || !body) {

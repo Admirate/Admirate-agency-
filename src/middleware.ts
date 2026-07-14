@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "@/lib/auth";
 
-export function middleware(request: NextRequest) {
+/**
+ * Gates the dashboard pages. This checks the token's *signature* — it
+ * previously decoded the payload segment and trusted whatever `exp` it found,
+ * so any hand-written token with a future expiry was accepted.
+ *
+ * This is the gate for the dashboard UI only. The API routes guard themselves
+ * (see lib/api-auth.ts) rather than relying on middleware, so a bypass here
+ * cannot expose data.
+ */
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/dashboard/login") {
@@ -8,27 +18,12 @@ export function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get("admin_token")?.value;
+  const payload = token ? await verifyToken(token) : null;
 
-  if (!token) {
-    const loginUrl = new URL("/dashboard/login", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  try {
-    const payload = JSON.parse(
-      Buffer.from(token.split(".")[1], "base64").toString()
+  if (!payload) {
+    const response = NextResponse.redirect(
+      new URL("/dashboard/login", request.url)
     );
-    const now = Math.floor(Date.now() / 1000);
-
-    if (payload.exp && payload.exp < now) {
-      const loginUrl = new URL("/dashboard/login", request.url);
-      const response = NextResponse.redirect(loginUrl);
-      response.cookies.delete("admin_token");
-      return response;
-    }
-  } catch {
-    const loginUrl = new URL("/dashboard/login", request.url);
-    const response = NextResponse.redirect(loginUrl);
     response.cookies.delete("admin_token");
     return response;
   }

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = signToken(email);
+    const token = await signToken(email);
 
     const response = NextResponse.json(
       { message: "Login successful" },
