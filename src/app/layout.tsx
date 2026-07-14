@@ -80,7 +80,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    // The inline script below sets `class="no-loader"` on <html> before React
+    // hydrates, so the server markup and the client DOM differ on this one
+    // attribute by design. Without this, React logs a hydration mismatch.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -93,6 +96,22 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
           rel="stylesheet"
+        />
+
+        {/* Decides, before the first paint, whether the landing loader runs.
+            It is server-rendered markup, so removing it from an effect would
+            flash the black terminal first. The nav links are real <a> hrefs,
+            so returning Home is a full document load — without this, the whole
+            boot sequence replays every single time.
+
+            Plays on the first home-page load in a tab and on any reload (a hard
+            refresh should show it again); skipped otherwise. The flag is set by
+            the landing page itself, not here, so the intro is not consumed by a
+            visitor who happened to land on /services first. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var n=performance.getEntriesByType('navigation')[0];if(sessionStorage.getItem('adm:booted')==='1'&&(!n||n.type!=='reload')){document.documentElement.classList.add('no-loader');}}catch(e){}})();`,
+          }}
         />
       </head>
       <body>

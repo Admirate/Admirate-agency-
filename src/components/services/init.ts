@@ -309,6 +309,30 @@ if(!reduced && finePointer){
   });
 }
 
+/* ---------- VIDEO PRODUCTION + REELS ----------
+   Both sections are ported from the landing page. They are driven by the same
+   cached-geometry engine below (P('tv') / P('reels')), so the scrub code is the
+   landing page's, unchanged. */
+const frames=[...document.querySelectorAll('.frame')];
+const chan=document.getElementById('chan'), tvprog=document.getElementById('tvprog'), tcode=document.getElementById('tcode');
+const phone=document.getElementById('phone'), track=document.getElementById('reeltrack'), pprog=document.getElementById('pprog');
+const reelsEls=[...document.querySelectorAll('.reel')];
+const viewTargets=[214000,489000,1200000];
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+'M':Math.round(n/1000)+'K';
+
+/* The like counter rolls up when a reel becomes the live one. */
+let cntRaf=null, lastLive=-1;
+function tween(el,target){
+  if(cntRaf)cancelAnimationFrame(cntRaf);
+  const t0=performance.now(), D=650;
+  (function step(t){
+    if(_dead)return;
+    const p=Math.min(1,(t-t0)/D), e=1-Math.pow(1-p,3);
+    el.textContent=fmt(target*e);
+    if(p<1)cntRaf=requestAnimationFrame(step);
+  })(t0);
+}
+
 /* ---------- render engine: cached geometry, event-gated frames ----------
    The old loop read getBoundingClientRect() per section per frame and
    repainted the bg gradient + orb every frame. Geometry is now measured once
@@ -316,7 +340,7 @@ if(!reduced && finePointer){
    On mobile the gradient interpolation is dropped for a per-zone colour swap
    — a phone repaints a full-viewport gradient far too slowly to do it live. */
 const topline=document.getElementById('topline');
-let Y=scrollY, dirty=true, VH=innerHeight, DOCH=1, IS_M=false, lastZone=-1;
+let Y=scrollY, dirty=true, VH=innerHeight, DOCH=1, IS_M=false, AMPF=1, lastZone=-1;
 const GEOMAP={};
 function measure(){
   VH=innerHeight;
@@ -324,6 +348,8 @@ function measure(){
   secs.forEach(el=>{GEOMAP[el.id]={top:el.offsetTop,h:el.offsetHeight};});
   zones.forEach(z=>{z.t=z.el.offsetTop;});
   IS_M=matchMedia('(max-width:768px)').matches;
+  /* The phone's full tilt throw reads as jitter on a small screen. */
+  AMPF=IS_M?0.45:1;
   buildGaze();
   measurePan();
   dirty=true;
@@ -377,6 +403,28 @@ function render(){
   wsteps.forEach((s,i)=>s.classList.toggle('on',i===wi));
   wticks.forEach((t,i)=>t.classList.toggle('on',i<=wi));
 
+  /* video: scenes by thirds, channel, timecode, bar */
+  const pt=P('tv');
+  const idxT=Math.min(2, Math.floor(pt*3));
+  frames.forEach((f,i)=>f.classList.toggle('on', i===idxT));
+  chan.textContent='CH 0'+(idxT+1);
+  const secsT=pt*30, ss=String(Math.floor(secsT)).padStart(2,'0'), ff=String(Math.floor((secsT%1)*24)).padStart(2,'0');
+  tcode.textContent=`TC 00:${ss}:${ff}`;
+  tvprog.style.width=(pt*100)+'%';
+
+  /* reels: track scroll, tilt (damped on mobile), live per card, counters */
+  const pr=P('reels');
+  track.style.transform=`translateY(${-pr*200}%)`;
+  phone.style.transform=`rotate(${(2.5-5*pr)*AMPF}deg)`;
+  pprog.style.height=(pr*100)+'%';
+  reelsEls.forEach((reel,i)=>{
+    const c=[0,0.5,1][i];
+    const near=1-clamp(Math.abs(pr-c)/0.18,0,1);
+    const isLive = near>0.55;
+    reel.classList.toggle('live', isLive);
+    if(isLive && lastLive!==i){ lastLive=i; tween(reel.querySelector('.cv'), viewTargets[i]); }
+    if(!isLive && lastLive===i){ lastLive=-1; }
+  });
 }
 
 const _onScroll=()=>{dirty=true;};
@@ -403,6 +451,7 @@ if(staticScrub){ Y=scrollY; updateDots(); }
 function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId); cancelAnimationFrame(_curRaf);
+  if(cntRaf)cancelAnimationFrame(cntRaf);
   clearInterval(typeTimer); clearTimeout(loadTimer);
   try{ioS.disconnect();}catch(e){}
   try{stopRecog();}catch(e){}

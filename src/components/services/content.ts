@@ -54,7 +54,6 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 .duo{flex:1;min-height:0;width:100%;display:flex;align-items:center;gap:clamp(30px,5vw,80px)}
 .duotext{flex:0 0 clamp(270px,30vw,400px)}
 .duomedia{flex:1;display:flex;align-items:center;justify-content:center;min-width:0;height:100%}
-.idx{position:absolute;bottom:26px;left:var(--pad);font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--grey);z-index:6}
 .rise{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
 .sec.active .rise{opacity:1;transform:none;transition-delay:var(--rd,0s)}
 .float{animation:idle 6s ease-in-out infinite alternate}
@@ -253,6 +252,85 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .cvisit:hover .ar{transform:translate(2px,-2px)}
 .cli:focus-visible,.bgo:focus-visible,.cvisit:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 
+/* ============ VIDEO PRODUCTION (scrub) ============
+   Ported from the landing page's #tv section. The scrub is driven by P('tv') in
+   init.ts, exactly as it is there — this page already runs the same cached-
+   geometry engine, so the animation code came across unchanged. */
+.objcap{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(28px,5vw,64px);text-transform:uppercase;letter-spacing:-.01em;color:var(--black);text-align:center;line-height:1}
+.onblack .objcap{color:var(--white)}
+#tv{height:260vh}
+.tvframe{width:min(560px,84vw);background:var(--black);border-radius:16px;padding:clamp(12px,2vw,22px);box-shadow:10px 10px 0 rgba(227,0,27,.1);position:relative}
+.screen{position:relative;aspect-ratio:16/9;background:#111;border-radius:8px;overflow:hidden}
+.scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px);animation:scan 8s linear infinite;pointer-events:none;z-index:5}
+@keyframes scan{to{background-position:0 120px}}
+.staticflk{position:absolute;inset:0;background:#fff;opacity:0;z-index:6;pointer-events:none;animation:flick 4s steps(1) infinite}
+@keyframes flick{0%,96%{opacity:0}97%{opacity:.06}98%{opacity:0}99%{opacity:.09}100%{opacity:0}}
+.rec{position:absolute;top:12px;left:14px;z-index:7;font-family:var(--mono);font-size:11px;color:#fff;letter-spacing:.12em}
+.rec i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px;animation:blink 1s steps(1) infinite}
+.chan{position:absolute;top:10px;right:14px;z-index:7;font-family:var(--mono);font-size:12px;color:#0f0;text-shadow:0 0 6px rgba(0,255,0,.6)}
+.tcode{position:absolute;bottom:10px;right:14px;z-index:7;font-family:var(--mono);font-size:11px;color:#0f0;text-shadow:0 0 6px rgba(0,255,0,.6);letter-spacing:.06em}
+.frame{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;opacity:0;transition:opacity .4s;padding:20px;text-align:center}
+.frame.on{opacity:1}
+.frame h3{font-family:var(--display);font-weight:900;font-stretch:110%;color:#fff;font-size:clamp(19px,3vw,32px);text-transform:uppercase;letter-spacing:-.01em}
+.frame .chip2{font-family:var(--mono);font-size:10px;color:#fff;border:1px solid var(--red);padding:5px 10px;letter-spacing:.14em}
+.frame.f1{background:linear-gradient(135deg,#1a1a1c,#2b0006)}
+.frame.f2{background:linear-gradient(135deg,#E3001B,#7e000f)}
+.frame.f3{background:#f2f2ef}.frame.f3 h3{color:var(--black)}.frame.f3 .chip2{color:var(--black);border-color:var(--black)}
+.tvbar{height:4px;background:#2a2a2c;margin-top:12px;border-radius:3px;overflow:hidden}
+.tvbar i{display:block;height:100%;width:0;background:var(--red)}
+
+/* ============ SOCIAL MEDIA / REELS (scrub) ============
+   Ported from the landing page's #reels section, and placed immediately before
+   the social-creatives grid below. Driven by P('reels') in init.ts. */
+#reels{height:280vh}
+.phone{height:min(62svh,540px);aspect-ratio:9/18.5;background:#161618;border-radius:34px;border:3px solid #2c2c2f;padding:10px;position:relative;will-change:transform;box-shadow:0 26px 70px rgba(227,0,27,.12)}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:36%;height:18px;background:#000;border-radius:12px;z-index:8}
+.pscreen{position:relative;width:100%;height:100%;border-radius:24px;overflow:hidden;background:#000}
+.rstatus{position:absolute;top:0;left:0;right:0;z-index:7;display:flex;justify-content:space-between;padding:8px 14px 0;font-family:var(--mono);font-size:9px;color:#fff;pointer-events:none}
+.tabbar{position:absolute;bottom:0;left:0;right:0;z-index:7;display:flex;justify-content:space-around;align-items:center;padding:9px 8px 11px;background:linear-gradient(transparent,rgba(0,0,0,.7));pointer-events:none}
+.tabbar svg{width:18px;height:18px;fill:none;stroke:#bbb;stroke-width:1.8}
+.tabbar .active svg{stroke:var(--red);filter:drop-shadow(0 0 5px rgba(227,0,27,.7))}
+.reeltrack{position:absolute;inset:0;will-change:transform}
+.reel{position:absolute;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:16px 14px 52px;color:#fff}
+.reel.r1{top:0;background:linear-gradient(160deg,#26262a 40%,#3b0009)}
+.reel.r2{top:100%;background:linear-gradient(200deg,#E3001B,#5c000b)}
+.reel.r3{top:200%;background:linear-gradient(160deg,#0e0e10,#26262a 60%,#001)}
+.vidfx{position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.07) 50%,transparent 58%);background-size:250% 100%;animation:sweep 3.8s linear infinite;pointer-events:none}
+.ruser{position:absolute;top:32px;left:12px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px}
+.avatar{width:24px;height:24px;border-radius:50%;background:var(--red);display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:12px;color:#fff;border:1.5px solid #fff}
+.follow{border:1px solid rgba(255,255,255,.7);padding:3px 9px;font-size:8px;letter-spacing:.16em;transition:background .35s,border-color .35s}
+.reel.live .follow{background:var(--red);border-color:var(--red)}
+.reel .rtag{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:#fff;border:1px solid rgba(255,255,255,.5);padding:4px 8px;align-self:flex-start;margin-bottom:9px}
+.reel .rh{font-family:var(--display);font-weight:900;font-size:16px;text-transform:uppercase;margin-bottom:5px;line-height:1.1;max-width:80%;letter-spacing:-.01em}
+.reel .rc{font-size:11px;color:#e6e6e8;line-height:1.5;max-width:76%;font-weight:400}
+.reel .rhash{font-family:var(--mono);font-size:9px;color:var(--red);margin-top:7px}
+.reel.r2 .rhash{color:#fff}
+.stack{position:absolute;right:8px;bottom:106px;display:flex;flex-direction:column;gap:13px;align-items:center;z-index:3}
+.sicon{width:32px;text-align:center;transform:scale(0);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.reel.live .sicon{transform:scale(1)}
+.reel.live .sicon:nth-child(1){transition-delay:.12s}
+.reel.live .sicon:nth-child(2){transition-delay:.26s}
+.reel.live .sicon:nth-child(3){transition-delay:.4s}
+.sicon svg{width:24px;height:24px;fill:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.sicon.hrt svg{fill:var(--red)}
+.sicon .cnt{display:block;font-family:var(--mono);font-size:8px;color:#fff;margin-top:3px}
+.likes{position:absolute;right:20px;bottom:136px;pointer-events:none;z-index:2}
+.likes i{position:absolute;bottom:0;right:0;font-size:12px;font-style:normal;color:var(--red);opacity:0;text-shadow:0 0 6px rgba(0,0,0,.4)}
+.reel.live .likes i{animation:riseheart 2.2s linear infinite;animation-delay:var(--d)}
+@keyframes riseheart{
+  0%{opacity:0;transform:translate(0,0) scale(.7)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translate(var(--x),-130px) scale(1.15)}
+}
+.mrow{display:flex;align-items:center;gap:8px;margin-top:10px}
+.vinyl{width:18px;height:18px;flex:0 0 18px;border-radius:50%;background:conic-gradient(#3a3a3d,#111,#3a3a3d,#111,#3a3a3d);border:2px solid #555;position:relative;animation:spin 3s linear infinite}
+.vinyl::after{content:"";position:absolute;inset:35%;border-radius:50%;background:var(--red)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mticker{flex:1;overflow:hidden;white-space:nowrap;font-family:var(--mono);font-size:9px;color:#ddd}
+.mticker span{display:inline-block;animation:tick 9s linear infinite}
+.pbar{position:absolute;right:5px;top:12%;bottom:12%;width:3px;background:#2c2c2f;border-radius:2px;z-index:6}
+.pbar i{display:block;width:100%;height:0;background:var(--red);border-radius:2px}
+
 /* ============ S6 SOCIAL (full) ============
    Real client creatives, held still. This was a 220vh pinned scrub whose only
    job was to slide the four columns against each other; with that motion gone
@@ -357,7 +435,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
      needs roomier padding and the grid left at its natural height. */
   .full{padding:clamp(104px,14vh,124px) var(--pad) 72px}
   .full .stagewrap{flex:0 0 auto;padding-top:clamp(18px,3vh,30px)}
-  .full .idx{position:static;margin-top:34px}
 
   /* Scrub stages must stay exactly one viewport tall — the scrub progress is
      measured against it — so they keep height:100svh and shrink their media. */
@@ -436,6 +513,11 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   /* Human-length scrubs: same choreography over less travel. */
   #eye{height:200vh}
   #web{height:220vh}
+  #tv{height:220vh}
+  #reels{height:240vh}
+
+  .tvframe{width:min(430px,90vw)}
+  .phone{height:min(64svh,480px)}
 
   /* Let the logo grid breathe past one screen; snap still lands on its top. */
   #logos{height:auto;min-height:100svh}
@@ -460,16 +542,24 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .duo{flex:none;height:auto;flex-direction:column;align-items:flex-start;gap:20px}
   .duotext{flex:0 0 auto;width:100%}
   .duomedia{width:100%;height:auto;justify-content:flex-start}
-  .idx{position:static;margin-top:26px}
   #scrollhint{display:none}
 
   /* the JS paints these; without it they'd be blank/transparent */
   #bgfade,#lightorb,#topline,.gdot{display:none}
-  #hero,#eye,#logos,#clients,#social,#consist{background:var(--paper)}
-  #web,#collat{background:var(--black)}
+  #hero,#eye,#logos,#clients,#social,#consist,#tv{background:var(--paper)}
+  #web,#collat,#reels{background:var(--black)}
+
+  /* The ported mocks, sized for a short screen. .objcap is a decorative
+     oversized caption — it is the first thing to go when height is scarce. */
+  .objcap{display:none}
+  .tvframe{width:min(380px,100%)}
+  .phone{height:min(82svh,330px)}
 
   /* pinned end-states */
   .rise,.ltile,.ltile .lf,.mcard,.citem,.bframe,.cside,.sq{opacity:1!important;transform:none!important;clip-path:none!important}
+  /* The reel action icons start at scale(0) and are only revealed by .reel.live,
+     which the (disabled) scrub would have set — pin them or they never appear. */
+  .sicon{transform:none!important;opacity:1!important}
   .fixseg i{transform:scaleX(1)!important}
   .wsteps{min-height:0}
   .wstep{position:static;opacity:1!important;transform:none!important;margin-bottom:14px}
@@ -494,7 +584,11 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .full{height:auto;min-height:70vh;padding-top:90px;padding-bottom:90px}
   .stagewrap,.duo{flex:none;height:auto;padding:20px 0 0}
   .full,.scrub .stage{padding:80px var(--pad)}
-  .rise,#hero h1 .w,#hero .tag,#hero .sub,#hero .rule,#scrollhint,.ltile,.ltile .lf,.mcard,.citem,.sq,.wstep,.wcomp,.fix,.bframe,.cside{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;animation:none!important}
+  .rise,#hero h1 .w,#hero .tag,#hero .sub,#hero .rule,#scrollhint,.ltile,.ltile .lf,.mcard,.citem,.sq,.wstep,.wcomp,.fix,.bframe,.cside,.sicon{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;animation:none!important}
+  /* The scrub is off, so the bg never gets painted — pin the two ported
+     sections' own backgrounds, as the sections above already do. */
+  #tv{background:var(--paper)}
+  #reels{background:var(--black)}
   /* No page-pan without motion — the shot simply sits at the top of the frame. */
   .bview img{transform:none!important;transition:none!important}
   .wcomp{position:static;margin-bottom:20px}
@@ -596,7 +690,7 @@ export const SERVICES_HTML = String.raw`
             <div class="fixseg" id="fs2"><i></i></div>
             <div class="fixseg" id="fs3"><i></i></div>
           </div>
-          <div class="fixlabel">FIXATION <b id="fixno">01</b> / 04</div>
+          <div class="fixlabel"><b id="fixno">01</b> / 04</div>
         </div>
       </div>
       <div class="duomedia">
@@ -614,7 +708,6 @@ export const SERVICES_HTML = String.raw`
         </div>
       </div>
     </div>
-    <div class="idx">02 — 09</div>
   </div>
 </section>
 
@@ -638,7 +731,6 @@ export const SERVICES_HTML = String.raw`
         <div class="ltile" style="--i:7" data-h><svg class="construct" viewBox="0 0 100 100" preserveAspectRatio="none"><circle cx="50" cy="50" r="34"/><circle cx="50" cy="50" r="22"/><line x1="0" y1="50" x2="100" y2="50"/><line x1="50" y1="0" x2="50" y2="100"/></svg><div class="lf"><div class="mk" style="--dur:6.8s;--del:.2s"><span>QI</span></div></div></div>
       </div>
   </div>
-  <div class="idx">03 — 09</div>
 </section>
 
 <!-- S4 WEBSITES (scrub) -->
@@ -668,7 +760,6 @@ export const SERVICES_HTML = String.raw`
         </div>
       </div>
     </div>
-    <div class="idx">04 — 09</div>
   </div>
 </section>
 
@@ -702,7 +793,87 @@ export const SERVICES_HTML = String.raw`
       </aside>
     </div>
   </div>
-  <div class="idx">05 — 09</div>
+</section>
+
+<!-- SOCIAL MEDIA / REELS (scrub) — ported from the landing page.
+     Section order follows the nav's services menu: design, identity, digital
+     (+ websites), social media, video production, brand collaterals. The reels
+     phone opens social media and the creatives grid below continues it. -->
+<section id="reels" class="sec scrub onblack" data-bg="#0B0B0C">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">SOCIAL MEDIA</div>
+      <h2 class="rise" style="--rd:.1s">Reels built to convert</h2>
+    </div>
+    <div class="stagewrap">
+      <div class="objcap">Social Media</div>
+      <div class="phone" id="phone">
+        <div class="notch"></div>
+        <div class="pscreen">
+          <div class="reeltrack" id="reeltrack">
+
+            <div class="reel r1">
+              <div class="vidfx"></div>
+              <div class="ruser"><span class="avatar">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
+              <div class="likes"><i style="--d:0s;--x:-14px">♥</i><i style="--d:.5s;--x:8px">♥</i><i style="--d:1s;--x:-6px">♥</i><i style="--d:1.5s;--x:12px">♥</i></div>
+              <div class="stack">
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">214K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">3.1K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
+              </div>
+              <div class="rtag">SCRIPT + SHOOT</div>
+              <div class="rh">Scripted to stop thumbs</div>
+              <div class="rc">Hooks written from audience data — planned, shot and directed in-house.</div>
+              <div class="rhash">#hooks #brandfilm #madebyadmirate</div>
+              <div class="mrow"><span class="vinyl"></span><div class="mticker"><span>♫ original audio — admirate &nbsp;&nbsp;&nbsp; ♫ original audio — admirate &nbsp;&nbsp;&nbsp;</span></div></div>
+            </div>
+
+            <div class="reel r2">
+              <div class="vidfx"></div>
+              <div class="ruser"><span class="avatar" style="background:#0B0B0C">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
+              <div class="likes"><i style="--d:.2s;--x:10px">♥</i><i style="--d:.7s;--x:-10px">♥</i><i style="--d:1.2s;--x:6px">♥</i><i style="--d:1.7s;--x:-14px">♥</i></div>
+              <div class="stack">
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">489K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">7.8K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
+              </div>
+              <div class="rtag">EDIT + MOTION</div>
+              <div class="rh">Cut to the beat</div>
+              <div class="rc">Captions, motion graphics and sound design — every frame earns the next.</div>
+              <div class="rhash">#motiongraphics #edit #sounddesign</div>
+              <div class="mrow"><span class="vinyl"></span><div class="mticker"><span>♫ original audio — admirate &nbsp;&nbsp;&nbsp; ♫ original audio — admirate &nbsp;&nbsp;&nbsp;</span></div></div>
+            </div>
+
+            <div class="reel r3">
+              <div class="vidfx"></div>
+              <div class="ruser"><span class="avatar">A</span><span>@admirate.in</span><span class="follow">FOLLOW</span></div>
+              <div class="likes"><i style="--d:.1s;--x:-8px">♥</i><i style="--d:.6s;--x:14px">♥</i><i style="--d:1.1s;--x:-12px">♥</i><i style="--d:1.6s;--x:8px">♥</i></div>
+              <div class="stack">
+                <div class="sicon hrt"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-8 11-8 11z"/></svg><span class="cnt cv">1.2M</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg><span class="cnt">12K</span></div>
+                <div class="sicon"><svg viewBox="0 0 24 24"><path d="M3 12l18-8-6 18-3-7-9-3z"/></svg><span class="cnt">SHARE</span></div>
+              </div>
+              <div class="rtag">DISTRIBUTE + CONVERT</div>
+              <div class="rh">Built to route viewers</div>
+              <div class="rc">Every reel ends with a path — profile, page, enquiry. Views become leads.</div>
+              <div class="rhash">#leadgen #convert #simplejourney</div>
+              <div class="mrow"><span class="vinyl"></span><div class="mticker"><span>♫ original audio — admirate &nbsp;&nbsp;&nbsp; ♫ original audio — admirate &nbsp;&nbsp;&nbsp;</span></div></div>
+            </div>
+
+          </div>
+          <div class="rstatus"><span>9:41</span><span>▮▮▮ ▰▰▱</span></div>
+          <div class="tabbar">
+            <span><svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"/></svg></span>
+            <span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></span>
+            <span class="active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 9l5 3-5 3z"/></svg></span>
+            <span><svg viewBox="0 0 24 24"><path d="M6 3h12l2 5H4z"/><path d="M4 8h16v13H4z"/></svg></span>
+            <span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg></span>
+          </div>
+          <div class="pbar"><i id="pprog"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- S6 SOCIAL (full) -->
@@ -715,7 +886,32 @@ export const SERVICES_HTML = String.raw`
   <div class="stagewrap">
     <div class="mgrid" id="mgrid">${MGRID_HTML}</div>
   </div>
-  <div class="idx">06 — 09</div>
+</section>
+
+<!-- VIDEO PRODUCTION (scrub) — ported from the landing page -->
+<section id="tv" class="sec scrub" data-bg="#F5F4F0">
+  <div class="stage">
+    <div class="shead">
+      <div class="eb rise" style="--rd:0s">VIDEO PRODUCTION</div>
+      <h2 class="rise" style="--rd:.1s">Films, ads &amp; brand stories</h2>
+    </div>
+    <div class="stagewrap">
+      <div class="objcap">Video Production</div>
+      <div class="tvframe">
+        <div class="screen">
+          <div class="frame f1 on"><h3>The Hook</h3><div class="chip2">SCENE 01 — STOP THE SCROLL</div></div>
+          <div class="frame f2"><h3>The Story</h3><div class="chip2">SCENE 02 — YOUR BRAND ON FILM</div></div>
+          <div class="frame f3"><h3>The Ask</h3><div class="chip2">SCENE 03 — CLEAR CALL TO ACTION</div></div>
+          <div class="scanlines"></div>
+          <div class="staticflk"></div>
+          <div class="rec"><i></i>REC</div>
+          <div class="chan" id="chan">CH 01</div>
+          <div class="tcode" id="tcode">TC 00:00:00</div>
+        </div>
+        <div class="tvbar"><i id="tvprog"></i></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- S7 COLLATERALS (full) -->
@@ -737,7 +933,6 @@ export const SERVICES_HTML = String.raw`
       </div>
     </div>
   </div>
-  <div class="idx">07 — 09</div>
 </section>
 
 <!-- S8 CONSISTENCY (full) -->
@@ -757,7 +952,6 @@ export const SERVICES_HTML = String.raw`
     <h2 class="rise" style="--rd:.12s">One brand. Every platform.<br>Zero confusion with <em>anyone else's</em>.</h2>
     <p class="rise" style="--rd:.24s">Your logo, your site, your reels and your print all speak the same visual language — one that looks nothing like your competitors'. That consistency is what makes people recognise you before they've even read your name.</p>
   </div>
-  <div class="idx">08 — 09</div>
 </section>
 
 <!-- S9 CTA + FOOTER -->

@@ -11,7 +11,19 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
    pinned states, so they're switched off here too. The loader still runs —
    it's gated on `reduced` alone. */
 const staticScrub = reduced || matchMedia('(max-height: 600px)').matches;
-document.body.classList.add('locked');
+
+/* The loader is a first-impression, not a page transition. The pill nav's links
+   are real <a> hrefs, so coming back to / is a full document load and used to
+   replay the whole boot sequence every time. app/layout.tsx decides this before
+   the first paint and marks the document; we only read its verdict here so the
+   two can never disagree. Mark the tab as booted now, so the *next* arrival
+   skips — but a reload still plays (layout.tsx overrides on nav type 'reload').
+   Storage can throw in private mode; if it does we simply always play, which is
+   the old behaviour. */
+const skipLoader = document.documentElement.classList.contains('no-loader');
+try{ sessionStorage.setItem('adm:booted','1'); }catch(e){}
+
+if(!skipLoader) document.body.classList.add('locked');
 
 /* ---------- content fills ---------- */
 const words = 'BRANDING — LOGO DESIGN — WEBSITES — PACKAGING — SOCIAL MEDIA — VIDEO PRODUCTION — PRINT ADS — BRAND COLLATERALS — BOOKING SYSTEMS — CHATBOTS — ';
@@ -74,6 +86,14 @@ function typeLine(el, speed){
   });
 }
 async function boot(){
+  /* Already hidden by CSS — drop it outright and let the hero play immediately,
+     rather than running finish()'s curtain-open on a curtain nobody saw. */
+  if(skipLoader){
+    if(loader && loader.parentNode) loader.remove();
+    document.body.classList.remove('locked');
+    document.body.classList.add('loaded');
+    return;
+  }
   if(reduced){ finish(); return; }
   await wait(380);
   if(_dead) return;

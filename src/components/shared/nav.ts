@@ -112,15 +112,168 @@ export const NAV_CSS = String.raw`
 @media (prefers-reduced-motion:reduce){
   .pnav,.pnav .pchip,.pnav .pcta,.pnav .pcta .ar{transition:none}
 }
+
+/* ---------- SERVICES MEGA MENU ----------
+   "Services" is a button, not a link — it opens this panel rather than
+   navigating. The panel carries its own "View all services" link so /services
+   itself is still reachable. Full-screen ink, so it reads as part of the site
+   rather than as a dropdown bolted onto it. */
+.pnav .pmenu{
+  background:none;border:0;font:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.pnav .pmenu .pcar{
+  display:inline-block;font-size:9px;line-height:1;opacity:.75;
+  transition:transform .3s,opacity .2s;
+}
+.pnav .pmenu[aria-expanded="true"] .pcar{transform:rotate(180deg);opacity:1}
+.pnav .pmenu[aria-expanded="true"]{color:#fff}
+
+/* Sits above the pill (z 150) and covers it; the panel's own ✕ closes it. */
+.smenu{
+  position:fixed;inset:0;z-index:200;
+  background:#0B0B0C;color:#fff;
+  display:flex;flex-direction:column;
+  padding:clamp(18px,3vw,34px);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .4s ease,visibility .4s;
+  overflow-y:auto;overscroll-behavior:contain;
+}
+.smenu.open{opacity:1;visibility:visible;pointer-events:auto}
+/* Locks the page behind the panel. A distinct class from the landing loader's
+   body.locked, so the two can never clobber each other. */
+body.smopen{overflow:hidden}
+
+.smenu .smtop{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:clamp(14px,2.4vw,26px);flex:0 0 auto;
+}
+.smenu .smeb{
+  font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--red);
+}
+.smenu .smclose{
+  background:none;border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;
+  width:42px;height:42px;border-radius:999px;font-size:16px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:background .25s,border-color .25s,transform .25s;
+}
+.smenu .smclose:hover{background:var(--red);border-color:var(--red);transform:rotate(90deg)}
+
+.smenu .smlist{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center}
+
+.sitem{
+  position:relative;display:flex;align-items:center;gap:clamp(12px,2vw,26px);
+  padding:clamp(10px,1.6vh,18px) clamp(8px,1.6vw,20px);
+  border-top:1px solid rgba(255,255,255,.1);
+  text-decoration:none;color:#fff;overflow:hidden;
+  opacity:0;transform:translateY(22px);
+}
+.sitem:last-of-type{border-bottom:1px solid rgba(255,255,255,.1)}
+.smenu.open .sitem{
+  opacity:1;transform:none;
+  transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1);
+  transition-delay:calc(var(--i)*55ms + .08s);
+}
+/* The red wipe. Scales from the left behind the label, which then steps aside. */
+.sitem::before{
+  content:"";position:absolute;inset:0;background:var(--red);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .45s cubic-bezier(.16,1,.3,1);
+}
+.sitem:hover::before,.sitem:focus-visible::before{transform:scaleX(1)}
+.sitem > *{position:relative}
+.sitem .sn{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red);
+  flex:0 0 auto;transition:color .3s;
+}
+.sitem .st{
+  font-family:var(--display);font-weight:800;font-stretch:106%;text-transform:uppercase;
+  font-size:clamp(26px,5.2vw,60px);line-height:1.05;letter-spacing:-.015em;
+  transition:transform .45s cubic-bezier(.16,1,.3,1);
+}
+.sitem .sar{
+  margin-left:auto;flex:0 0 auto;opacity:0;font-size:clamp(16px,2vw,24px);
+  transform:translateX(-12px);
+  transition:opacity .35s,transform .45s cubic-bezier(.16,1,.3,1);
+}
+.sitem:hover .sn,.sitem:focus-visible .sn{color:#fff}
+.sitem:hover .st,.sitem:focus-visible .st{transform:translateX(clamp(6px,1vw,14px))}
+.sitem:hover .sar,.sitem:focus-visible .sar{opacity:1;transform:none}
+
+/* Websites sits under Digital — indented, quieter, and marked as a child. */
+.sitem.ssub{padding-left:clamp(34px,7vw,110px);border-top:1px dashed rgba(255,255,255,.09)}
+.sitem.ssub .st{font-size:clamp(15px,2.1vw,24px);font-weight:700}
+.sitem.ssub .sn{font-size:13px;color:rgba(255,255,255,.35)}
+.sitem.ssub:hover .sn{color:#fff}
+
+.smenu .smfoot{
+  flex:0 0 auto;padding-top:clamp(14px,2.4vw,26px);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.smenu .small{
+  font-family:var(--body);font-weight:600;font-size:14px;color:#fff;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:3px;
+  transition:color .25s,border-color .25s,gap .25s;
+}
+.smenu .small:hover{color:var(--red);border-color:var(--red);gap:13px}
+.smenu .smnote{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#66666a}
+
+@media (max-width:640px){
+  .smenu{padding:16px 14px}
+  .sitem{gap:12px;padding:9px 4px}
+  .smenu .smclose{width:38px;height:38px}
+  .smenu .smnote{display:none}
+}
+/* Landscape phones: the list must scroll rather than crush the type. */
+@media (max-height:600px){
+  .smenu .smlist{justify-content:flex-start}
+  .sitem .st{font-size:clamp(18px,4vw,26px)}
+  .sitem.ssub .st{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .smenu,.sitem,.sitem::before,.sitem .st,.sitem .sar,.smenu .smclose{transition:none}
+  .sitem{opacity:1;transform:none}
+}
 `;
 
 export type NavPage = "home" | "services" | "blogs";
 
 const LINKS: { id: NavPage; label: string; href: string }[] = [
   { id: "home", label: "Home", href: "/" },
-  { id: "services", label: "Services", href: "/services" },
   { id: "blogs", label: "Blogs", href: "/blogs" },
 ];
+
+/**
+ * The services menu. Every entry points at a section that exists on /services,
+ * so the panel never promises a page we haven't built. `sub` items render
+ * indented beneath their parent (Websites under Digital).
+ */
+type SvcItem = { label: string; href: string; sub?: boolean };
+
+const SERVICES: SvcItem[] = [
+  { label: "Design", href: "/services#eye" },
+  { label: "Identity", href: "/services#logos" },
+  { label: "Digital", href: "/services#web" },
+  { label: "Websites", href: "/services#clients", sub: true },
+  { label: "Social Media", href: "/services#reels" },
+  { label: "Video Production", href: "/services#tv" },
+  { label: "Brand Collaterals", href: "/services#collat" },
+];
+
+const svcItemsHtml = () => {
+  let n = 0;
+  return SERVICES.map((s, i) => {
+    // Sub-items are not numbered — they carry a branch mark instead, so the
+    // top-level run still reads 01…06.
+    const mark = s.sub ? "└" : String(++n).padStart(2, "0");
+    return `<a class="sitem${s.sub ? " ssub" : ""}" href="${s.href}" style="--i:${i}" data-h>
+      <span class="sn">${mark}</span>
+      <span class="st">${s.label}</span>
+      <span class="sar">→</span>
+    </a>`;
+  }).join("\n    ");
+};
 
 /** `active` marks the current page; `ctaHref` differs per page (in-page anchor vs cross-page). */
 export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
@@ -129,25 +282,127 @@ export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
     <span class="pchip"><img class="plogo" src="${LOGO}" alt="" width="213" height="46" decoding="async"></span>
   </a>
   <div class="plinks">
-    ${LINKS.map(
-      (l) =>
-        `<a class="plink${l.id === active ? " on" : ""}" href="${l.href}"${
-          l.id === active ? ' aria-current="page"' : ""
-        } data-h>${l.label}</a>`
-    ).join("\n    ")}
+    <a class="plink${active === "home" ? " on" : ""}" href="/"${
+      active === "home" ? ' aria-current="page"' : ""
+    } data-h>Home</a>
+    <button type="button" class="plink pmenu${
+      active === "services" ? " on" : ""
+    }" id="psvc" aria-expanded="false" aria-controls="smenu" aria-haspopup="dialog" data-h>Services <span class="pcar">▼</span></button>
+    <a class="plink${active === "blogs" ? " on" : ""}" href="/blogs"${
+      active === "blogs" ? ' aria-current="page"' : ""
+    } data-h>Blogs</a>
   </div>
   <a class="pcta" href="${ctaHref}" data-h>Start<span class="ctalong"> a project</span> <span class="ar">→</span></a>
 </nav>
+
+<div class="smenu" id="smenu" role="dialog" aria-modal="true" aria-label="Services" aria-hidden="true">
+  <div class="smtop">
+    <span class="smeb">SERVICES</span>
+    <button type="button" class="smclose" id="smclose" aria-label="Close services menu" data-h>✕</button>
+  </div>
+  <div class="smlist">
+    ${svcItemsHtml()}
+  </div>
+  <div class="smfoot">
+    <a class="small" href="/services" data-h>View all services <span>→</span></a>
+    <span class="smnote">STRATEGIC DESIGN &amp; MARKETING</span>
+  </div>
+</div>
 `;
 
-/** Adds the raised/shadowed state once the page has scrolled. Returns a cleanup fn. */
+/**
+ * Wires the pill's scrolled state and the services mega menu.
+ * Returns a cleanup fn — every listener added here is removed there, because
+ * RawPage calls it on unmount and a stray listener would leak across pages.
+ */
 export function initNav(): () => void {
+  const stops: (() => void)[] = [];
+
   const nav = document.getElementById("pnav");
-  if (!nav) return () => {};
+  if (nav) {
+    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    stops.push(() => window.removeEventListener("scroll", onScroll));
+  }
 
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 12);
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+  const menu = document.getElementById("smenu");
+  const trigger = document.getElementById("psvc");
+  const closeBtn = document.getElementById("smclose");
 
-  return () => window.removeEventListener("scroll", onScroll);
+  if (menu && trigger) {
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let open = false;
+
+    const setOpen = (v: boolean) => {
+      open = v;
+      menu.classList.toggle("open", v);
+      menu.setAttribute("aria-hidden", v ? "false" : "true");
+      trigger.setAttribute("aria-expanded", v ? "true" : "false");
+      document.body.classList.toggle("smopen", v);
+      // Move focus into the panel on open and back to the trigger on close, so
+      // the keyboard is never left on an element hidden behind the overlay.
+      const target = v
+        ? (menu.querySelector<HTMLElement>(".sitem") ?? null)
+        : trigger;
+      target?.focus({ preventScroll: true });
+    };
+
+    const onTrigger = (e: Event) => {
+      e.preventDefault();
+      setOpen(!open);
+    };
+    trigger.addEventListener("click", onTrigger);
+    stops.push(() => trigger.removeEventListener("click", onTrigger));
+
+    if (closeBtn) {
+      const onClose = () => setOpen(false);
+      closeBtn.addEventListener("click", onClose);
+      stops.push(() => closeBtn.removeEventListener("click", onClose));
+    }
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    stops.push(() => document.removeEventListener("keydown", onKey));
+
+    const onMenuClick = (e: MouseEvent) => {
+      // Clicking the panel's own background closes it.
+      if (e.target === menu) {
+        setOpen(false);
+        return;
+      }
+
+      const a = (e.target as Element).closest("a[href]");
+      if (!a) return;
+
+      const href = a.getAttribute("href") || "";
+      const hash = href.indexOf("#");
+
+      // Already on the page the item points at: scroll rather than reload.
+      if (hash > -1) {
+        const path = href.slice(0, hash);
+        const id = href.slice(hash + 1);
+        const el = id ? document.getElementById(id) : null;
+        if (el && (path === location.pathname || path === "")) {
+          e.preventDefault();
+          setOpen(false);
+          el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+          history.replaceState(null, "", href);
+          return;
+        }
+      }
+
+      // Otherwise let the browser navigate; just close so it isn't left open
+      // behind the new page if the browser restores this one from bfcache.
+      setOpen(false);
+    };
+    menu.addEventListener("click", onMenuClick);
+    stops.push(() => menu.removeEventListener("click", onMenuClick));
+
+    stops.push(() => document.body.classList.remove("smopen"));
+  }
+
+  return () => stops.forEach((s) => s());
 }

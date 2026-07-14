@@ -28,8 +28,6 @@ body.locked{overflow:hidden;height:100vh}
 .eb{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--red);margin-bottom:14px}
 h2.light{font-family:var(--body);font-weight:500;font-size:clamp(26px,3.4vw,46px);line-height:1.22;letter-spacing:-.008em;word-spacing:.05em;color:var(--black)}
 .dark h2.light{color:var(--white)}
-.idx{position:absolute;bottom:26px;left:var(--pad);font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--grey);z-index:5}
-.dark .idx{color:#66666a}
 .rise{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
 .sec.active .rise{opacity:1;transform:none;transition-delay:var(--rd,0s)}
 
@@ -40,6 +38,10 @@ h2.light{font-family:var(--body);font-weight:500;font-size:clamp(26px,3.4vw,46px
 
 /* ============ LOADER ============ */
 #loader{position:fixed;inset:0;z-index:1000;pointer-events:none}
+/* Set by the inline script in app/layout.tsx before the first paint, when the
+   visitor is returning Home rather than arriving or reloading. Hiding it here
+   rather than in init() is what prevents a flash of the black terminal. */
+html.no-loader #loader{display:none}
 #loader .half{position:absolute;left:0;width:100%;height:50.5%;background:var(--black);transition:transform .9s cubic-bezier(.76,0,.24,1)}
 #loader .half.top{top:0}
 #loader .half.bot{bottom:0}
@@ -521,25 +523,23 @@ export const LANDING_HTML = String.raw`
     <div class="tag">// WHAT IS ADMIRATE</div>
     <p class="big" id="introTxt">We're a full-stack ad agency obsessed with three things: <span class="acc">good design</span>, <span class="acc">user journeys</span> and <span class="acc">quick&nbsp;leads</span>. We build strong advertising material that moves buyers to act — not <span class="strike">social media fluff</span> that just sits there looking pretty.</p>
   </div>
-  <div class="idx">02 — 09</div>
 </section>
 
 <!-- S3 SERVICES -->
 <section id="services" class="sec full">
   <div class="shead">
-    <div class="eb rise" style="--rd:0s">SERVICES — WHAT WE MAKE</div>
+    <div class="eb rise" style="--rd:0s">SERVICES</div>
     <h2 class="light rise" style="--rd:.12s">Everything your brand needs to be seen.</h2>
   </div>
   <div class="stagewrap">
     <div class="svcgrid" id="svcgrid"></div>
   </div>
-  <div class="idx">03 — 09</div>
 </section>
 
 <!-- S4 LOGOS -->
 <section id="logos" class="sec full">
   <div class="shead">
-    <div class="eb rise" style="--rd:0s">01 / IDENTITY</div>
+    <div class="eb rise" style="--rd:0s">IDENTITY</div>
     <h2 class="light rise" style="--rd:.12s">Logos &amp;<br>brand identity</h2>
   </div>
   <div class="stagewrap">
@@ -552,14 +552,13 @@ export const LANDING_HTML = String.raw`
       <div class="tile" style="--i:5;--dx:130px;--dr:7deg"><span>M/8</span></div>
     </div>
   </div>
-  <div class="idx">04 — 09</div>
 </section>
 
 <!-- S5 VIDEO (scrub) -->
 <section id="tv" class="sec scrub">
   <div class="stage">
     <div class="shead">
-      <div class="eb rise" style="--rd:0s">02 / VIDEO PRODUCTION</div>
+      <div class="eb rise" style="--rd:0s">VIDEO PRODUCTION</div>
       <h2 class="light rise" style="--rd:.12s">Films, ads &amp; brand stories</h2>
     </div>
     <div class="stagewrap">
@@ -578,7 +577,6 @@ export const LANDING_HTML = String.raw`
         <div class="tvbar"><i id="tvprog"></i></div>
       </div>
     </div>
-    <div class="idx">05 — 09</div>
   </div>
 </section>
 
@@ -586,7 +584,7 @@ export const LANDING_HTML = String.raw`
 <section id="web" class="sec scrub">
   <div class="stage">
     <div class="shead">
-      <div class="eb rise" style="--rd:0s">03 / DIGITAL</div>
+      <div class="eb rise" style="--rd:0s">DIGITAL</div>
       <h2 class="light rise" style="--rd:.12s">Websites, booking systems &amp; chatbots</h2>
     </div>
     <div class="stagewrap">
@@ -609,7 +607,6 @@ export const LANDING_HTML = String.raw`
         </div>
       </div>
     </div>
-    <div class="idx">06 — 09</div>
   </div>
 </section>
 
@@ -617,7 +614,7 @@ export const LANDING_HTML = String.raw`
 <section id="reels" class="sec scrub dark">
   <div class="stage">
     <div class="shead">
-      <div class="eb rise" style="--rd:0s">04 / SOCIAL MEDIA</div>
+      <div class="eb rise" style="--rd:0s">SOCIAL MEDIA</div>
       <h2 class="light rise" style="--rd:.12s">Reels built to convert</h2>
     </div>
     <div class="stagewrap">
@@ -688,7 +685,6 @@ export const LANDING_HTML = String.raw`
         </div>
       </div>
     </div>
-    <div class="idx">07 — 09</div>
   </div>
 </section>
 
@@ -702,7 +698,6 @@ export const LANDING_HTML = String.raw`
     <div class="marquee"><div class="mtrack" id="m1"></div><div class="mtrack" aria-hidden="true" id="m1b"></div></div>
     <div class="marquee rev"><div class="mtrack" id="m2"></div><div class="mtrack" aria-hidden="true" id="m2b"></div></div>
   </div>
-  <div class="idx">08 — 09</div>
 </section>
 
 <!-- S9 CTA -->
