@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { POSTS } from "@/components/blogs/posts";
+import { SERVICE_LIST } from "@/components/service/registry";
 import { SITE } from "@/lib/seo";
 
 /**
@@ -33,6 +34,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    /* The six service pages sit just below /services, which remains the
+       overview that links to them, and above the posts. */
+    ...SERVICE_LIST.map((s) => ({
+      url: `${SITE.url}/services/${s.slug}`,
+      lastModified: PAGES_UPDATED,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
     {
       url: `${SITE.url}/blogs`,
       lastModified: POSTS.reduce(

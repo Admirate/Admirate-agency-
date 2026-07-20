@@ -575,6 +575,21 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .showcase{grid-template-columns:minmax(0,1.6fr) minmax(190px,1fr);width:min(760px,100%)}
 }
 
+/* ============ CROSS-LINK OUT ============
+   Each service section now has a page of its own, so this page is the trailer
+   and the link below is the way into the feature. Sits inside .shead, after the
+   heading, on all six. */
+.svmore{
+  display:inline-flex;align-items:center;gap:9px;margin-top:16px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+  color:var(--red);text-decoration:none;
+  border-bottom:1px solid rgba(227,0,27,.38);padding-bottom:4px;
+  transition:gap .25s,border-color .25s,opacity .25s;
+}
+.svmore:hover{gap:15px;border-color:var(--red)}
+.svmore .ar{transition:transform .25s}
+.svmore:hover .ar{transform:translateX(3px)}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01s!important;transition-duration:.01s!important;animation-iteration-count:1!important;transition-delay:0s!important}
   #lightorb,#grain,.lightband,#cdot,#cring,#dots{display:none}
@@ -690,6 +705,7 @@ export const SERVICES_HTML = String.raw`
     <div class="shead">
       <div class="eb rise" style="--rd:0s">EYE-LEVEL DESIGN</div>
       <h2 class="rise" style="--rd:.1s">Every placement is deliberate.</h2>
+      <a class="svmore rise" style="--rd:.2s" href="/services/design" data-h>EXPLORE DESIGN <span class="ar">→</span></a>
     </div>
     <div class="duo">
       <div class="duotext">
@@ -728,6 +744,7 @@ export const SERVICES_HTML = String.raw`
     <h2 class="rise" style="--rd:.1s">Logos built to be recognised in half a second.</h2>
     <p class="rise" style="--rd:.2s">A mark has to work small on a phone screen and huge on a hoarding, in colour and in a single flat black. These are the shapes we design to survive both.</p>
     <div class="stopchip rise" style="--rd:.3s"><i></i>RECOGNITION TEST — 0.5s / MARK</div>
+    <a class="svmore rise" style="--rd:.38s" href="/services/identity" data-h>EXPLORE IDENTITY <span class="ar">→</span></a>
   </div>
   <div class="stagewrap">
       <div class="lgrid">
@@ -749,6 +766,7 @@ export const SERVICES_HTML = String.raw`
     <div class="shead">
       <div class="eb rise" style="--rd:0s">DIGITAL</div>
       <h2 class="rise" style="--rd:.1s">Websites that load like a handshake.</h2>
+      <a class="svmore rise" style="--rd:.2s" href="/services/digital" data-h>EXPLORE DIGITAL <span class="ar">→</span></a>
     </div>
     <div class="duo">
       <div class="duotext">
@@ -814,6 +832,7 @@ export const SERVICES_HTML = String.raw`
     <div class="shead">
       <div class="eb rise" style="--rd:0s">SOCIAL MEDIA</div>
       <h2 class="rise" style="--rd:.1s">Reels built to convert</h2>
+      <a class="svmore rise" style="--rd:.2s" href="/services/social-media" data-h>EXPLORE SOCIAL MEDIA <span class="ar">→</span></a>
     </div>
     <div class="stagewrap">
       <div class="objcap">Social Media</div>
@@ -904,6 +923,7 @@ export const SERVICES_HTML = String.raw`
     <div class="shead">
       <div class="eb rise" style="--rd:0s">VIDEO PRODUCTION</div>
       <h2 class="rise" style="--rd:.1s">Films, ads &amp; brand stories</h2>
+      <a class="svmore rise" style="--rd:.2s" href="/services/video-production" data-h>EXPLORE VIDEO PRODUCTION <span class="ar">→</span></a>
     </div>
     <div class="stagewrap">
       <div class="objcap">Video Production</div>
@@ -930,6 +950,7 @@ export const SERVICES_HTML = String.raw`
     <div class="eb rise" style="--rd:0s">BRAND COLLATERALS</div>
     <h2 class="rise" style="--rd:.1s">The physical proof of a strong identity.</h2>
     <p class="rise" style="--rd:.2s">Business cards, brand guidelines, packaging, merch — the things people hold in their hands, carrying the same face your brand shows everywhere else.</p>
+    <a class="svmore rise" style="--rd:.3s" href="/services/brand-collaterals" data-h>EXPLORE BRAND COLLATERALS <span class="ar">→</span></a>
   </div>
   <div class="stagewrap">
     <div class="shelfwrap">

@@ -8,6 +8,7 @@
  */
 
 import { asset } from "@/lib/cdn";
+import { SERVICE_LIST } from "@/components/service/registry";
 
 const LOGO = asset("admirate logo.webp");
 
@@ -238,23 +239,18 @@ const LINKS: { id: NavPage; label: string; href: string }[] = [
 ];
 
 /**
- * The services menu. Every entry points at a section that exists on /services,
- * so the panel never promises a page we haven't built.
+ * The services menu.
+ *
+ * Entries used to be anchors into sections of /services, because those sections
+ * were all that existed. Each service now has its own page, so they point there
+ * instead — the invariant is unchanged: the panel never promises a page we
+ * haven't built. `SERVICE_LIST` is the single source of that truth, shared with
+ * the sitemap and the route's generateStaticParams, and it carries no page copy
+ * so importing it here costs nothing.
  */
-type SvcItem = { label: string; href: string };
-
-const SERVICES: SvcItem[] = [
-  { label: "Identity", href: "/services#logos" },
-  { label: "Design", href: "/services#eye" },
-  { label: "Social Media", href: "/services#reels" },
-  { label: "Digital", href: "/services#web" },
-  { label: "Video Production", href: "/services#tv" },
-  { label: "Brand Collaterals", href: "/services#collat" },
-];
-
 const svcItemsHtml = () =>
-  SERVICES.map(
-    (s, i) => `<a class="sitem" href="${s.href}" style="--i:${i}" data-h>
+  SERVICE_LIST.map(
+    (s, i) => `<a class="sitem" href="/services/${s.slug}" style="--i:${i}" data-h>
       <span class="sn">${String(i + 1).padStart(2, "0")}</span>
       <span class="st">${s.label}</span>
       <span class="sar">→</span>

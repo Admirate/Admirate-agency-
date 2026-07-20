@@ -100,6 +100,30 @@ function fillChips(id,arr){
   });
 }
 fillChips('svc',SVC); fillChips('budget',BUD); fillChips('time',TIME);
+
+/* ---------- preselect from a service page ----------
+   The six /services/<slug> pages send the visitor here as ?service=<Label>.
+   Those labels are the nav's service names, which are NOT all chip labels —
+   only Social Media, Video Production and Brand Collaterals happen to match.
+   The rest need saying explicitly, so the map is written out rather than
+   guessed at with a fuzzy comparison. An unknown value simply selects nothing. */
+const SERVICE_CHIPS={
+  'identity':['Branding','Logo design'],
+  'design':['Campaigns','Print ads'],
+  'social media':['Social media'],
+  'digital':['Websites'],
+  'video production':['Video production'],
+  'brand collaterals':['Brand collaterals'],
+};
+try{
+  const want=new URLSearchParams(location.search).get('service');
+  const wanted=want?SERVICE_CHIPS[want.trim().toLowerCase()]:null;
+  if(wanted){
+    const box=document.getElementById('svc');
+    [...box.children].forEach(c=>{ if(wanted.includes(c.dataset.v)) c.classList.add('on'); });
+  }
+}catch(e){/* malformed query string — leave every chip unselected */}
+
 if(dot && finePointer && !reduced) bindHover(document.getElementById('brief'));
 
 /* ---------- submit ---------- */
