@@ -1,11 +1,14 @@
 /**
- * DIGITAL — a page about websites, which builds one in front of you.
+ * DIGITAL — websites, argued as journeys rather than pages.
  *
  * Set-pieces unique to this page:
- *   RACE   two load bars run against each other on demand, with the share of
- *          visitors still waiting counted off as they go
- *   BUILD  a browser frame assembles a page in four stages as you scroll —
- *          skeleton, structure, content, done
+ *   RACE     two loading bars run side by side on a button press. It is the
+ *            one claim on this page a paragraph cannot make, so it is played
+ *            rather than stated — and labelled illustrative, because it is
+ *            not a measurement of anyone's site
+ *   JOURNEY  a five-node path from visit to CRM, drawn in as the section
+ *            arrives, with the integrations that carry each step beneath it
+ *   BUILT    the four things a build is held to, as a plain pillar row
  */
 
 export const DIGITAL_CSS = String.raw`
@@ -30,16 +33,14 @@ body.smopen{overflow:hidden}
 
 .dgs{position:relative;z-index:1;padding:clamp(96px,14vh,150px) var(--pad) clamp(70px,11vh,120px)}
 .dgs.dark{color:var(--white)}
-.dgeb{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.dgeb::after{content:"";height:1px;width:clamp(26px,5vw,60px);background:currentColor;opacity:.45}
 .dgh{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(27px,4.6vw,60px);line-height:1.05;letter-spacing:-.026em;max-width:17ch}
 .dgh em{font-style:normal;color:var(--red)}
 .dgp{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:#4a4a4e;max-width:56ch;margin-top:18px}
 .dgs.dark .dgp{color:#a4a4a8}
 .up{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .8s cubic-bezier(.16,1,.3,1)}
-.dgs.in .up,#build.in .up{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.dgs.in .up{opacity:1;transform:none;transition-delay:var(--d,0s)}
 
-/* shared browser chrome, used by hero and the build scrub */
+/* browser chrome, used by the hero */
 .brw{background:var(--white);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 26px 64px rgba(0,0,0,.09)}
 .brw .chrome{display:flex;align-items:center;gap:7px;padding:10px 13px;border-bottom:1px solid var(--line);background:#F4F4F1}
 .brw .chrome b{width:9px;height:9px;border-radius:50%;background:#DcDcD8;display:block}
@@ -93,42 +94,31 @@ body.smopen{overflow:hidden}
 #rgo:hover{background:#c40017;transform:translateY(-2px)}
 #rgo:disabled{opacity:.45;transform:none;cursor:default}
 
-/* ============ 3 — BUILD (scrub) ============ */
-#build{height:340vh;padding:0}
-#build .pin{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(26px,4vw,68px);align-items:center;padding:clamp(90px,13vh,140px) var(--pad) clamp(50px,8vh,90px)}
-#build .btext{position:relative}
-#build .bstep{position:absolute;top:0;left:0;opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s cubic-bezier(.16,1,.3,1);pointer-events:none}
-#build .bstep.on{opacity:1;transform:none;position:relative;pointer-events:auto}
-#build .bnum{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--red);margin-bottom:11px}
-#bview .el{position:absolute;left:7%;right:7%;border-radius:3px;background:#EDEDEA;opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s cubic-bezier(.16,1,.3,1),background .45s}
-#bview .el.on{opacity:1;transform:none}
-#bview .e1{top:11%;height:9%;right:44%}
-#bview .e2{top:26%;height:6%;right:20%}
-#bview .e3{top:35%;height:6%;right:32%}
-#bview .e4{top:50%;height:21%;right:53%}
-#bview .e5{top:50%;left:53%;height:21%;right:7%}
-#bview .e6{top:81%;height:8%;right:63%;border-radius:999px}
-/* stage 3 dresses the skeleton in the real thing */
-#bview.done .e1{background:var(--black)}
-#bview.done .e4{background:linear-gradient(140deg,#1a1a1d,#3a3a40)}
-#bview.done .e6{background:var(--red)}
-#bmeter{position:absolute;right:12px;bottom:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--grey)}
-#build .bprog{position:absolute;left:var(--pad);bottom:clamp(30px,6vh,60px);display:flex;gap:6px}
-#build .bprog i{width:24px;height:2px;background:rgba(11,11,12,.16);transition:background .35s}
-#build .bprog i.on{background:var(--red)}
+/* ============ 3 — THE JOURNEY ============ */
+#journey .jsub{margin-top:14px}
+#jflow{width:100%;max-width:960px;height:auto;overflow:visible;margin-top:clamp(34px,5vh,58px)}
+#jflow .jpath{fill:none;stroke:var(--line);stroke-width:2}
+#jflow .jlive{fill:none;stroke:var(--red);stroke-width:2;stroke-linecap:round;stroke-dasharray:var(--jl,900);stroke-dashoffset:var(--jl,900);transition:stroke-dashoffset 1.8s cubic-bezier(.5,0,.2,1) .2s}
+#journey.in #jflow .jlive{stroke-dashoffset:0}
+#jflow .jnode{fill:var(--white);stroke:var(--line);stroke-width:2}
+#jflow .jnode.hit{stroke:var(--red)}
+#jflow .jnum{font-family:var(--mono);font-size:7px;fill:var(--red)}
+#jflow .jtxt{font-family:var(--mono);font-size:8px;letter-spacing:.1em;fill:#4a4a4e}
+#journey .jgrid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(30px,5vh,52px)}
+.jcard{background:#fff;padding:clamp(18px,2.2vw,26px);display:flex;flex-direction:column;gap:10px;min-height:150px;transition:background .35s}
+.jcard .jn{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--red)}
+.jcard h3{font-family:var(--display);font-weight:800;font-stretch:104%;text-transform:uppercase;font-size:clamp(14px,1.4vw,17px);letter-spacing:-.005em}
+.jcard p{font-size:13px;line-height:1.6;color:#5a5a5e}
+.jcard:hover{background:#FAFAF8}
 
-/* ============ 4 — ONE JOB ============ */
-#job .jgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(30px,5vh,54px)}
-.jcol{background:var(--white);padding:clamp(22px,3vw,38px)}
-.jcol h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--red);margin-bottom:18px}
-.jcol ul{list-style:none;display:flex;flex-direction:column;gap:11px}
-.jcol li{font-size:14.5px;line-height:1.5;color:#4a4a4e;display:flex;gap:10px;align-items:flex-start}
-.jcol li::before{content:"";flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:var(--line);margin-top:7px}
-.jcol.good li::before{background:var(--red)}
-.jcol .verdict{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--grey);margin-top:20px;padding-top:15px;border-top:1px solid var(--line)}
-.jcol.good .verdict{color:var(--red)}
+/* ============ 4 — BUILT RIGHT ============ */
+#built .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:clamp(18px,2.6vw,34px);margin-top:clamp(30px,5vh,52px)}
+.pillar{border-top:2px solid var(--black);padding-top:16px;transition:border-color .3s}
+.pillar:hover{border-color:var(--red)}
+.pillar h3{font-family:var(--display);font-weight:900;font-stretch:110%;text-transform:uppercase;font-size:clamp(17px,1.8vw,22px);letter-spacing:-.01em}
+.pillar p{font-size:13.5px;line-height:1.6;color:#5a5a5e;margin-top:9px}
 
-/* ============ 5 — PROOF ============ */
+/* ============ 5 — THE WORK ============ */
 #dproof .plist{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line)}
 .prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);align-items:center;padding:clamp(18px,2.6vh,30px) 0;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
 .prow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1)}
@@ -141,13 +131,7 @@ body.smopen{overflow:hidden}
 .prow:hover .pn,.prow:hover .pd,.prow:hover .pt{color:rgba(255,255,255,.88)}
 .prow:hover .pnm{color:#fff;transform:translateX(clamp(5px,1vw,12px))}
 
-/* ============ 6 — DEPTH ============ */
-#ddepth .dwrap{max-width:68ch;margin-top:clamp(30px,5vh,52px)}
-#ddepth h3{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(19px,2.2vw,28px);line-height:1.2;letter-spacing:-.015em;margin:clamp(32px,5vh,54px) 0 13px}
-#ddepth p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.78;color:#4a4a4e;margin-bottom:19px}
-#ddepth .dwrap>p:first-of-type::first-letter{font-family:var(--display);font-weight:900;font-stretch:110%;float:left;font-size:3.5em;line-height:.82;padding:6px 12px 0 0;color:var(--red)}
-
-/* ============ 7 — CLOSE ============ */
+/* ============ 6 — CLOSE ============ */
 #dclose .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
 .nrow{display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:clamp(12px,1.9vh,20px) clamp(6px,1.4vw,16px);border-bottom:1px solid rgba(255,255,255,.14);text-decoration:none;color:#fff;position:relative;overflow:hidden}
 .nrow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1)}
@@ -179,55 +163,45 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #dgrail{display:none}
   #dhero{grid-template-columns:1fr;gap:32px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
   #race .rwrap{grid-template-columns:1fr;gap:26px}
-  #build{height:auto}
-  #build .pin{position:static;height:auto;grid-template-columns:1fr;gap:26px;padding:clamp(70px,10vh,100px) var(--pad)}
-  #build .bstep{position:relative;opacity:1;transform:none;margin-bottom:22px}
-  #build .bprog{display:none}
-  #bview .el{opacity:1;transform:none}
-  #job .jgrid{grid-template-columns:1fr}
   .prow{grid-template-columns:auto minmax(0,1fr);row-gap:7px}
   .prow .pt{grid-column:2;justify-self:start}
 }
 @media (max-width:480px){ #dhero h1{font-size:clamp(36px,12vw,54px)} }
 @media (max-height:600px){
   #dhero{min-height:auto}
-  #build{height:auto}
-  #build .pin{position:static;height:auto}
-  #build .bstep{position:relative;opacity:1;transform:none;margin-bottom:20px}
-  #bview .el{opacity:1;transform:none}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .up{opacity:1;transform:none}
   #dhero h1 .l i{transform:none;animation:none}
   #hbrw .sk{opacity:1;animation:none}
-  #build{height:auto}
-  #build .pin{position:static;height:auto}
-  #build .bstep{position:relative;opacity:1;transform:none;margin-bottom:22px}
-  #bview .el{opacity:1;transform:none}
+  #jflow .jlive{stroke-dashoffset:0;transition:none}
 }
 `;
 
-const BUILD_STEPS = [
-  { n: "STAGE 01", h: "Structure before anything else", p: "What the page is for and what order its argument runs in. A page whose case works in plain text will work beautifully once designed; one that does not never recovers." },
-  { n: "STAGE 02", h: "Real content, not lorem", p: "Layouts are built against the words that will actually be there. Designing around placeholder text is how a site ends up with a headline slot nothing true fits into." },
-  { n: "STAGE 03", h: "Weight added deliberately", p: "Images and type are the page's weight, and every kilobyte is a decision. Sized properly here, they cost nothing later; ignored here, they become the reason the page is slow." },
-  { n: "STAGE 04", h: "Useful before it is finished", p: "The page should be readable and usable before everything has arrived. That is what separates a site that feels instant from one that technically loads in the same time." },
+/** The path a visitor takes, and where it ends. */
+const JOURNEY_NODES = [
+  { x: 45, label: "VISIT" },
+  { x: 182, label: "EXPLORE" },
+  { x: 320, label: "CHAT" },
+  { x: 458, label: "BOOK" },
+  { x: 595, label: "CRM" },
 ];
 
-const JOB_BAD = [
-  "Impress investors",
-  "Explain the product",
-  "Recruit staff",
-  "Rank for six search terms",
-  "Announce the latest news",
-  "Collect newsletter signups",
+/** What carries each step of that path. */
+const JOURNEY_CARDS = [
+  { h: "Booking systems", p: "Appointments and reservations taken on the spot — no back-and-forth." },
+  { h: "WhatsApp integrations", p: "The conversation continues where your customers already are." },
+  { h: "Chatbots", p: "Questions answered at 2 a.m., leads qualified before you wake up." },
+  { h: "Lead capture", p: "Forms and flows that ask just enough — and never lose an enquiry." },
+  { h: "CRM integrations", p: "Every lead lands in your pipeline automatically, tagged and ready." },
 ];
-const JOB_GOOD = [
-  "Make the offer obvious in one line",
-  "Prove it with real work",
-  "Answer the two objections that stop people",
-  "Give one clear next step",
+
+const PILLARS = [
+  { h: "Future-proof", p: "Built on foundations that grow with you — never rebuilt from scratch in two years." },
+  { h: "Secure", p: "Hardened, maintained and monitored — your site and your customers' data stay safe." },
+  { h: "Scalable", p: "Launch-day traffic or year-five traffic, the experience stays instant." },
+  { h: "Conversion-first", p: "Every page has one job, one path and one clear next step." },
 ];
 
 const PROOF = [
@@ -277,7 +251,7 @@ export const DIGITAL_HTML = String.raw`
   <div>
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Digital</b></div>
     <h1>${heroLine("SITES THAT", 0.15)}<br>${heroLine("EARN THEIR KEEP", 0.44, true)}</h1>
-    <p class="dgp">Websites designed, built and shipped end to end — fast to load, clear to read, and built around the one thing you actually need a visitor to do.</p>
+    <p class="dgp">We don't just build websites — we build frictionless customer journeys. From the first click to the enquiry in your CRM, every step is designed to convert.</p>
   </div>
   <div class="brw" id="hbrw">
     <div class="chrome"><b></b><b></b><b></b><div class="url">admirate.in/your-homepage<span class="caret"></span></div></div>
@@ -291,11 +265,10 @@ export const DIGITAL_HTML = String.raw`
 
 <!-- 2 — RACE -->
 <section class="dgs dark" id="race" data-bg="#0B0B0C" data-label="The race">
-  <div class="dgeb up">THE COST OF SLOW</div>
   <h2 class="dgh up" style="--d:.08s">Nobody complains. They just <em>leave</em>.</h2>
   <div class="rwrap">
     <div>
-      <p class="dgp up" style="--d:.14s">A slow site does not produce angry emails. It produces a number that was always going to be lower, with no explanation attached. Run the two side by side.</p>
+      <p class="dgp up" style="--d:.14s">Speed is the first step of the journey. Run the two side by side.</p>
       <button type="button" id="rgo" class="up" style="--d:.22s" data-h>Run the race <span>→</span></button>
       <p class="dgp up" style="--d:.28s;font-size:12.5px;color:#6a6a6e">Illustrative, not a measurement of any particular site.</p>
     </div>
@@ -314,92 +287,61 @@ export const DIGITAL_HTML = String.raw`
   </div>
 </section>
 
-<!-- 3 — BUILD (scrub) -->
-<section id="build" data-bg="#FFFFFF" data-label="The build">
-  <div class="pin">
-    <div class="btext">
-      <div class="dgeb">THE BUILD</div>
-      ${BUILD_STEPS.map(
-        (s, i) => `<div class="bstep${i === 0 ? " on" : ""}" data-i="${i}">
-        <div class="bnum">${s.n}</div>
-        <h2 class="dgh">${s.h}</h2>
-        <p class="dgp">${s.p}</p>
-      </div>`
-      ).join("\n      ")}
-    </div>
-    <div class="brw">
-      <div class="chrome"><b></b><b></b><b></b><div class="url" id="burl">admirate.in</div></div>
-      <div class="load"><i id="bload"></i></div>
-      <div class="view" id="bview">
-        <span class="el e1"></span><span class="el e2"></span><span class="el e3"></span>
-        <span class="el e4"></span><span class="el e5"></span><span class="el e6"></span>
-        <span id="bmeter">0%</span>
-      </div>
-    </div>
-    <div class="bprog" aria-hidden="true">${BUILD_STEPS.map((_, i) => `<i${i === 0 ? ' class="on"' : ""}></i>`).join("")}</div>
+<!-- 3 — THE JOURNEY -->
+<section class="dgs" id="journey" data-bg="#FFFFFF" data-label="The journey">
+  <h2 class="dgh up" style="--d:.08s">The site is the door. The <em>journey</em> is the point.</h2>
+  <p class="dgp jsub up" style="--d:.14s">A visitor should glide from curiosity to conversation without ever hitting friction — every path ends in a booking, a chat or a lead, never a dead end.</p>
+  <svg id="jflow" class="up" style="--d:.2s" viewBox="0 0 640 130" role="img" aria-label="A frictionless journey from visit to chat to booking to CRM">
+    <path class="jpath" d="M45 70 H595"/>
+    <path class="jlive" style="--jl:550" d="M45 70 H595"/>
+    ${JOURNEY_NODES.map(
+      (n, i) => `<circle class="jnode hit" cx="${n.x}" cy="70" r="15"/>
+    <text class="jnum" x="${n.x}" y="73" text-anchor="middle">0${i + 1}</text>
+    <text class="jtxt" x="${n.x}" y="105" text-anchor="middle">${n.label}</text>`,
+    ).join("\n    ")}
+  </svg>
+  <div class="jgrid2 up" style="--d:.26s">
+    ${JOURNEY_CARDS.map(
+      (c, i) =>
+        `<article class="jcard"><span class="jn">0${i + 1}</span><h3>${c.h}</h3><p>${c.p}</p></article>`,
+    ).join("\n    ")}
   </div>
 </section>
 
-<!-- 4 — ONE JOB -->
-<section class="dgs" id="job" data-bg="#FAFAF8" data-label="One job">
-  <div class="dgeb up">ONE PAGE, ONE JOB</div>
-  <h2 class="dgh up" style="--d:.08s">Pages fail by trying to serve <em>everyone</em>.</h2>
-  <p class="dgp up" style="--d:.14s">Deciding what a page is primarily for is the highest-leverage decision in a build — and it is a strategy decision, not a design one.</p>
-  <div class="jgrid">
-    <div class="jcol up" style="--d:.2s">
-      <h3>A HOMEPAGE ASKED TO DO EVERYTHING</h3>
-      <ul>${JOB_BAD.map((x) => `<li>${x}</li>`).join("")}</ul>
-      <div class="verdict">// SIX JOBS. ALL OF THEM DONE WEAKLY.</div>
-    </div>
-    <div class="jcol good up" style="--d:.28s">
-      <h3>A HOMEPAGE WITH ONE JOB</h3>
-      <ul>${JOB_GOOD.map((x) => `<li>${x}</li>`).join("")}</ul>
-      <div class="verdict">// ONE JOB. THE REST HAS ITS OWN PAGE.</div>
-    </div>
+<!-- 4 — BUILT RIGHT -->
+<section class="dgs" id="built" data-bg="#FAFAF8" data-label="Built right">
+  <h2 class="dgh up">Designed around <em>conversion</em>, not just appearance.</h2>
+  <div class="pillars up" style="--d:.14s">
+    ${PILLARS.map((p) => `<div class="pillar"><h3>${p.h}</h3><p>${p.p}</p></div>`).join("\n    ")}
   </div>
 </section>
 
-<!-- 5 — PROOF -->
-<section class="dgs" id="dproof" data-bg="#FFFFFF" data-label="Proof">
-  <div class="dgeb up">PROOF</div>
-  <h2 class="dgh up" style="--d:.08s">Sites already doing the <em>job</em>.</h2>
+<!-- 5 — THE WORK -->
+<section class="dgs" id="dproof" data-bg="#FFFFFF" data-label="The work">
+  <h2 class="dgh up">Journeys already doing the <em>job</em>.</h2>
   <div class="plist">
     ${PROOF.map(
       (p, i) => `<div class="prow up" style="--d:${(0.16 + i * 0.05).toFixed(2)}s">
       <span class="pn">${String(i + 1).padStart(2, "0")}</span>
       <span><span class="pnm">${p.n}</span><br><span class="pd">${p.d}</span></span>
       <span class="pt">${p.t.toUpperCase()}</span>
-    </div>`
+    </div>`,
     ).join("\n    ")}
   </div>
 </section>
 
-<!-- 6 — DEPTH -->
-<section class="dgs" id="ddepth" data-bg="#FAFAF8" data-label="In depth">
-  <div class="dgeb up">IN DEPTH</div>
-  <h2 class="dgh up" style="--d:.08s">The long version, for anyone who wants it.</h2>
-  <div class="dwrap up" style="--d:.16s">
-    <p>A website is usually the only part of a brand a stranger meets alone — without a salesperson, a room, or any explanation. Whatever it communicates in the first few seconds is what the brand becomes to that person. It is a high-stakes moment that routinely gets treated as a technical deliverable.</p>
-    <h3>Speed is not a technical concern</h3>
-    <p>The delay between tapping a link and seeing something useful is where a large share of visitors are lost, and they are lost silently. Performance is not polish applied at the end; it is decided early, by choices about images, fonts and how much has to arrive before the page means anything at all.</p>
-    <h3>Findable by construction</h3>
-    <p>Search visibility is mostly a consequence of building the thing properly: real headings, honest metadata, structured data that matches what is on the page, and URLs that do not change. Done during the build it costs almost nothing. Added afterwards it becomes a project.</p>
-    <h3>Built to be lived in</h3>
-    <p>A site is not finished at launch — it is inherited. If updating it requires the people who built it, it will either stagnate or quietly degrade. The handover matters as much as the build.</p>
-  </div>
-</section>
-
-<!-- 7 — CLOSE -->
+<!-- 6 — CLOSE -->
 <section class="dgs dark" id="dclose" data-bg="#0B0B0C" data-label="Close">
-  <div class="dgeb up">KEEP GOING</div>
   <h2 class="dgh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">
     ${NEXT.map(
-      (s, i) => `<a class="nrow up" href="/services/${s.slug}" style="--d:${(0.14 + i * 0.05).toFixed(2)}s" data-h>
+      (n, i) => `<a class="nrow up" href="/services/${n.slug}" style="--d:${(0.14 + i * 0.05).toFixed(
+        2,
+      )}s" data-h>
       <span class="nn">${String(i + 1).padStart(2, "0")}</span>
-      <span class="nt">${s.label}</span>
+      <span class="nt">${n.label}</span>
       <span class="na">→</span>
-    </a>`
+    </a>`,
     ).join("\n    ")}
   </div>
   <div class="cta">

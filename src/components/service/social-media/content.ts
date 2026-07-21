@@ -1,15 +1,13 @@
 /**
- * SOCIAL MEDIA — a page shaped like the feed it is about.
+ * SOCIAL MEDIA — reels and creatives, argued on a phone.
  *
  * Set-pieces unique to this page:
- *   FEED   a phone whose reels advance as you scroll, each one a stage in how a
- *          piece is actually made — hook, cut, route
- *   ROUTE  a funnel that draws itself: view → profile → page → enquiry, with
- *          the point that a view which routes nowhere is where most feeds stop
- *
- * No follower, view or engagement figures appear anywhere on this page. The
- * repository holds none, and a fabricated metric is a claim the studio would
- * have to defend.
+ *   PHONE  a handset in the hero cycling three reels, with a thumb drifting up
+ *          the screen — the gesture the whole page is about
+ *   ROUTE  a four-node path from view to enquiry, drawn in as the section
+ *          arrives: the claim that attention without a destination is worth
+ *          nothing, made as a diagram rather than a sentence
+ *   SWALL  a rolling strip of posts and reels, each in its own treatment
  */
 
 export const SOCIAL_CSS = String.raw`
@@ -34,16 +32,14 @@ body.smopen{overflow:hidden}
 
 .sms{position:relative;z-index:1;padding:clamp(96px,14vh,150px) var(--pad) clamp(70px,11vh,120px)}
 .sms.dark{color:var(--white)}
-.smeb2{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.smeb2::after{content:"";height:1px;width:clamp(26px,5vw,60px);background:currentColor;opacity:.45}
 .smh{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(27px,4.6vw,60px);line-height:1.05;letter-spacing:-.026em;max-width:17ch}
 .smh em{font-style:normal;color:var(--red)}
 .smp{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:#4a4a4e;max-width:56ch;margin-top:18px}
 .sms.dark .smp{color:#a4a4a8}
 .up{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .8s cubic-bezier(.16,1,.3,1)}
-.sms.in .up,#feed.in .up{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.sms.in .up{opacity:1;transform:none;transition-delay:var(--d,0s)}
 
-/* ---------- the phone, shared by hero and feed scrub ---------- */
+/* ---------- the phone ---------- */
 .fone{
   width:min(100%,270px);aspect-ratio:9/19;position:relative;
   background:#0e0e10;border:8px solid #1c1c1f;border-radius:34px;
@@ -87,19 +83,7 @@ body.smopen{overflow:hidden}
 #shero h1 u{text-decoration:none;color:var(--red)}
 #shero .pwrap{display:flex;justify-content:center}
 
-/* ============ 2 — FEED (scrub) ============ */
-#feed{height:330vh;padding:0}
-#feed .pin{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,4vw,68px);align-items:center;padding:clamp(90px,13vh,140px) var(--pad) clamp(50px,8vh,90px)}
-#feed .ftext{position:relative}
-#feed .fstep{position:absolute;top:0;left:0;opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s cubic-bezier(.16,1,.3,1);pointer-events:none}
-#feed .fstep.on{opacity:1;transform:none;position:relative;pointer-events:auto}
-#feed .fnum{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--red);margin-bottom:11px}
-#feed .pwrap{display:flex;justify-content:center}
-#feed .fprog{position:absolute;left:var(--pad);bottom:clamp(30px,6vh,60px);display:flex;gap:6px}
-#feed .fprog i{width:24px;height:2px;background:rgba(255,255,255,.18);transition:background .35s}
-#feed .fprog i.on{background:var(--red)}
-
-/* ============ 3 — ROUTE ============ */
+/* ============ 2 — ROUTE ============ */
 #route .rwrap{margin-top:clamp(32px,5vh,58px)}
 #rsvg{width:100%;height:auto;overflow:visible}
 #rsvg .rpath{fill:none;stroke:var(--line);stroke-width:2}
@@ -110,33 +94,38 @@ body.smopen{overflow:hidden}
 #rsvg .node.hit{stroke:var(--red)}
 #rsvg .ntxt{font-family:var(--mono);font-size:8px;letter-spacing:.1em;fill:#4a4a4e}
 #rsvg .nnum{font-family:var(--mono);font-size:7px;fill:var(--red)}
-#route .dead{
-  display:flex;align-items:flex-start;gap:12px;margin-top:clamp(26px,4vh,44px);
-  border-left:2px solid var(--red);padding-left:16px;max-width:60ch;
-}
-#route .dead b{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--red);display:block;margin-bottom:7px}
-#route .dead p{font-size:14.5px;line-height:1.65;color:#4a4a4e}
 
-/* ============ 4 — PROOF ============ */
-#sproof .plist{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line)}
-.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);align-items:center;padding:clamp(18px,2.6vh,30px) 0;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
-.prow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1)}
-.prow>*{position:relative;z-index:1;transition:color .35s}
-.prow:hover::before{transform:scaleX(1)}
-.prow .pn{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red)}
-.prow .pnm{font-family:var(--display);font-weight:800;font-stretch:106%;text-transform:uppercase;font-size:clamp(19px,3vw,38px);line-height:1.08;letter-spacing:-.018em;transition:transform .45s cubic-bezier(.16,1,.3,1),color .35s}
-.prow .pd{font-size:13.5px;line-height:1.5;color:#5a5a5e;max-width:54ch}
-.prow .pt{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--grey);white-space:nowrap}
-.prow:hover .pn,.prow:hover .pd,.prow:hover .pt{color:rgba(255,255,255,.88)}
-.prow:hover .pnm{color:#fff;transform:translateX(clamp(5px,1vw,12px))}
+/* ============ 3 — SOCIALS THAT STAND OUT ============ */
+#swall .mq{margin-top:clamp(30px,5vh,52px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+#swall .mqtrack{display:flex;width:max-content;animation:mqx 48s linear infinite}
+#swall .mq:hover .mqtrack{animation-play-state:paused}
+.mqset{display:flex;gap:clamp(14px,2vw,24px);padding-right:clamp(14px,2vw,24px)}
+@keyframes mqx{to{transform:translateX(-50%)}}
+.scard2{flex:0 0 auto;width:clamp(178px,20vw,236px)}
+.stile{aspect-ratio:9/16;border-radius:16px;border:1px solid var(--line);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:18px;background:#fff;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s}
+.scard2:hover .stile{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,11,12,.16)}
+.stile .chip{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--grey)}
+.stile .chip i{width:6px;height:6px;border-radius:50%;background:var(--red)}
+.stile .hook{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(17px,1.9vw,23px);line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;text-align:center}
+.stile .hash{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:var(--grey)}
+.stile.s-dark{background:linear-gradient(160deg,#1a1a1e,#0B0B0C 70%)}
+.stile.s-dark .hook{color:#fff}
+.stile.s-dark .hook u{text-decoration:none;color:var(--red)}
+.stile.s-warm{background:#FBF7F1}
+.stile.s-warm .hook{font-family:var(--body);font-weight:300;font-size:clamp(15px,1.7vw,20px);letter-spacing:.06em;text-transform:lowercase;color:var(--black)}
+.stile.s-red{background:linear-gradient(160deg,#E3001B,#a80014 78%)}
+.stile.s-red .hook{color:#fff}
+.stile.s-red .hash{color:rgba(255,255,255,.6)}
+.stile.s-red .chip{color:rgba(255,255,255,.7)}
+.stile.s-red .chip i{background:#fff}
+.stile.s-paper{background:#FAFAF8}
+.stile.s-paper .hook{color:var(--black)}
+.stile.s-paper .hook u{text-decoration:none;color:var(--red)}
+.stile.s-air .hook{font-family:var(--body);font-weight:300;font-size:clamp(14px,1.6vw,18px);letter-spacing:.3em;text-transform:uppercase;color:var(--black);padding-left:.3em}
+.smeta{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--grey);white-space:nowrap}
+.smeta b{color:var(--black);font-weight:500}
 
-/* ============ 5 — DEPTH ============ */
-#sdepth .dwrap{max-width:68ch;margin-top:clamp(30px,5vh,52px)}
-#sdepth h3{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(19px,2.2vw,28px);line-height:1.2;letter-spacing:-.015em;margin:clamp(32px,5vh,54px) 0 13px}
-#sdepth p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.78;color:#4a4a4e;margin-bottom:19px}
-#sdepth .dwrap>p:first-of-type::first-letter{font-family:var(--display);font-weight:900;font-stretch:110%;float:left;font-size:3.5em;line-height:.82;padding:6px 12px 0 0;color:var(--red)}
-
-/* ============ 6 — CLOSE ============ */
+/* ============ 4 — CLOSE ============ */
 #sclose .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
 .nrow{display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:clamp(12px,1.9vh,20px) clamp(6px,1.4vw,16px);border-bottom:1px solid rgba(255,255,255,.14);text-decoration:none;color:#fff;position:relative;overflow:hidden}
 .nrow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1)}
@@ -169,19 +158,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #shero{grid-template-columns:1fr;gap:34px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
   #shero .pwrap{order:-1}
   .fone{width:min(64%,210px)}
-  #feed{height:auto}
-  #feed .pin{position:static;height:auto;grid-template-columns:1fr;gap:26px;padding:clamp(70px,10vh,100px) var(--pad)}
-  #feed .fstep{position:relative;opacity:1;transform:none;margin-bottom:22px}
-  #feed .fprog{display:none}
-  .prow{grid-template-columns:auto minmax(0,1fr);row-gap:7px}
-  .prow .pt{grid-column:2;justify-self:start}
 }
 @media (max-width:480px){ #shero h1{font-size:clamp(36px,12vw,54px)} }
 @media (max-height:600px){
   #shero{min-height:auto}
-  #feed{height:auto}
-  #feed .pin{position:static;height:auto}
-  #feed .fstep{position:relative;opacity:1;transform:none;margin-bottom:20px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
@@ -189,10 +169,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #shero h1 .l i{transform:none;animation:none}
   .fone .thumb{display:none}
   .reeltrack{transition:none}
-  #feed{height:auto}
-  #feed .pin{position:static;height:auto}
-  #feed .fstep{position:relative;opacity:1;transform:none;margin-bottom:22px}
   #rsvg .rlive{stroke-dashoffset:0;transition:none}
+  #swall .mqtrack{animation:none}
+  #swall .mq{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
 `;
 
@@ -202,12 +181,6 @@ const REELS = [
   { tag: "ROUTE + CONVERT", hd: "Built to send people somewhere", cp: "Every piece ends with a path — profile, page, enquiry.", hash: "#leadgen #convert" },
 ];
 
-const FEED_STEPS = [
-  { n: "STAGE 01", h: "The first second is the strategy", p: "Distribution on every feed platform is decided by whether people stay. That makes the opening moment the highest-leverage part of the entire production — higher than the camera, the location or the edit. It is a writing problem, which is why it is solved on paper first." },
-  { n: "STAGE 02", h: "The cut is where pace is decided", p: "Captions, motion and sound carry more of the result than most people expect. Pace is what an audience actually experiences, and pace is made in the edit — not found there." },
-  { n: "STAGE 03", h: "Then it has to go somewhere", p: "A piece that is widely seen and leads nowhere has converted attention into nothing. The path out is designed as part of the content, not bolted on once the numbers look good." },
-];
-
 const ROUTE_NODES = [
   { x: 60, label: "THE VIEW" },
   { x: 230, label: "THE PROFILE" },
@@ -215,10 +188,15 @@ const ROUTE_NODES = [
   { x: 570, label: "THE ENQUIRY" },
 ];
 
-const PROOF = [
-  { n: "Hitex SportExpo", t: "Event · Social", d: "Expo campaign creative built to carry launch-week momentum across feeds." },
-  { n: "Our Sacred Space", t: "Events · Community", d: "A rolling calendar of classes and events turned into content with somewhere to go." },
-  { n: "Samyoga Studio", t: "Studio · Lifestyle", d: "Practice-led content in a category where sameness is the default." },
+/* Posts and reels as they actually ran. Each carries its own treatment so the
+   strip reads as six accounts rather than one template filled in six times. */
+const WALL = [
+  { cls: "s-dark", chip: "REEL", hook: `GAME<br><u>DAY</u>.`, hash: "#SPORTEXPO #GAMEON", b: "Hitex SportExpo", tag: "CAMPAIGN" },
+  { cls: "s-warm", chip: "POST", hook: `this weekend,<br>at the space`, hash: "#EVENTS #COMMUNITY", b: "Our Sacred Space", tag: "FEED" },
+  { cls: "s-paper", chip: "REEL", hook: `One breath<br>at a <u>time</u>.`, hash: "#PRACTICE #STUDIO", b: "Samyoga Studio", tag: "REELS" },
+  { cls: "s-dark", chip: "POST", hook: `Recovery starts with a <u>conversation</u>.`, hash: "#CARE #SUPPORT", b: "Hope Trust India", tag: "CONTENT" },
+  { cls: "s-air", chip: "POST", hook: `Clearly premium`, hash: "#GLASS #FACADES", b: "South Glass", tag: "FEED" },
+  { cls: "s-red", chip: "REEL", hook: `MADE TO<br>CONVERT.`, hash: "#ADMIRATE", b: "ADMIRATE", tag: "REELS" },
 ];
 
 const NEXT = [
@@ -263,13 +241,24 @@ const phone = (id: string, withThumb: boolean) => `
         <div class="hd">${r.hd}</div>
         <div class="cp">${r.cp}</div>
         <div class="hash">${r.hash}</div>
-      </div>`
+      </div>`,
       ).join("")}
     </div>
   </div>
   <div class="bar"><i id="${id}bar"></i></div>
   ${withThumb ? '<div class="thumb" aria-hidden="true"></div>' : ""}
 </div>`;
+
+/* The marquee needs its contents twice: the track translates -50%, so the
+   second copy is what occupies the viewport as the first scrolls out. It is
+   duplicate content, hence aria-hidden on the copy. */
+const wallSet = (hidden: boolean) => `
+      <div class="mqset"${hidden ? ' aria-hidden="true"' : ""}>
+      ${WALL.map(
+        (w) =>
+          `<div class="scard2"><div class="stile ${w.cls}"><span class="chip"><i></i>${w.chip}</span><span class="hook">${w.hook}</span><span class="hash">${w.hash}</span></div><div class="smeta"><b>${w.b}</b><span>${w.tag}</span></div></div>`,
+      ).join("\n      ")}
+      </div>`;
 
 export const SOCIAL_HTML = String.raw`
 <div id="smbg"></div>
@@ -286,27 +275,8 @@ export const SOCIAL_HTML = String.raw`
   <div class="pwrap">${phone("hreel", true)}</div>
 </section>
 
-<!-- 2 — FEED (scrub) -->
-<section id="feed" data-bg="#FAFAF8" data-label="The feed">
-  <div class="pin">
-    <div class="ftext">
-      <div class="smeb2">HOW A PIECE IS MADE</div>
-      ${FEED_STEPS.map(
-        (s, i) => `<div class="fstep${i === 0 ? " on" : ""}" data-i="${i}">
-        <div class="fnum">${s.n}</div>
-        <h2 class="smh">${s.h}</h2>
-        <p class="smp">${s.p}</p>
-      </div>`
-      ).join("\n      ")}
-    </div>
-    <div class="pwrap">${phone("freel", false)}</div>
-    <div class="fprog" aria-hidden="true">${FEED_STEPS.map((_, i) => `<i${i === 0 ? ' class="on"' : ""}></i>`).join("")}</div>
-  </div>
-</section>
-
-<!-- 3 — ROUTE -->
+<!-- 2 — ROUTE -->
 <section class="sms" id="route" data-bg="#FFFFFF" data-label="The route">
-  <div class="smeb2 up">THE ROUTE</div>
   <h2 class="smh up" style="--d:.08s">A view that goes nowhere is a <em>vanity</em> number.</h2>
   <p class="smp up" style="--d:.14s">Attention is the hard part, and it is worth nothing on its own. Every piece should end with somewhere to go — and that path is designed, not hoped for.</p>
   <div class="rwrap up" style="--d:.2s">
@@ -316,59 +286,34 @@ export const SOCIAL_HTML = String.raw`
       ${ROUTE_NODES.map(
         (n, i) => `<circle class="node hit" cx="${n.x}" cy="70" r="15"/>
         <text class="nnum" x="${n.x}" y="73" text-anchor="middle">0${i + 1}</text>
-        <text class="ntxt" x="${n.x}" y="105" text-anchor="middle">${n.label}</text>`
+        <text class="ntxt" x="${n.x}" y="105" text-anchor="middle">${n.label}</text>`,
       ).join("\n      ")}
     </svg>
   </div>
-  <div class="dead">
-    <div>
-      <b>WHERE MOST FEEDS STOP</b>
-      <p>At node one. The piece is seen, it performs, the number is screenshotted — and there was never anything after it. The production cost was identical.</p>
+</section>
+
+<!-- 3 — SOCIALS THAT STAND OUT -->
+<section class="sms" id="swall" data-bg="#FBF7F1" data-label="The work">
+  <h2 class="smh up">Socials that <em>stand out</em>.</h2>
+  <p class="smp up" style="--d:.1s">Accounts and creatives cut through the scroll — and send people somewhere.</p>
+  <div class="mq up" style="--d:.18s">
+    <div class="mqtrack">${wallSet(false)}${wallSet(true)}
     </div>
   </div>
 </section>
 
-<!-- 4 — PROOF -->
-<section class="sms" id="sproof" data-bg="#FBF7F1" data-label="Proof">
-  <div class="smeb2 up">PROOF</div>
-  <h2 class="smh up" style="--d:.08s">Accounts with somewhere to <em>send</em> people.</h2>
-  <div class="plist">
-    ${PROOF.map(
-      (p, i) => `<div class="prow up" style="--d:${(0.16 + i * 0.05).toFixed(2)}s">
-      <span class="pn">${String(i + 1).padStart(2, "0")}</span>
-      <span><span class="pnm">${p.n}</span><br><span class="pd">${p.d}</span></span>
-      <span class="pt">${p.t.toUpperCase()}</span>
-    </div>`
-    ).join("\n    ")}
-  </div>
-</section>
-
-<!-- 5 — DEPTH -->
-<section class="sms" id="sdepth" data-bg="#FFFFFF" data-label="In depth">
-  <div class="smeb2 up">IN DEPTH</div>
-  <h2 class="smh up" style="--d:.08s">The long version, for anyone who wants it.</h2>
-  <div class="dwrap up" style="--d:.16s">
-    <p>The most common social brief is a number of posts per month. It is easy to agree to, easy to invoice against, and almost unrelated to whether anything improves. Volume without a point produces a busy account and a flat business — the work happens, the calendar fills, and nothing downstream moves.</p>
-    <h3>Consistency beats intensity</h3>
-    <p>A burst of excellent content followed by six quiet weeks performs worse than a steady run of good work, because these platforms reward reliability and audiences form habits. Production is planned so one session yields a sequence — the goal is a pace that can be sustained, not a launch that cannot.</p>
-    <h3>Views are not the product</h3>
-    <p>A piece that is widely seen and leads nowhere has converted attention into nothing. Every piece should end somewhere — a profile that explains, a page that sells, a form that starts a conversation.</p>
-    <h3>It still has to look like you</h3>
-    <p>Social is where most brands quietly come apart. The pace invites shortcuts, and a year later the feed shares nothing with the website. The identity system exists precisely so speed does not cost coherence.</p>
-  </div>
-</section>
-
-<!-- 6 — CLOSE -->
+<!-- 4 — CLOSE -->
 <section class="sms dark" id="sclose" data-bg="#0B0B0C" data-label="Close">
-  <div class="smeb2 up">KEEP GOING</div>
   <h2 class="smh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">
     ${NEXT.map(
-      (s, i) => `<a class="nrow up" href="/services/${s.slug}" style="--d:${(0.14 + i * 0.05).toFixed(2)}s" data-h>
+      (s, i) => `<a class="nrow up" href="/services/${s.slug}" style="--d:${(0.14 + i * 0.05).toFixed(
+        2,
+      )}s" data-h>
       <span class="nn">${String(i + 1).padStart(2, "0")}</span>
       <span class="nt">${s.label}</span>
       <span class="na">→</span>
-    </a>`
+    </a>`,
     ).join("\n    ")}
   </div>
   <div class="cta">

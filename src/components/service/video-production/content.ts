@@ -1,15 +1,15 @@
 /**
- * VIDEO PRODUCTION — a page that behaves like an edit suite.
+ * VIDEO PRODUCTION — films, argued from the edit rather than the shoot.
  *
  * Set-pieces unique to this page:
- *   TIMELINE  scrolling scrubs a real timeline: timecode counts, the playhead
- *             moves, scenes cut. The section's argument is about structure and
- *             pacing, so the reader is given the scrubber
- *   RATIOS    the same film in three ratios, switchable — the point being that
- *             these are three edits, not three crops
+ *   APERTURE  six blades open and close around a play mark in the hero
+ *   TIMELINE  a scroll-driven playhead crosses a real track, the timecode
+ *             counting in frames, scenes cutting as the head crosses each clip
+ *   SOUND     an equaliser standing in for the half of a film you cannot see
+ *   MONTAGE   a rolling strip of finished frames, sprocket holes and all
  *
- * Crew size, kit and turnaround are stated nowhere: the repository records
- * none of it.
+ * The clip widths are the flex values in the markup, so the playhead and the
+ * clips cannot disagree — both are read from the laid-out DOM in measure().
  */
 
 export const VIDEO_CSS = String.raw`
@@ -34,8 +34,6 @@ body.smopen{overflow:hidden}
 
 .vs{position:relative;z-index:1;padding:clamp(96px,14vh,150px) var(--pad) clamp(70px,11vh,120px)}
 .vs.dark{color:var(--white)}
-.veb{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.veb::after{content:"";height:1px;width:clamp(26px,5vw,60px);background:currentColor;opacity:.45}
 .vh{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(27px,4.6vw,60px);line-height:1.05;letter-spacing:-.026em;max-width:17ch}
 .vh em{font-style:normal;color:var(--red)}
 .vp{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:#4a4a4e;max-width:56ch;margin-top:18px}
@@ -100,47 +98,42 @@ body.smopen{overflow:hidden}
 #play{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--red);left:0;box-shadow:0 0 12px rgba(227,0,27,.8)}
 #play::before{content:"";position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:9px;height:9px;background:var(--red);border-radius:1px}
 
-/* ============ 3 — RATIOS ============ */
-#rat .rwrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:center;margin-top:clamp(28px,4.6vh,50px)}
-#rat .tabs{display:inline-flex;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px;margin-top:22px}
-#rat .tabs button{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;background:none;border:none;color:#9a9a9e;padding:10px 15px;border-radius:999px;cursor:pointer;transition:background .25s,color .25s}
-#rat .tabs button.on{background:var(--red);color:#fff}
-#rstage{display:flex;align-items:center;justify-content:center;min-height:min(56vh,420px)}
-#rframe{
-  position:relative;background:#0a0a0c;border:1px solid rgba(255,255,255,.14);overflow:hidden;
-  transition:width .6s cubic-bezier(.16,1,.3,1),height .6s cubic-bezier(.16,1,.3,1);
-  display:flex;align-items:center;justify-content:center;padding:clamp(14px,2.4vw,30px);
-}
-#rframe .rt{font-family:var(--display);font-weight:900;font-stretch:112%;letter-spacing:-.028em;line-height:.98;color:#fff;text-transform:uppercase;text-align:center;transition:font-size .6s cubic-bezier(.16,1,.3,1)}
-#rframe .rt span{color:var(--red)}
-#rframe .vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.55))}
-#rcap{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red);margin-top:16px;min-height:1.4em}
-
-/* ============ 4 — SOUND ============ */
+/* ============ 3 — SOUND ============ */
 #snd .bars{display:flex;align-items:flex-end;gap:clamp(3px,.6vw,7px);height:clamp(90px,16vh,150px);margin-top:clamp(30px,5vh,52px)}
 #snd .bars i{flex:1;background:var(--red);opacity:.75;border-radius:2px 2px 0 0;transform-origin:bottom;animation:eq 1.6s ease-in-out infinite;animation-delay:var(--sd,0s)}
 @keyframes eq{0%,100%{transform:scaleY(.22)}50%{transform:scaleY(1)}}
 
-/* ============ 5 — PROOF ============ */
-#vproof .plist{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line)}
-.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);align-items:center;padding:clamp(18px,2.6vh,30px) 0;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
-.prow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1)}
-.prow>*{position:relative;z-index:1;transition:color .35s}
-.prow:hover::before{transform:scaleX(1)}
-.prow .pn{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red)}
-.prow .pnm{font-family:var(--display);font-weight:800;font-stretch:106%;text-transform:uppercase;font-size:clamp(19px,3vw,38px);line-height:1.08;letter-spacing:-.018em;transition:transform .45s cubic-bezier(.16,1,.3,1),color .35s}
-.prow .pd{font-size:13.5px;line-height:1.5;color:#5a5a5e;max-width:54ch}
-.prow .pt{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--grey);white-space:nowrap}
-.prow:hover .pn,.prow:hover .pd,.prow:hover .pt{color:rgba(255,255,255,.88)}
-.prow:hover .pnm{color:#fff;transform:translateX(clamp(5px,1vw,12px))}
+/* ============ 4 — THE MONTAGE ============ */
+#montage .strip{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;position:relative}
+#montage .strip::before,#montage .strip::after{content:"";position:absolute;left:0;right:0;height:7px;background-image:repeating-linear-gradient(90deg,var(--line) 0 11px,transparent 11px 27px);opacity:.8}
+#montage .strip::before{top:4px}
+#montage .strip::after{bottom:4px}
+#montage .mq{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+#montage .mqtrack{display:flex;width:max-content;animation:mqx 44s linear infinite}
+#montage .mq:hover .mqtrack{animation-play-state:paused}
+.mqset{display:flex;gap:clamp(12px,1.8vw,22px);padding-right:clamp(12px,1.8vw,22px)}
+@keyframes mqx{to{transform:translateX(-50%)}}
+.fcard{flex:0 0 auto;width:clamp(240px,28vw,340px)}
+.fframe{aspect-ratio:16/9;border-radius:4px;position:relative;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.fcard:hover .fframe{transform:scale(1.03)}
+.fframe .tc{position:absolute;top:9px;left:11px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:rgba(255,255,255,.65)}
+.fframe .rdot{position:absolute;top:9px;right:11px;width:7px;height:7px;border-radius:50%;background:var(--red);animation:blip 1.4s ease-in-out infinite}
+.fframe .vg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 52%,rgba(0,0,0,.5))}
+.fframe .w{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(24px,2.6vw,34px);letter-spacing:-.025em;text-transform:uppercase;color:#fff}
+.fframe .w u{text-decoration:none;color:var(--red)}
+.fframe .wsoft{font-family:var(--body);font-weight:300;font-size:clamp(19px,2.1vw,27px);letter-spacing:.2em;color:#fff;text-transform:lowercase}
+.fframe.f1{background:linear-gradient(150deg,#26060a,#0B0B0C 62%)}
+.fframe.f2{background:linear-gradient(160deg,#17171b,#0B0B0C 70%)}
+.fframe.f3{background:linear-gradient(150deg,#2b2117,#141110 68%)}
+.fframe.f4{background:linear-gradient(155deg,#1d2226,#0e1113 70%)}
+.fframe.f5{background:linear-gradient(150deg,#1b1b1f,#0B0B0C 66%)}
+.fframe.f6{background:linear-gradient(155deg,#211d16,#0f0e0c 70%)}
+.fmeta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--grey);white-space:nowrap}
+.fmeta b{color:var(--black);font-weight:500}
+#montage .cutnote{margin-top:clamp(26px,4vh,42px);text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--grey)}
+#montage .cutnote b{color:var(--red);font-weight:400}
 
-/* ============ 6 — DEPTH ============ */
-#vdepth .dwrap{max-width:68ch;margin-top:clamp(30px,5vh,52px)}
-#vdepth h3{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(19px,2.2vw,28px);line-height:1.2;letter-spacing:-.015em;margin:clamp(32px,5vh,54px) 0 13px}
-#vdepth p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.78;color:#4a4a4e;margin-bottom:19px}
-#vdepth .dwrap>p:first-of-type::first-letter{font-family:var(--display);font-weight:900;font-stretch:110%;float:left;font-size:3.5em;line-height:.82;padding:6px 12px 0 0;color:var(--red)}
-
-/* ============ 7 — CLOSE ============ */
+/* ============ 5 — CLOSE ============ */
 #vclose .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
 .nrow{display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:clamp(12px,1.9vh,20px) clamp(6px,1.4vw,16px);border-bottom:1px solid rgba(255,255,255,.14);text-decoration:none;color:#fff;position:relative;overflow:hidden}
 .nrow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1)}
@@ -173,14 +166,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #vhero{grid-template-columns:1fr;gap:34px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
   #vhero .apwrap{order:-1}
   #apsvg{width:min(60%,220px)}
+  /* The scrub is switched off below 768px (see IS_M in init.ts); the scenes
+     stack and the track, which has nothing to drive it, is hidden. */
   #tl{height:auto}
   #tl .pin{position:static;height:auto;padding:clamp(70px,10vh,100px) var(--pad)}
   .mon{aspect-ratio:4/3}
   .mon .scene{position:relative;opacity:1;inset:auto;border-bottom:1px solid rgba(255,255,255,.1)}
   .track{display:none}
-  #rat .rwrap{grid-template-columns:1fr;gap:24px}
-  .prow{grid-template-columns:auto minmax(0,1fr);row-gap:7px}
-  .prow .pt{grid-column:2;justify-self:start}
 }
 @media (max-width:480px){ #vhero h1{font-size:clamp(36px,12vw,54px)} }
 @media (max-height:600px){
@@ -193,8 +185,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .up{opacity:1;transform:none}
   #vhero h1 .l i{transform:none;animation:none}
-  #apsvg .bl,#vhero .rec i,#snd .bars i{animation:none}
+  #apsvg .bl,#vhero .rec i,#snd .bars i,.fframe .rdot{animation:none}
   #snd .bars i{transform:scaleY(.6)}
+  #montage .mqtrack{animation:none}
+  #montage .mq{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
   #tl{height:auto}
   #tl .pin{position:static;height:auto}
   .mon{aspect-ratio:auto}
@@ -203,23 +197,25 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 }
 `;
 
+/* The four beats of a film that works, and how much of the running time each
+   is given. `flex` is the clip width on the track, so the playhead crossing a
+   clip and the scene cutting are the same event. */
 const SCENES = [
-  { n: "SCENE 01 — 00:00", h: "The hook", p: "Whatever happens here decides whether anything after it is watched. It is written, not filmed — and it is the cheapest thing in the entire production to get right." },
-  { n: "SCENE 02 — 00:08", h: "The turn", p: "The reason to keep watching. Something has to change, or the viewer has already learned the rest is predictable." },
-  { n: "SCENE 03 — 00:22", h: "The proof", p: "The claim, shown rather than asserted. This is where production value finally earns its budget — and not a second before." },
-  { n: "SCENE 04 — 00:38", h: "The ask", p: "One clear next move, made while the argument is still standing. Placed anywhere earlier it is noise." },
+  { h: "The hook", p: "Attention is captured in the first moments or never. The hook is the whole strategy — everything after it only exists if this works.", clip: "THE HOOK", flex: 18 },
+  { h: "The turn", p: "Something has to change, or the viewer already knows the rest. Pacing is decided cut by cut — and pacing is what keeps the thumb still.", clip: "THE TURN", flex: 22 },
+  { h: "The proof", p: "The claim, shown rather than said — and cut tight enough that no second asks to be skipped.", clip: "THE PROOF", flex: 34 },
+  { h: "The ask", p: "One clear next move, made while attention is still yours.", clip: "THE ASK", flex: 26 },
 ];
 
-const RATIOS = [
-  { k: "wide", lbl: "16:9 — SITE & YOUTUBE", w: 100, h: 56.25, fs: 34, cap: "// ROOM TO BREATHE. THE FULL ARGUMENT FITS." },
-  { k: "tall", lbl: "9:16 — REELS & SHORTS", w: 42, h: 74, fs: 26, cap: "// RECOMPOSED, NOT CROPPED. THE SUBJECT MOVES." },
-  { k: "sq", lbl: "1:1 — FEED", w: 62, h: 62, fs: 29, cap: "// A THIRD COMPOSITION. SAME FOOTAGE, NEW EDIT." },
-];
-
-const PROOF = [
-  { n: "Hitex SportExpo", t: "Event · Film", d: "An expo with a launch window — film made to carry scale and urgency at once." },
-  { n: "Hope Trust India", t: "Story · Care", d: "Subject matter that required restraint; a story told without dramatising the people in it." },
-  { n: "Our Sacred Space", t: "Venue · Culture", d: "A space whose atmosphere is the offer, which makes it a film problem more than a photo one." },
+/* Finished frames. Each carries its own grade so the strip reads as six films
+   rather than one look repeated. */
+const MONTAGE = [
+  { cls: "f1", tc: "TC 00:00:12", art: `<span class="w">GAME <u>ON</u></span>`, b: "Hitex SportExpo", tag: "LAUNCH FILM" },
+  { cls: "f2", tc: "TC 00:01:04", art: `<span class="wsoft">listen.</span>`, b: "Hope Trust India", tag: "BRAND STORY" },
+  { cls: "f3", tc: "TC 00:00:38", art: `<span class="wsoft">the space</span>`, b: "Our Sacred Space", tag: "VENUE FILM" },
+  { cls: "f4", tc: "TC 00:00:21", art: `<span class="w">CLARITY<u>.</u></span>`, b: "South Glass", tag: "PRODUCT FILM" },
+  { cls: "f5", tc: "TC 00:00:47", art: `<span class="wsoft">flow</span>`, b: "Samyoga Studio", tag: "STUDIO FILM" },
+  { cls: "f6", tc: "TC 00:02:10", art: `<span class="w">50 <u>YEARS</u></span>`, b: "Patil Group", tag: "CORPORATE FILM" },
 ];
 
 const NEXT = [
@@ -252,18 +248,38 @@ const heroLine = (text: string, start: number, dot = false) => {
     .join(" ");
 };
 
-/* Six aperture blades on a 200 box. */
-const blades = () =>
-  Array.from({ length: 6 }, (_, i) => {
-    const a = (i * 60 * Math.PI) / 180;
-    const x1 = 100 + 72 * Math.cos(a);
-    const y1 = 100 + 72 * Math.sin(a);
-    const x2 = 100 + 72 * Math.cos(a + (120 * Math.PI) / 180);
-    const y2 = 100 + 72 * Math.sin(a + (120 * Math.PI) / 180);
-    return `<path class="bl" d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(
-      1
-    )} ${y2.toFixed(1)}"/>`;
-  }).join("");
+/* Six aperture blades, drawn as a ring of chords. */
+const blades = () => {
+  const pts = [0, 1, 2, 3, 4, 5].map((i) => {
+    const a = (i * Math.PI) / 3;
+    return { x: 100 + 72 * Math.cos(a), y: 100 + 72 * Math.sin(a) };
+  });
+  return pts
+    .map((p, i) => {
+      const q = pts[(i + 2) % 6];
+      return `<path class="bl" d="M${p.x.toFixed(1)} ${p.y.toFixed(1)} L${q.x.toFixed(1)} ${q.y.toFixed(1)}"/>`;
+    })
+    .join("");
+};
+
+/* The equaliser. Nine delays repeated across the row so neighbouring bars are
+   always out of phase without needing a value per bar. */
+const eqBars = () =>
+  Array.from(
+    { length: 34 },
+    (_, i) => `<i style="--sd:${((i % 9) * 0.13).toFixed(2)}s"></i>`,
+  ).join("");
+
+/* The marquee needs its contents twice: the track translates -50%, so the
+   second copy is what occupies the viewport as the first scrolls out. It is
+   duplicate content, hence aria-hidden on the copy. */
+const montageSet = (hidden: boolean) => `
+        <div class="mqset"${hidden ? ' aria-hidden="true"' : ""}>
+      ${MONTAGE.map(
+        (m) =>
+          `<div class="fcard"><div class="fframe ${m.cls}"><span class="tc">${m.tc}</span><span class="rdot"></span>${m.art}<span class="vg"></span></div><div class="fmeta"><b>${m.b}</b><span>${m.tag}</span></div></div>`,
+      ).join("\n      ")}
+        </div>`;
 
 export const VIDEO_HTML = String.raw`
 <div id="vbg"></div>
@@ -275,7 +291,7 @@ export const VIDEO_HTML = String.raw`
   <div>
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Video Production</b></div>
     <h1>${heroLine("FILMS THAT", 0.15)}<br>${heroLine("DO A JOB", 0.42, true)}</h1>
-    <p class="vp">Brand films, ads and stories — scripted, shot and cut in-house, built around what the film has to achieve rather than how it should look.</p>
+    <p class="vp">Anything can be filmed. What gets watched is decided in the edit — the hook that stops the scroll, the pacing that holds it, the story that lands.</p>
   </div>
   <div class="apwrap">
     <div>
@@ -294,105 +310,62 @@ export const VIDEO_HTML = String.raw`
   <div class="pin">
     <div class="head">
       <div>
-        <div class="veb">THE STRUCTURE</div>
-        <h2 class="vh" style="color:#fff">A film is made on paper. <em>Twice</em>.</h2>
+        <h2 class="vh" style="color:#fff">Won in the first seconds. Held by the <em>cut</em>.</h2>
       </div>
       <div id="tcode">TC 00:00:00</div>
     </div>
     <div class="mon">
       ${SCENES.map(
         (s, i) => `<div class="scene s${i}${i === 0 ? " on" : ""}" data-i="${i}">
-        <div class="sn">${s.n}</div>
         <h3>${s.h}</h3>
         <p>${s.p}</p>
-      </div>`
+      </div>`,
       ).join("\n      ")}
       <div class="scan" aria-hidden="true"></div>
       <div class="vig" aria-hidden="true"></div>
     </div>
     <div class="track" id="track">
       ${SCENES.map(
-        (s, i) => `<div class="clip${i === 0 ? " on" : ""}" data-i="${i}" style="flex:${[18, 22, 34, 26][i]}"><span>${s.h.toUpperCase()}</span></div>`
+        (s, i) =>
+          `<div class="clip${i === 0 ? " on" : ""}" data-i="${i}" style="flex:${s.flex}"><span>${s.clip}</span></div>`,
       ).join("\n      ")}
       <div id="play"></div>
     </div>
   </div>
 </section>
 
-<!-- 3 — RATIOS -->
-<section class="vs" id="rat" data-bg="#FAFAF8" data-label="Ratios">
-  <div class="veb up">THE DELIVERY</div>
-  <h2 class="vh up" style="--d:.08s">Three ratios. Three <em>edits</em>.</h2>
-  <div class="rwrap">
-    <div>
-      <p class="vp up" style="--d:.14s">The same footage has to work full-width on a site, vertically in a feed, and square. These are different compositions, not different crops — and planning them during the shoot is what makes them possible at all.</p>
-      <div class="tabs up" style="--d:.22s" id="rtabs" role="group" aria-label="Aspect ratio">
-        ${RATIOS.map(
-          (r, i) => `<button type="button" data-k="${r.k}"${i === 0 ? ' class="on"' : ""} data-h>${r.lbl.split(" — ")[0]}</button>`
-        ).join("")}
-      </div>
-      <div id="rcap" role="status" aria-live="polite">${RATIOS[0].cap}</div>
-    </div>
-    <div id="rstage" class="up" style="--d:.18s">
-      <div id="rframe" style="width:${RATIOS[0].w}%;aspect-ratio:16/9">
-        <div class="rt" style="font-size:${RATIOS[0].fs}px">Stop<span>.</span><br>Look here first</div>
-        <div class="vig" aria-hidden="true"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 4 — SOUND -->
+<!-- 3 — SOUND -->
 <section class="vs dark" id="snd" data-bg="#0B0B0C" data-label="Sound">
-  <div class="veb up">SOUND</div>
   <h2 class="vh up" style="--d:.08s">Half the film you can't <em>see</em>.</h2>
-  <p class="vp up" style="--d:.14s">Viewers tolerate an imperfect image far longer than poor audio, and sound carries most of a film's emotional weight. It is routinely the first thing cut from a budget and the first thing an audience notices.</p>
-  <div class="bars up" style="--d:.2s" aria-hidden="true">
-    ${Array.from({ length: 34 }, (_, i) => `<i style="--sd:${((i % 9) * 0.13).toFixed(2)}s"></i>`).join("")}
-  </div>
+  <p class="vp up" style="--d:.14s">Viewers forgive an imperfect image long before poor audio. Sound is half the edit — the pace, mood and weight you never see.</p>
+  <div class="bars up" style="--d:.2s" aria-hidden="true">${eqBars()}</div>
 </section>
 
-<!-- 5 — PROOF -->
-<section class="vs" id="vproof" data-bg="#FFFFFF" data-label="Proof">
-  <div class="veb up">PROOF</div>
-  <h2 class="vh up" style="--d:.08s">Films made to do <em>something</em>.</h2>
-  <div class="plist">
-    ${PROOF.map(
-      (p, i) => `<div class="prow up" style="--d:${(0.16 + i * 0.05).toFixed(2)}s">
-      <span class="pn">${String(i + 1).padStart(2, "0")}</span>
-      <span><span class="pnm">${p.n}</span><br><span class="pd">${p.d}</span></span>
-      <span class="pt">${p.t.toUpperCase()}</span>
-    </div>`
-    ).join("\n    ")}
+<!-- 4 — THE MONTAGE -->
+<section class="vs" id="montage" data-bg="#FFFFFF" data-label="The montage">
+  <h2 class="vh up">Straight from the <em>timeline</em>.</h2>
+  <p class="vp up" style="--d:.1s">A running cut of finished work — films made to hook, hold and convert.</p>
+  <div class="strip up" style="--d:.18s">
+    <div class="mq">
+      <div class="mqtrack">${montageSet(false)}${montageSet(true)}
+      </div>
+    </div>
   </div>
+  <p class="cutnote up" style="--d:.26s"><b>//</b> NOTICE HOW QUICKLY THIS PAGE GOT TO THE POINT? THAT'S THE EDIT.</p>
 </section>
 
-<!-- 6 — DEPTH -->
-<section class="vs" id="vdepth" data-bg="#FAFAF8" data-label="In depth">
-  <div class="veb up">IN DEPTH</div>
-  <h2 class="vh up" style="--d:.08s">The long version, for anyone who wants it.</h2>
-  <div class="dwrap up" style="--d:.16s">
-    <p>Video is the most expensive thing most brands make and the least frequently briefed properly. The conversation usually starts with format and duration — a two-minute brand film, a thirty-second ad — before anyone has said what the film is supposed to do. Those decisions belong at the end of the reasoning, not the start.</p>
-    <h3>Structure beats production value</h3>
-    <p>Audiences forgive a great deal visually and almost nothing structurally. A film that is beautifully shot but takes forty seconds to reach a point will be abandoned; a plainly shot film that is clear from the first line will be watched through. Where the money goes should follow that, and it usually does not.</p>
-    <h3>Written before it is filmed</h3>
-    <p>Every problem is cheapest on paper. A scene that does not work costs a sentence to cut in the script, a morning to reshoot on location, and sometimes cannot be fixed at all in the edit. Scripting is not a formality ahead of the interesting part — it is where the film is actually made.</p>
-    <h3>Cut for where it plays</h3>
-    <p>The same footage has to work as a full film on a site, a short in a feed, and a few seconds before someone skips. These are different edits, not different crops. Planning the cutdowns during the shoot — rather than discovering them afterwards — is the difference between a set of real assets and one film awkwardly trimmed.</p>
-  </div>
-</section>
-
-<!-- 7 — CLOSE -->
+<!-- 5 — CLOSE -->
 <section class="vs dark" id="vclose" data-bg="#0B0B0C" data-label="Close">
-  <div class="veb up">KEEP GOING</div>
   <h2 class="vh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">
     ${NEXT.map(
-      (s, i) => `<a class="nrow up" href="/services/${s.slug}" style="--d:${(0.14 + i * 0.05).toFixed(2)}s" data-h>
+      (n, i) => `<a class="nrow up" href="/services/${n.slug}" style="--d:${(0.14 + i * 0.05).toFixed(
+        2,
+      )}s" data-h>
       <span class="nn">${String(i + 1).padStart(2, "0")}</span>
-      <span class="nt">${s.label}</span>
+      <span class="nt">${n.label}</span>
       <span class="na">→</span>
-    </a>`
+    </a>`,
     ).join("\n    ")}
   </div>
   <div class="cta">
@@ -406,6 +379,3 @@ export const VIDEO_HTML = String.raw`
   <footer><div>© 2026 ADMIRATE.IN</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;
-
-export const SCENE_COUNT = SCENES.length;
-export const RATIO_SPECS = RATIOS;

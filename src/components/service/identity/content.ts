@@ -1,25 +1,16 @@
-import { SITE } from "@/lib/seo";
-
 /**
- * IDENTITY — a page about marks, built as one.
+ * IDENTITY — the page about marks, built out of one mark being made.
  *
- * Authored the way /landing and /services are: a raw stylesheet and a raw HTML
- * document, driven by an imperative init.ts. Nothing here is shared with the
- * other service pages by design — the brief was six pages that do not look
- * alike, and a shared section grammar is exactly what made them look alike.
+ * Set-pieces unique to this page:
+ *   MARK    the hero mark draws itself out of a circle and a square, then the
+ *           construction geometry retracts and leaves the letterform behind
+ *   ANAT    a three-stage scroll scrub: the mark is picked out of visual
+ *           noise, echoed once it is gone, then left standing alone
+ *   BRANDS  a tile wall of marks now doing their job out in the world, each
+ *           set in its own typography rather than shown as a logo file
  *
- * The journey, and why it is in this order:
- *   1 MARK      the mark assembles out of its own construction geometry
- *   2 HALFSEC   the recognition test — the page's central claim, made playable
- *   3 ANATOMY   the mark taken apart against its grid (scrub)
- *   4 SYSTEM    mark becomes system: type, colour, rules
- *   5 SCALE     the same mark from 16px to hoarding
- *   6 PROOF     real clients
- *   7 DEPTH     the long argument
- *   8 CLOSE     onward links + CTA
- *
- * Selectors are prefixed `id-` or are unique ids, so this sheet cannot collide
- * with the other pages' identically-named selectors when RawPage mounts it.
+ * The scrub is switched off below 768px (see IS_M in init.ts), where the three
+ * stages simply stack and are all visible.
  */
 
 export const IDENTITY_CSS = String.raw`
@@ -69,11 +60,6 @@ body.idhover #idcur{width:56px;height:56px;background:rgba(227,0,27,.08)}
 /* ---------- section frame ---------- */
 .ids{position:relative;z-index:1;padding:clamp(96px,14vh,150px) var(--pad) clamp(70px,11vh,120px)}
 .ids.dark{color:var(--white)}
-.ideb{
-  font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);
-  display:flex;align-items:center;gap:11px;margin-bottom:16px;
-}
-.ideb::after{content:"";height:1px;width:clamp(26px,5vw,60px);background:currentColor;opacity:.45}
 .idh{
   font-family:var(--display);font-weight:800;font-stretch:106%;
   font-size:clamp(27px,4.6vw,60px);line-height:1.05;letter-spacing:-.026em;
@@ -129,12 +115,7 @@ body.idhover #idcur{width:56px;height:56px;background:rgba(227,0,27,.08)}
 @keyframes condraw{to{stroke-dashoffset:0}}
 @keyframes confade{to{opacity:.14}}
 @keyframes cfade{to{opacity:1}}
-#mark .mcap{
-  position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
-  font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--grey);white-space:nowrap;
-  opacity:0;animation:cfade .6s ease 3.2s forwards;
-}
-#idscroll{
+#mark #idscroll{
   position:absolute;bottom:clamp(26px,5vh,52px);left:var(--pad);z-index:3;
   font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--grey);
   display:flex;align-items:center;gap:12px;
@@ -143,109 +124,50 @@ body.idhover #idcur{width:56px;height:56px;background:rgba(227,0,27,.08)}
 #idscroll .b i{display:block;height:100%;width:38%;background:var(--red);animation:sw 2s ease-in-out infinite}
 @keyframes sw{0%{transform:translateX(-100%)}100%{transform:translateX(270%)}}
 
-/* ============ 2 — HALF A SECOND ============
-   The claim, made playable: a mark is shown for 500ms and taken away. */
-#half{background:transparent;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
-#half .hwrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(30px,5vw,80px);align-items:center}
-#flash{
-  position:relative;aspect-ratio:16/10;width:100%;
-  background:#141417;border:1px solid rgba(255,255,255,.12);border-radius:6px;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-}
-#flash .shot{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .06s linear;
-}
-#flash.lit .shot{opacity:1}
-#flash .shot svg{width:34%;height:auto}
-#flash .prompt{
-  font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:#55555a;text-align:center;padding:0 20px;
-}
-#flash.lit .prompt,#flash.running .prompt{opacity:0}
-#flash .timer{
-  position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--red);
-}
-#flash.running .timer{width:100%;transition:width .5s linear}
-#flash .grain2{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.5))}
-#half .opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-#half .opt{
-  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
-  background:none;border:1px solid rgba(255,255,255,.2);color:#c8c8cc;
-  padding:11px 16px;border-radius:999px;cursor:pointer;
-  transition:border-color .25s,color .25s,background .25s;
-}
-#half .opt:hover{border-color:var(--red);color:#fff}
-#half .opt.right{border-color:var(--red);background:var(--red);color:#fff}
-#half .opt.wrong{border-color:rgba(255,255,255,.14);color:#5a5a5e}
-#half .play{
-  display:inline-flex;align-items:center;gap:10px;margin-top:24px;min-height:46px;
-  padding:0 24px;border-radius:999px;background:var(--red);color:#fff;border:none;
-  font-family:var(--body);font-weight:600;font-size:14px;cursor:pointer;
-  transition:background .25s,transform .25s;
-}
-#half .play:hover{background:#c40017;transform:translateY(-2px)}
-#half .play:disabled{opacity:.45;cursor:default;transform:none}
-#hres{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red);margin-top:18px;min-height:1.4em}
-
-/* ============ 3 — ANATOMY (scrub) ============ */
+/* ============ 2 — PHILOSOPHY (scrub) ============ */
 #anat{height:320vh;padding:0}
 #anat .pin{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:center;padding:clamp(90px,13vh,140px) var(--pad) clamp(50px,8vh,90px)}
 #anat .atext{position:relative}
 #anat .astep{position:absolute;top:0;left:0;opacity:0;transform:translateY(18px);transition:opacity .45s,transform .45s cubic-bezier(.16,1,.3,1);pointer-events:none}
 #anat .astep.on{opacity:1;transform:none;position:relative;pointer-events:auto}
-#anat .anum{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--red);margin-bottom:12px}
-#anatsvg{width:min(100%,440px);justify-self:center;overflow:visible;color:var(--black)}
-#anatsvg .g{stroke:var(--red);stroke-width:1;fill:none;opacity:0;transition:opacity .4s}
-#anatsvg .g.on{opacity:.8}
-#anatsvg .letter{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-#anatsvg .dimtxt{font-family:var(--mono);font-size:7px;letter-spacing:.12em;fill:var(--red);opacity:0;transition:opacity .4s}
-#anatsvg .dimtxt.on{opacity:1}
+#anat #anatsvg{width:min(100%,440px);justify-self:center;overflow:visible;color:var(--black)}
+#anatsvg .nz{stroke:var(--grey);stroke-width:1.2;fill:none;opacity:.4;transition:opacity .6s ease,transform .6s cubic-bezier(.16,1,.3,1)}
+#anatsvg .mm{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:opacity .6s ease,transform .7s cubic-bezier(.16,1,.3,1);transform-origin:100px 105px}
+#anatsvg .echo{fill:none;stroke:var(--red);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(1.12);transform-origin:100px 105px;transition:opacity .6s ease,transform .7s cubic-bezier(.16,1,.3,1)}
+#anatsvg .dotp{fill:var(--red);opacity:0;transition:opacity .5s ease .15s}
+#anat[data-stage="1"] .nz{opacity:0;transform:scale(.94)}
+#anat[data-stage="1"] .mm{opacity:.1}
+#anat[data-stage="1"] .echo{opacity:1;transform:scale(1)}
+#anat[data-stage="2"] .nz{opacity:0;transform:scale(.94)}
+#anat[data-stage="2"] .mm{opacity:1;transform:scale(1.05)}
+#anat[data-stage="2"] .echo{opacity:0;transform:scale(.96)}
+#anat[data-stage="2"] .dotp{opacity:1}
 #anat .aprog{position:absolute;left:var(--pad);bottom:clamp(30px,6vh,60px);display:flex;gap:6px}
 #anat .aprog i{width:26px;height:2px;background:rgba(11,11,12,.16);transition:background .35s}
 #anat .aprog i.on{background:var(--red)}
 
-/* ============ 4 — SYSTEM ============ */
-#sys .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.14);margin-top:clamp(34px,5vh,58px)}
-.scard{background:var(--black);padding:clamp(22px,2.6vw,34px);display:flex;flex-direction:column;gap:14px;min-height:230px}
-.scard .sn{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--red)}
-.scard h3{font-family:var(--display);font-weight:800;font-stretch:104%;text-transform:uppercase;font-size:clamp(16px,1.7vw,21px);letter-spacing:-.008em;color:#fff}
-.scard p{font-size:14px;line-height:1.62;color:#9a9a9e}
-.scard .demo{margin-top:auto;height:56px;display:flex;align-items:flex-end;gap:7px}
-.scard .sw{flex:1;border-radius:3px;height:100%}
-.scard .tyA{font-family:var(--display);font-weight:900;font-stretch:118%;font-size:30px;color:#fff;line-height:1}
-.scard .tyB{font-family:var(--body);font-weight:400;font-size:13px;color:#8a8a8e}
-.scard .rulez{display:flex;flex-direction:column;gap:6px;width:100%}
-.scard .rulez span{height:2px;background:rgba(255,255,255,.22);border-radius:2px}
+/* ============ 3 — BRANDS WE'VE CRAFTED ============ */
+#brands .bsub{margin-top:14px}
+#brands .bwall{margin-top:clamp(32px,5vh,56px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.btile{position:relative;background:#fff;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:clamp(18px,2.4vw,30px);overflow:hidden;transition:background .4s ease}
+.btile .bmk{color:var(--black);text-align:center;line-height:1.05;transition:color .4s ease,transform .5s cubic-bezier(.16,1,.3,1);white-space:nowrap}
+.btile .bmk u{text-decoration:none;color:var(--red)}
+.btile .btag{position:absolute;left:14px;bottom:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--grey);transition:color .4s ease}
+.btile:hover{background:var(--black)}
+.btile:hover .bmk{color:#fff;transform:scale(1.05)}
+.btile:hover .btag{color:var(--red)}
+.mk-a{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(19px,1.9vw,26px);letter-spacing:-.02em;text-transform:uppercase}
+.mk-b{font-family:var(--body);font-weight:300;font-size:clamp(15px,1.5vw,20px);letter-spacing:.34em;text-transform:uppercase;padding-left:.34em}
+.mk-c{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(19px,1.9vw,26px);letter-spacing:-.01em;text-transform:lowercase}
+.mk-d{font-family:var(--display);font-weight:900;font-stretch:106%;font-size:clamp(18px,1.8vw,24px);letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--red);padding-bottom:6px}
+.mk-e{font-family:var(--mono);font-weight:400;font-size:clamp(13px,1.3vw,17px);letter-spacing:.26em;text-transform:lowercase}
+.mk-f{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(20px,2vw,28px);letter-spacing:-.015em;text-transform:uppercase}
+.mk-f small{display:block;font-family:var(--body);font-weight:300;font-size:.42em;letter-spacing:.5em;color:var(--grey);margin-top:5px;padding-left:.5em}
+.btile:hover .mk-f small{color:#8a8a8e}
+.mk-g{font-family:var(--display);font-weight:800;font-stretch:110%;font-size:clamp(18px,1.8vw,25px);letter-spacing:.14em;text-transform:uppercase}
+.mk-h{font-family:var(--body);font-weight:300;font-size:clamp(16px,1.6vw,21px);letter-spacing:.28em;text-transform:lowercase}
 
-/* ============ 5 — SCALE ============ */
-#scale{overflow:hidden}
-#scale .track{display:flex;align-items:flex-end;gap:clamp(22px,4vw,64px);margin-top:clamp(36px,6vh,62px);flex-wrap:wrap}
-.szitem{display:flex;flex-direction:column;align-items:center;gap:12px}
-.szbox{display:flex;align-items:center;justify-content:center;color:var(--black)}
-.szitem span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--grey);white-space:nowrap}
-.szbox svg{width:100%;height:100%;display:block}
-
-/* ============ 6 — PROOF ============ */
-#proof .plist{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line)}
-.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);align-items:center;
-  padding:clamp(18px,2.6vh,30px) 0;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
-.prow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1)}
-.prow>*{position:relative;z-index:1;transition:color .35s}
-.prow:hover::before{transform:scaleX(1)}
-.prow .pn{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red)}
-.prow .pnm{font-family:var(--display);font-weight:800;font-stretch:106%;text-transform:uppercase;font-size:clamp(19px,3vw,38px);line-height:1.08;letter-spacing:-.018em;transition:transform .45s cubic-bezier(.16,1,.3,1),color .35s}
-.prow .pd{font-size:13.5px;line-height:1.5;color:#5a5a5e;max-width:54ch}
-.prow .pt{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--grey);white-space:nowrap}
-.prow:hover .pn,.prow:hover .pd,.prow:hover .pt{color:rgba(255,255,255,.88)}
-.prow:hover .pnm{color:#fff;transform:translateX(clamp(5px,1vw,12px))}
-
-/* ============ 7 — DEPTH ============ */
-#depth .dwrap{max-width:68ch;margin-top:clamp(30px,5vh,52px)}
-#depth h3{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(19px,2.2vw,28px);line-height:1.2;letter-spacing:-.015em;margin:clamp(32px,5vh,54px) 0 13px}
-#depth p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.78;color:#4a4a4e;margin-bottom:19px}
-#depth .dwrap>p:first-of-type::first-letter{font-family:var(--display);font-weight:900;font-stretch:110%;float:left;font-size:3.5em;line-height:.82;padding:6px 12px 0 0;color:var(--red)}
-
-/* ============ 8 — CLOSE ============ */
+/* ============ 4 — CLOSE ============ */
 #close{position:relative;overflow:hidden}
 #close .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
 .nrow{display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:clamp(12px,1.9vh,20px) clamp(6px,1.4vw,16px);
@@ -285,20 +207,17 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #mark .mstage{order:-1}
   #mstage{width:min(74%,300px)}
   #idscroll{position:static;margin-top:28px}
-  #half .hwrap{grid-template-columns:1fr;gap:26px}
   /* The scrub is switched off below 768px (see IS_M in init.ts); the three
-     anatomy stages simply stack and are all visible. */
+     philosophy stages simply stack and are all visible. */
   #anat{height:auto}
   #anat .pin{position:static;height:auto;grid-template-columns:1fr;gap:28px;padding:clamp(70px,10vh,100px) var(--pad)}
   #anat .astep{position:relative;opacity:1;transform:none;margin-bottom:24px}
   #anat .aprog{display:none}
   #anatsvg{width:min(80%,320px)}
-  .prow{grid-template-columns:auto minmax(0,1fr);row-gap:7px}
-  .prow .pt{grid-column:2;justify-self:start}
+  .btile{aspect-ratio:16/9}
 }
 @media (max-width:480px){
   #mark h1{font-size:clamp(38px,12vw,56px)}
-  #scale .track{gap:18px}
 }
 @media (max-height:600px){
   #mark{min-height:auto}
@@ -312,115 +231,40 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #mark h1 .l i{transform:none;animation:none}
   #mstage .con,#mstage .glyph{stroke-dashoffset:0;animation:none}
   #mstage .con{opacity:.14}
-  #mstage .fillp,#mark .mcap{opacity:1;animation:none}
+  #mstage .fillp{opacity:1;animation:none}
   #anat{height:auto}
   #anat .pin{position:static;height:auto}
   #anat .astep{position:relative;opacity:1;transform:none;margin-bottom:22px}
+  #anatsvg .nz{opacity:.4 !important;transform:none !important}
+  #anatsvg .mm{opacity:1 !important;transform:none !important}
 }
 `;
 
-/* ---------- the construction mark, shared by hero and anatomy ---------- */
+/* The mark itself, shared by the hero construction and the philosophy scrub so
+   the two can never drift apart. The scrub sits it 5px lower than the hero. */
 const GLYPH_A = `M64 150 L100 50 L136 150`;
 const GLYPH_BAR = `M80 118 H120`;
+const GLYPH_A_LG = `M64 155 L100 55 L136 155`;
+const GLYPH_BAR_LG = `M80 123 H120`;
 
-/** Small solid mark used in the flash test and the scale ladder. */
-const solidMark = () =>
-  `<svg viewBox="0 0 200 200" fill="none" aria-hidden="true">
-     <path d="${GLYPH_A}" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-     <path d="${GLYPH_BAR}" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>
-   </svg>`;
-
-/* Decoys for the recognition test. Deliberately generic — the point of the
-   exercise is that a category-standard mark is hard to tell from its
-   neighbours, which is the argument the section is making. */
-const decoyMark = (n: number) => {
-  const shapes = [
-    `<circle cx="100" cy="100" r="52" stroke="currentColor" stroke-width="14" fill="none"/>`,
-    `<rect x="52" y="52" width="96" height="96" rx="16" stroke="currentColor" stroke-width="14" fill="none"/>`,
-    `<path d="M50 140 L100 55 L150 140 Z" stroke="currentColor" stroke-width="14" fill="none" stroke-linejoin="round"/>`,
-  ];
-  return `<svg viewBox="0 0 200 200" fill="none" aria-hidden="true">${shapes[n]}</svg>`;
-};
-
-const SIZES = [
-  { px: 16, label: "16PX — FAVICON" },
-  { px: 28, label: "28PX — APP ICON" },
-  { px: 52, label: "52PX — PROFILE" },
-  { px: 92, label: "92PX — CARD" },
-  { px: 150, label: "150PX — SIGNAGE" },
+/** What a mark has to do, in the order the scrub reveals it. */
+const PHILOSOPHY = [
+  "Recognised in an instant",
+  "Remembered after it's gone",
+  "Understood at a glance",
 ];
 
-const SYSTEM_CARDS = [
-  {
-    n: "01",
-    h: "The mark",
-    p: "One shape, drawn to survive every size and a single flat colour.",
-    demo: `<div class="tyA">A<span style="color:var(--red)">.</span></div>`,
-  },
-  {
-    n: "02",
-    h: "The type",
-    p: "A hierarchy with a job for every level — headline, body, and the four-word version.",
-    demo: `<div><div class="tyA">Aa</div><div class="tyB">Archivo · Inter · Plex Mono</div></div>`,
-  },
-  {
-    n: "03",
-    h: "The colour",
-    p: "Defined for screen and for press, with contrast checked rather than assumed.",
-    demo: `<div class="demo">
-      <span class="sw" style="background:#E3001B"></span>
-      <span class="sw" style="background:#0B0B0C"></span>
-      <span class="sw" style="background:#FAFAF8"></span>
-      <span class="sw" style="background:#8A8A8E"></span>
-    </div>`,
-  },
-  {
-    n: "04",
-    h: "The rules",
-    p: "Written plainly enough that someone who has never met you applies them correctly.",
-    demo: `<div class="rulez"><span style="width:100%"></span><span style="width:72%"></span><span style="width:88%"></span><span style="width:54%"></span></div>`,
-  },
-];
-
-const ANATOMY_STEPS = [
-  {
-    n: "STAGE 01",
-    h: "It starts as geometry",
-    p: "Before it is a letter it is a circle and a square — a grid that decides the proportions, the angles and the optical centre. Marks drawn without one look almost right, and stay that way.",
-  },
-  {
-    n: "STAGE 02",
-    h: "The letterform is cut from it",
-    p: "The shape is taken out of the construction, not drawn beside it. Every terminal, angle and join lands on the grid, which is what makes the result feel inevitable rather than arranged.",
-  },
-  {
-    n: "STAGE 03",
-    h: "Then the scaffolding goes",
-    p: "The grid is removed and what remains has to hold on its own — at a hoarding, at sixteen pixels, in one flat colour, stitched into fabric. If it needs the scaffolding to look right, it is not finished.",
-  },
-];
-
-const PROOF = [
-  {
-    n: "South Glass",
-    t: "Identity · Web",
-    d: "Glass and facades, established 2014. A technical product made to feel premium rather than industrial.",
-  },
-  {
-    n: "Hope Trust India",
-    t: "Brand · Content",
-    d: "Addiction and mental-health care — an identity that had to feel safe to approach at someone's lowest moment.",
-  },
-  {
-    n: "Patil Group",
-    t: "Corporate",
-    d: "The world's largest sleeper manufacturer, fifty years on the job. Scale carried without raising its voice.",
-  },
-  {
-    n: "Our Sacred Space",
-    t: "Arts · Culture",
-    d: "Art, movement and mindful living, held together by one calm and consistent face.",
-  },
+/* Marks out in the world. Each is set in its own typography rather than shown
+   as a logo file, so the wall reads as eight brands and not eight images. */
+const BRANDS = [
+  { cls: "mk-a", mk: `SPORTE<u>X</u>PO`, tag: "IDENTITY · CAMPAIGN" },
+  { cls: "mk-b", mk: `South Glass`, tag: "IDENTITY · WEB" },
+  { cls: "mk-c", mk: `hope trust<u>.</u>`, tag: "BRAND · CONTENT" },
+  { cls: "mk-d", mk: `Patil Group`, tag: "CORPORATE IDENTITY" },
+  { cls: "mk-e", mk: `our sacred space`, tag: "BRAND SYSTEM" },
+  { cls: "mk-f", mk: `AVVENT<small>GLOBAL</small>`, tag: "LOGO + SYSTEM" },
+  { cls: "mk-g", mk: `VALUCOR`, tag: "IDENTITY" },
+  { cls: "mk-h", mk: `samyoga`, tag: "STUDIO BRAND" },
 ];
 
 const NEXT_SERVICES = [
@@ -431,13 +275,6 @@ const NEXT_SERVICES = [
   { slug: "brand-collaterals", label: "Brand Collaterals" },
 ];
 
-/**
- * Splits a hero line into per-letter spans for the stagger.
- *
- * Letters are grouped into a nowrap word wrapper. Without it the browser is
- * free to break between any two inline-block letters, which is exactly what it
- * did at 1440px — "BE KNOWN" wrapped as "BE KNOW" / "N.".
- */
 const heroLine = (text: string, start: number, dot = false) => {
   const words = text.split(" ");
   let d = start;
@@ -446,10 +283,8 @@ const heroLine = (text: string, start: number, dot = false) => {
       const letters = word
         .split("")
         .map((ch) => {
-          const html = `<span class="l"><i style="--d:${d.toFixed(
-            2
-          )}s">${ch}</i></span>`;
-          d += 0.032;
+          const html = `<span class="l"><i style="--d:${d.toFixed(2)}s">${ch}</i></span>`;
+          d += 0.033;
           return html;
         })
         .join("");
@@ -474,7 +309,7 @@ export const IDENTITY_HTML = String.raw`
   <div class="mleft">
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Identity</b></div>
     <h1>${heroLine("BUILT TO", 0.15)}<br>${heroLine("BE KNOWN", 0.42, true)}</h1>
-    <p class="idp msub">A logo is the smallest part of it. Identity is the system that makes a brand recognisable before anyone has read its name — and impossible to confuse with the company beside it.</p>
+    <p class="idp msub">Great logos don't explain themselves. They're recognised in an instant, remembered after one look, and simple enough to be understood at a glance.</p>
   </div>
   <div class="mstage">
     <svg id="mstage" viewBox="0 0 200 210" fill="none" role="img" aria-label="A mark being constructed from a circle and a square">
@@ -486,135 +321,63 @@ export const IDENTITY_HTML = String.raw`
       <path class="glyph" style="--l:44"  d="${GLYPH_BAR}"/>
       <circle class="fillp" cx="150" cy="150" r="6" fill="#E3001B"/>
     </svg>
-    <span class="mcap">CIRCLE + SQUARE + GRID → ONE MARK</span>
   </div>
   <div id="idscroll">SCROLL<span class="b"><i></i></span></div>
 </section>
 
-<!-- 2 — HALF A SECOND -->
-<section class="ids dark" id="half" data-bg="#0B0B0C" data-label="Half a second">
-  <div class="hwrap">
-    <div>
-      <div class="ideb up">THE TEST</div>
-      <h2 class="idh up" style="--d:.08s">You get about <em>half a second</em>.</h2>
-      <p class="idp up" style="--d:.16s">That is roughly how long a mark has in a feed, on a shelf or at the side of a road. Not long enough to read anything. Long enough to recognise something — if there is something there to recognise.</p>
-      <button type="button" class="play up" id="hplay" style="--d:.24s" data-h>Run the test <span>→</span></button>
-      <div id="hres" role="status" aria-live="polite"></div>
-    </div>
-    <div class="up" style="--d:.14s">
-      <div id="flash">
-        <div class="prompt" id="hprompt">PRESS RUN — A MARK WILL APPEAR FOR 0.5 SECONDS</div>
-        <div class="shot" id="hshot"></div>
-        <div class="grain2" aria-hidden="true"></div>
-        <div class="timer" id="htimer"></div>
-      </div>
-      <div class="opts" id="hopts" hidden></div>
-    </div>
-  </div>
-</section>
-
-<!-- 3 — ANATOMY (scrub) -->
-<section id="anat" data-bg="#FFFFFF" data-label="Anatomy">
+<!-- 2 — PHILOSOPHY (scrub) -->
+<section id="anat" data-bg="#FFFFFF" data-label="Philosophy" data-stage="0">
   <div class="pin">
     <div class="atext">
-      <div class="ideb">ANATOMY</div>
-      ${ANATOMY_STEPS.map(
-        (s, i) => `<div class="astep${i === 0 ? " on" : ""}" data-i="${i}">
-        <div class="anum">${s.n}</div>
-        <h2 class="idh">${s.h}</h2>
-        <p class="idp">${s.p}</p>
-      </div>`
+      ${PHILOSOPHY.map(
+        (h, i) =>
+          `<div class="astep${i === 0 ? " on" : ""}" data-i="${i}">
+        <h2 class="idh">${h}</h2>
+      </div>`,
       ).join("\n      ")}
     </div>
-    <svg id="anatsvg" viewBox="0 0 200 200" fill="none" role="img" aria-label="The mark dissected against its construction grid">
-      <circle class="g" id="ag1" cx="100" cy="100" r="85"/>
-      <rect   class="g" id="ag2" x="40" y="40" width="120" height="120"/>
-      <path   class="g" id="ag3" d="M15 100 H185"/>
-      <path   class="g" id="ag4" d="M100 15 V185"/>
-      <path   class="g" id="ag5" d="M64 150 L136 150"/>
-      <text class="dimtxt" id="ad1" x="104" y="34">R 85</text>
-      <text class="dimtxt" id="ad2" x="104" y="163">BASELINE</text>
-      <path class="letter" d="${GLYPH_A}"/>
-      <path class="letter" d="${GLYPH_BAR}"/>
+    <svg id="anatsvg" viewBox="0 0 200 200" fill="none" role="img" aria-label="A simple mark standing out from visual noise, then remaining alone">
+      <circle class="nz" cx="34" cy="42" r="15"/>
+      <rect class="nz" x="152" y="26" width="26" height="26"/>
+      <path class="nz" d="M18 158 L34 138 L50 158 L66 138"/>
+      <path class="nz" d="M158 148 H186 M158 158 H178 M158 168 H186"/>
+      <circle class="nz" cx="172" cy="106" r="9"/>
+      <rect class="nz" x="18" y="88" width="20" height="20" transform="rotate(18 28 98)"/>
+      <path class="echo" d="${GLYPH_A_LG} ${GLYPH_BAR_LG}"/>
+      <path class="mm" d="${GLYPH_A_LG}"/>
+      <path class="mm" d="${GLYPH_BAR_LG}"/>
+      <circle class="dotp" cx="148" cy="155" r="6"/>
     </svg>
-    <div class="aprog" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+    <div class="aprog" aria-hidden="true">${PHILOSOPHY.map(
+      (_, i) => `<i${i === 0 ? ' class="on"' : ""}></i>`,
+    ).join("")}</div>
   </div>
 </section>
 
-<!-- 4 — SYSTEM -->
-<section class="ids dark" id="sys" data-bg="#0B0B0C" data-label="The system">
-  <div class="ideb up">THE SYSTEM</div>
-  <h2 class="idh up" style="--d:.08s">A mark alone is not an identity. <em>This</em> is.</h2>
-  <p class="idp up" style="--d:.16s">Four parts, and the rules that hold them together — so the next thing nobody has designed yet still comes out looking like you.</p>
-  <div class="sgrid">
-    ${SYSTEM_CARDS.map(
-      (c, i) => `<article class="scard up" style="--d:${(0.22 + i * 0.07).toFixed(2)}s">
-      <span class="sn">${c.n}</span>
-      <h3>${c.h}</h3>
-      <p>${c.p}</p>
-      ${c.demo}
-    </article>`
+<!-- 3 — BRANDS WE'VE CRAFTED -->
+<section class="ids" id="brands" data-bg="#FAFAF8" data-label="Brands">
+  <h2 class="idh up">Brands we've <em>crafted</em>.</h2>
+  <p class="idp bsub up" style="--d:.1s">Marks and identities now doing their job out in the world.</p>
+  <div class="bwall up" style="--d:.18s">
+    ${BRANDS.map(
+      (b) =>
+        `<div class="btile"><span class="bmk ${b.cls}">${b.mk}</span><span class="btag">${b.tag}</span></div>`,
     ).join("\n    ")}
   </div>
 </section>
 
-<!-- 5 — SCALE -->
-<section class="ids" id="scale" data-bg="#FAFAF8" data-label="Every size">
-  <div class="ideb up">EVERY SIZE</div>
-  <h2 class="idh up" style="--d:.08s">Approved large. <em>Lived</em> small.</h2>
-  <p class="idp up" style="--d:.16s">Most marks are signed off at a size they will almost never appear at. This is the same shape at the sizes it will actually spend its life.</p>
-  <div class="track">
-    ${SIZES.map(
-      (s, i) => `<div class="szitem up" style="--d:${(0.22 + i * 0.06).toFixed(2)}s">
-      <div class="szbox" style="width:${s.px}px;height:${s.px}px">${solidMark()}</div>
-      <span>${s.label}</span>
-    </div>`
-    ).join("\n    ")}
-  </div>
-</section>
-
-<!-- 6 — PROOF -->
-<section class="ids" id="proof" data-bg="#FFFFFF" data-label="Proof">
-  <div class="ideb up">PROOF</div>
-  <h2 class="idh up" style="--d:.08s">Brands this work has already <em>carried</em>.</h2>
-  <div class="plist">
-    ${PROOF.map(
-      (p, i) => `<div class="prow up" style="--d:${(0.16 + i * 0.05).toFixed(2)}s">
-      <span class="pn">${String(i + 1).padStart(2, "0")}</span>
-      <span><span class="pnm">${p.n}</span><br><span class="pd">${p.d}</span></span>
-      <span class="pt">${p.t.toUpperCase()}</span>
-    </div>`
-    ).join("\n    ")}
-  </div>
-</section>
-
-<!-- 7 — DEPTH -->
-<section class="ids" id="depth" data-bg="#FAFAF8" data-label="In depth">
-  <div class="ideb up">IN DEPTH</div>
-  <h2 class="idh up" style="--d:.08s">The long version, for anyone who wants it.</h2>
-  <div class="dwrap up" style="--d:.16s">
-    <p>Recognition is not the same as memory. People rarely fail to remember a brand outright — what actually happens is quieter and more expensive: they remember something, and attach it to the wrong company. They recall a colour three competitors also use, a typeface that came with the website template, a mark that reads in a presentation and turns to mush in a browser tab.</p>
-    <h3>A logo is not an identity</h3>
-    <p>A logo is one asset. An identity is the set of decisions that make every future asset obviously yours — including the ones nobody has designed yet. When the system is real, an intern can lay out a slide nobody briefed and it still looks like you. When it is not, every new piece is a negotiation, and the brand drifts a little further each time.</p>
-    <p>That drift is the actual cost, and it is invisible month to month. A slightly different red here. A heavier typeface there because the licensed one was inconvenient. Six months later the deck, the site and the packaging look like three companies that share a name. Nobody made a bad decision; there was simply nothing to decide against.</p>
-    <h3>Different on purpose, not by accident</h3>
-    <p>Every industry has a default look, and defaults are comfortable precisely because they are shared. Sector-standard blue. The same three sans-serifs. Stock photography of people who have never used the product. It is safe, and it makes you interchangeable. Distinctiveness is not decoration here — it is the mechanism. A brand that looks like its category has to buy recognition with media spend. A brand that looks like itself earns it every time someone sees it.</p>
-    <h3>Built to be handed over</h3>
-    <p>An identity that only works while its designers are still involved has not finished. The system has to be documented plainly enough that your team, your printer and your next developer apply it correctly without asking — and structured well enough that when something genuinely new comes up, the right answer is obvious rather than invented.</p>
-  </div>
-</section>
-
-<!-- 8 — CLOSE -->
+<!-- 4 — CLOSE -->
 <section class="ids dark" id="close" data-bg="#0B0B0C" data-label="Close">
-  <div class="ideb up">KEEP GOING</div>
   <h2 class="idh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">
     ${NEXT_SERVICES.map(
-      (s, i) => `<a class="nrow up" href="/services/${s.slug}" style="--d:${(0.14 + i * 0.05).toFixed(2)}s" data-h>
+      (n, i) => `<a class="nrow up" href="/services/${n.slug}" style="--d:${(0.14 + i * 0.05).toFixed(
+        2,
+      )}s" data-h>
       <span class="nn">${String(i + 1).padStart(2, "0")}</span>
-      <span class="nt">${s.label}</span>
+      <span class="nt">${n.label}</span>
       <span class="na">→</span>
-    </a>`
+    </a>`,
     ).join("\n    ")}
   </div>
 
@@ -628,14 +391,11 @@ export const IDENTITY_HTML = String.raw`
   </div>
 
   <footer>
-    <div>© 2026 ${SITE.name}.IN</div>
+    <div>© 2026 ADMIRATE.IN</div>
     <div>MADE TO CONVERT</div>
   </footer>
 </section>
 `;
 
-/** Marks the flash test uses. Exported so init.ts does not redraw them. */
-export const FLASH_MARKS = {
-  real: solidMark(),
-  decoys: [decoyMark(0), decoyMark(1), decoyMark(2)],
-};
+/** How many stages the philosophy scrub steps through. */
+export const STAGE_COUNT = PHILOSOPHY.length;
