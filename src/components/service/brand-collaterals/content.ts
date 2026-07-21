@@ -2,11 +2,11 @@
  * BRAND COLLATERALS — a page about physical things, built with depth and light.
  *
  * Set-pieces unique to this page:
- *   SHELF  four objects on a lit shelf that rotate and rise into place as the
- *          section is scrubbed, each one taking its turn under the light
- *   PRESS  a draggable divider between a colour as approved on screen and the
- *          same colour as it lands on stock — the one argument on this page
- *          that a screen genuinely struggles to make, which is the point
+ *   RANGE  a two-column index of everything the brand hands over, ordered by
+ *          what moves business first, each row wiping red under the cursor
+ *   WALL   a rolling shelf of the pieces themselves, drawn in CSS rather than
+ *          photographed — a brochure, a profile, a carton, a sign — so the
+ *          page can show the range without waiting on a photo shoot
  *
  * Print partners, materials and lead times are stated nowhere: the repository
  * records none of them, and they are exactly the detail a client is held to.
@@ -34,14 +34,12 @@ body.smopen{overflow:hidden}
 
 .cs{position:relative;z-index:1;padding:clamp(96px,14vh,150px) var(--pad) clamp(70px,11vh,120px)}
 .cs.dark{color:var(--white)}
-.ceb{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.ceb::after{content:"";height:1px;width:clamp(26px,5vw,60px);background:currentColor;opacity:.45}
 .ch{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(27px,4.6vw,60px);line-height:1.05;letter-spacing:-.026em;max-width:17ch}
 .ch em{font-style:normal;color:var(--red)}
 .cp{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:#4a4a4e;max-width:56ch;margin-top:18px}
 .cs.dark .cp{color:#a4a4a8}
 .up{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .8s cubic-bezier(.16,1,.3,1)}
-.cs.in .up,#shelf.in .up{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.cs.in .up{opacity:1;transform:none;transition-delay:var(--d,0s)}
 
 /* ============ 1 — HERO ============ */
 #chero{min-height:100svh;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,76px);align-items:center}
@@ -74,82 +72,83 @@ body.smopen{overflow:hidden}
 }
 #chero .shadow{width:min(60%,230px);height:16px;margin:26px auto 0;border-radius:50%;background:rgba(11,11,12,.16);filter:blur(11px)}
 
-/* ============ 2 — SHELF (scrub) ============ */
-#shelf{height:340vh;padding:0}
-#shelf .pin{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(26px,4vw,68px);align-items:center;padding:clamp(90px,13vh,140px) var(--pad) clamp(50px,8vh,90px)}
-#shelf .stext{position:relative}
-#shelf .sstep{position:absolute;top:0;left:0;opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s cubic-bezier(.16,1,.3,1);pointer-events:none}
-#shelf .sstep.on{opacity:1;transform:none;position:relative;pointer-events:auto}
-#shelf .snum{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--red);margin-bottom:11px}
-.stage{position:relative;perspective:1300px;display:flex;align-items:center;justify-content:center;min-height:min(58vh,440px)}
-.stage .band{position:absolute;left:6%;right:6%;top:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(227,0,27,.4),transparent)}
-.obj{
-  position:absolute;transition:opacity .55s,transform .75s cubic-bezier(.16,1,.3,1);
-  opacity:0;transform:translateY(30px) rotateX(52deg) rotateZ(-18deg) scale(.86);
-  transform-style:preserve-3d;
-}
-.obj.on{opacity:1;transform:translateY(0) rotateX(42deg) rotateZ(-14deg) scale(1)}
-.obj .lbl{
-  position:absolute;left:50%;bottom:-38px;transform:translateX(-50%) rotateX(-42deg) rotateZ(14deg);
-  font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--grey);white-space:nowrap;
-}
-/* the four objects */
-.o-card{width:clamp(150px,22vw,250px);aspect-ratio:1.72;border-radius:5px;background:linear-gradient(135deg,#17171a,#0b0b0c);box-shadow:0 30px 52px rgba(0,0,0,.3)}
-.o-book{width:clamp(140px,20vw,220px);aspect-ratio:.76;border-radius:3px;background:linear-gradient(135deg,#f4f4f1,#e2e2dd);box-shadow:0 30px 52px rgba(0,0,0,.24);position:relative;overflow:hidden}
-.o-book::before{content:"";position:absolute;left:0;top:0;bottom:0;width:13px;background:var(--red)}
-.o-book::after{content:"";position:absolute;left:30px;right:22px;top:34px;height:8px;background:#0b0b0c;box-shadow:0 20px 0 #cfcfca,0 36px 0 #cfcfca}
-.o-bag{width:clamp(120px,17vw,190px);aspect-ratio:.82;border-radius:3px 3px 5px 5px;background:linear-gradient(135deg,#e9e6df,#d6d2c8);box-shadow:0 30px 52px rgba(0,0,0,.24);position:relative}
-.o-bag::before{content:"";position:absolute;left:26%;right:26%;top:-13px;height:16px;border:2px solid #c2beb4;border-bottom:none;border-radius:22px 22px 0 0}
-.o-bag::after{content:"";position:absolute;left:50%;top:44%;transform:translateX(-50%);font-family:var(--display);font-weight:900;font-size:26px;color:var(--red);content:"A."}
-.o-sign{width:clamp(160px,23vw,260px);aspect-ratio:2.6;border-radius:3px;background:linear-gradient(135deg,#0b0b0c,#1b1b1f);box-shadow:0 30px 52px rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center}
-.o-sign span{font-family:var(--display);font-weight:900;font-stretch:116%;font-size:clamp(17px,2.4vw,30px);color:#fff;letter-spacing:.02em}
-.o-sign span i{font-style:normal;color:var(--red)}
-#shelf .sprog{position:absolute;left:var(--pad);bottom:clamp(30px,6vh,60px);display:flex;gap:6px}
-#shelf .sprog i{width:24px;height:2px;background:rgba(11,11,12,.16);transition:background .35s}
-#shelf .sprog i.on{background:var(--red)}
+/* ============ 2 — THE RANGE ============ */
+#range .rgrid{margin-top:clamp(30px,5vh,52px);display:grid;grid-template-columns:1fr 1fr;column-gap:clamp(24px,4vw,64px);border-top:1px solid var(--line)}
+.drow{display:flex;align-items:baseline;gap:clamp(12px,1.8vw,22px);padding:clamp(14px,2vh,21px) clamp(6px,1vw,14px);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.drow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.drow:hover::before{transform:scaleX(1)}
+.drow>*{position:relative;z-index:1;transition:color .3s}
+.drow .dn{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--red);flex:0 0 auto}
+.drow .dt{font-family:var(--display);font-weight:800;font-stretch:106%;text-transform:uppercase;font-size:clamp(17px,2vw,26px);letter-spacing:-.012em;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.drow .dd{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--grey);white-space:nowrap}
+.drow:hover .dn,.drow:hover .dd{color:rgba(255,255,255,.85)}
+.drow:hover .dt{color:#fff;transform:translateX(clamp(4px,.8vw,10px))}
 
-/* ============ 3 — PRESS (drag compare) ============ */
-#press .pwrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:center;margin-top:clamp(28px,4.6vh,50px)}
-#swatch{
-  position:relative;aspect-ratio:16/10;overflow:hidden;border:1px solid rgba(255,255,255,.14);
-  cursor:ew-resize;touch-action:none;user-select:none;
-}
-#swatch .half{position:absolute;inset:0;display:flex;align-items:flex-end;padding:clamp(14px,2vw,24px)}
-/* left: as approved on a bright screen */
-#swatch .scr{background:#FF0A22}
-/* right: the same ink on uncoated stock — flatter, warmer, slightly darker */
-#swatch .prn{background:#C4121F;clip-path:inset(0 0 0 var(--x,50%))}
-#swatch .prn::after{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23p)' opacity='.5'/%3E%3C/svg%3E");
-}
-#swatch .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:rgba(255,255,255,.9);position:relative;z-index:3}
-#swatch .prn .tag{margin-left:auto}
-#shandle{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:50%;z-index:4;pointer-events:none;box-shadow:0 0 14px rgba(0,0,0,.4)}
-#shandle::after{
-  content:"⇄";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:38px;height:38px;border-radius:50%;background:#fff;color:var(--black);
-  display:flex;align-items:center;justify-content:center;font-size:15px;
-}
-#press .hint{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--red);margin-top:14px}
+/* ============ 3 — THE WALL (scrolling examples) ============ */
+#cwall .mq{margin-top:clamp(30px,5vh,52px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+#cwall .mqtrack{display:flex;width:max-content;animation:mqx 58s linear infinite}
+#cwall .mq:hover .mqtrack{animation-play-state:paused}
+.mqset{display:flex;gap:clamp(14px,2vw,24px);padding-right:clamp(14px,2vw,24px)}
+@keyframes mqx{to{transform:translateX(-50%)}}
+.ocase{flex:0 0 auto;width:clamp(172px,19vw,224px)}
+.oart{aspect-ratio:1;background:#141417;border:1px solid rgba(255,255,255,.12);border-radius:8px;display:grid;place-items:center;transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .35s}
+.ocase:hover .oart{transform:translateY(-6px);border-color:rgba(227,0,27,.6)}
+.olbl{margin-top:10px;text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:#9a9a9e;transition:color .3s}
+.ocase:hover .olbl{color:#fff}
+.oart .amk{color:var(--red);font-family:var(--display);font-weight:900;font-stretch:114%}
+/* the objects */
+.ob-broch{width:58%;aspect-ratio:3/4;background:#FAFAF8;border-radius:2px;position:relative;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.ob-broch::before{content:"";position:absolute;inset:0 auto 0 33.3%;width:1px;background:rgba(11,11,12,.14)}
+.ob-broch::after{content:"";position:absolute;inset:0 auto 0 66.6%;width:1px;background:rgba(11,11,12,.14)}
+.ob-broch i{position:absolute;top:0;left:0;right:0;height:26%;background:var(--red);border-radius:2px 2px 0 0}
+.ob-prof{width:52%;aspect-ratio:3/4;background:#FAFAF8;border-radius:2px 4px 4px 2px;position:relative;box-shadow:0 10px 26px rgba(0,0,0,.4);display:grid;place-items:center}
+.ob-prof::before{content:"";position:absolute;top:0;bottom:0;left:0;width:9%;background:var(--black);border-radius:2px 0 0 2px}
+.ob-prof .amk{font-size:26px;color:var(--black)}
+.ob-prof .amk u{text-decoration:none;color:var(--red)}
+.ob-cat{width:56%;aspect-ratio:3/4;background:#FAFAF8;border-radius:2px;box-shadow:0 10px 26px rgba(0,0,0,.4);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:7%;padding:12%}
+.ob-cat i{background:#d9d9d5;border-radius:1px}
+.ob-cat i:last-child{background:var(--red)}
+.ob-post{width:46%;aspect-ratio:2/3;background:var(--black);border:1px solid rgba(255,255,255,.2);border-radius:2px;box-shadow:0 10px 26px rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.ob-post .amk{font-size:64px;line-height:.72;color:#fff}
+.ob-post .amk u{text-decoration:none;color:var(--red)}
+.ob-fly{width:50%;aspect-ratio:3/4;background:#FAFAF8;border-radius:2px;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.ob-fly::before{content:"";position:absolute;top:-30%;right:-30%;width:70%;height:70%;background:var(--red);transform:rotate(45deg)}
+.ob-fly i{position:absolute;left:12%;bottom:16%;right:34%;height:5%;background:rgba(11,11,12,.2);border-radius:2px;box-shadow:0 -12px 0 rgba(11,11,12,.2),0 -24px 0 rgba(11,11,12,.2)}
+.ob-card{width:64%;aspect-ratio:17/10;background:#FAFAF8;border-radius:3px;box-shadow:0 10px 26px rgba(0,0,0,.4);display:flex;align-items:center;gap:10%;padding:0 10%}
+.ob-card .amk{font-size:22px;color:var(--black)}
+.ob-card .amk u{text-decoration:none;color:var(--red)}
+.ob-card i{flex:1;height:4px;background:rgba(11,11,12,.18);border-radius:2px;box-shadow:0 9px 0 rgba(11,11,12,.18)}
+.ob-pack{width:50%;aspect-ratio:1;background:#FAFAF8;border-radius:2px;position:relative;box-shadow:0 10px 26px rgba(0,0,0,.4);display:grid;place-items:center}
+.ob-pack::before{content:"";position:absolute;top:0;left:0;right:0;height:16%;background:#eceae6;border-bottom:1px solid rgba(11,11,12,.12);border-radius:2px 2px 0 0}
+.ob-pack .amk{font-size:30px;color:var(--black)}
+.ob-pack .amk u{text-decoration:none;color:var(--red)}
+.ob-sign{width:70%;aspect-ratio:16/6;background:#0a0a0c;border:1px solid rgba(255,255,255,.28);border-radius:6px;display:grid;place-items:center;box-shadow:0 0 34px rgba(227,0,27,.28)}
+.ob-sign span{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:15px;letter-spacing:.06em;color:#fff}
+.ob-sign span u{text-decoration:none;color:var(--red)}
+.ob-event{width:72%;aspect-ratio:16/9;background:#FAFAF8;border-radius:2px;box-shadow:0 10px 26px rgba(0,0,0,.4);display:grid;place-items:center;position:relative;overflow:hidden}
+.ob-event .rep{font-family:var(--display);font-weight:900;font-size:11px;letter-spacing:6px;line-height:2.4;color:rgba(11,11,12,.35);text-align:center;white-space:nowrap}
+.ob-event .rep u{text-decoration:none;color:var(--red)}
+.ob-deck{width:72%;aspect-ratio:16/9;background:#FAFAF8;border-radius:3px;box-shadow:0 10px 26px rgba(0,0,0,.4);position:relative;padding:9%}
+.ob-deck b{display:block;width:62%;height:12%;background:var(--black);border-radius:2px}
+.ob-deck i{display:block;width:78%;height:6%;background:rgba(11,11,12,.18);border-radius:2px;margin-top:9%}
+.ob-deck i+i{width:58%}
+.ob-deck s{position:absolute;right:9%;bottom:10%;width:12%;aspect-ratio:1;background:var(--red);border-radius:2px}
+.ob-stat{width:52%;aspect-ratio:3/4;background:#FAFAF8;border-radius:2px;box-shadow:0 10px 26px rgba(0,0,0,.4);position:relative;padding:10%}
+.ob-stat .amk{font-size:17px;color:var(--black)}
+.ob-stat .amk u{text-decoration:none;color:var(--red)}
+.ob-stat i{display:block;height:4.5%;background:rgba(11,11,12,.16);border-radius:2px;margin-top:8%}
+.ob-stat i:nth-child(3){width:82%}
+.ob-stat i:nth-child(4){width:64%}
+.ob-stat i:nth-child(5){width:74%}
+.ob-mix{position:relative;width:58%;aspect-ratio:1}
+.ob-mix i{position:absolute;background:#FAFAF8;border-radius:2px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.ob-mix i:nth-child(1){inset:16% 26% 22% 0;transform:rotate(-7deg);background:#eceae6}
+.ob-mix i:nth-child(2){inset:8% 12% 14% 12%;transform:rotate(3deg)}
+.ob-mix i:nth-child(3){inset:0 0 6% 26%;transform:rotate(9deg);display:grid;place-items:center}
+.ob-mix .amk{font-size:24px;color:var(--black)}
+.ob-mix .amk u{text-decoration:none;color:var(--red)}
 
-/* ============ 4 — HARD CASES ============ */
-#hard .hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(30px,5vh,54px)}
-.hc{background:var(--white);padding:clamp(20px,2.6vw,32px);display:flex;flex-direction:column;gap:14px;min-height:210px}
-.hc .box{height:74px;display:flex;align-items:center;justify-content:center;border-radius:3px}
-.hc .box .m{font-family:var(--display);font-weight:900;font-stretch:114%;font-size:30px}
-.hc.emb .box{background:#e6e2d8}
-.hc.emb .m{color:#e6e2d8;text-shadow:1px 1px 0 rgba(255,255,255,.9),-1px -1px 1px rgba(0,0,0,.28)}
-.hc.one .box{background:var(--black)}
-.hc.one .m{color:#fff}
-.hc.fab .box{background:#2b2f38}
-.hc.fab .m{color:#dfe2e8;letter-spacing:.02em;filter:blur(.4px)}
-.hc.tiny .box{background:var(--paper)}
-.hc.tiny .m{font-size:13px}
-.hc h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--red)}
-.hc p{font-size:13.5px;line-height:1.6;color:#5a5a5e}
-
-/* ============ 5 — PROOF ============ */
+/* ============ 4 — HELD IN HAND ============ */
 #cproof .plist{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line)}
 .prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);align-items:center;padding:clamp(18px,2.6vh,30px) 0;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
 .prow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1)}
@@ -162,13 +161,7 @@ body.smopen{overflow:hidden}
 .prow:hover .pn,.prow:hover .pd,.prow:hover .pt{color:rgba(255,255,255,.88)}
 .prow:hover .pnm{color:#fff;transform:translateX(clamp(5px,1vw,12px))}
 
-/* ============ 6 — DEPTH ============ */
-#cdepth .dwrap{max-width:68ch;margin-top:clamp(30px,5vh,52px)}
-#cdepth h3{font-family:var(--display);font-weight:800;font-stretch:104%;font-size:clamp(19px,2.2vw,28px);line-height:1.2;letter-spacing:-.015em;margin:clamp(32px,5vh,54px) 0 13px}
-#cdepth p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.78;color:#4a4a4e;margin-bottom:19px}
-#cdepth .dwrap>p:first-of-type::first-letter{font-family:var(--display);font-weight:900;font-stretch:110%;float:left;font-size:3.5em;line-height:.82;padding:6px 12px 0 0;color:var(--red)}
-
-/* ============ 7 — CLOSE ============ */
+/* ============ 5 — CLOSE ============ */
 #cclose .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
 .nrow{display:flex;align-items:center;gap:clamp(12px,2vw,26px);padding:clamp(12px,1.9vh,20px) clamp(6px,1.4vw,16px);border-bottom:1px solid rgba(255,255,255,.14);text-decoration:none;color:#fff;position:relative;overflow:hidden}
 .nrow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1)}
@@ -200,69 +193,63 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #crail{display:none}
   #chero{grid-template-columns:1fr;gap:40px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
   #chero .cardwrap{order:-1}
-  #shelf{height:auto}
-  #shelf .pin{position:static;height:auto;grid-template-columns:1fr;gap:26px;padding:clamp(70px,10vh,100px) var(--pad)}
-  #shelf .sstep{position:relative;opacity:1;transform:none;margin-bottom:22px}
-  #shelf .sprog{display:none}
-  /* Objects stack rather than overlap once the stage is not pinned. */
-  .stage{flex-direction:column;gap:64px;min-height:auto;padding:20px 0 44px;perspective:none}
-  .obj{position:relative;opacity:1;transform:none}
-  .obj.on{transform:none}
-  .obj .lbl{transform:translateX(-50%);bottom:-26px}
-  .stage .band{display:none}
-  #press .pwrap{grid-template-columns:1fr;gap:24px}
+  #range .rgrid{grid-template-columns:1fr}
   .prow{grid-template-columns:auto minmax(0,1fr);row-gap:7px}
   .prow .pt{grid-column:2;justify-self:start}
 }
 @media (max-width:480px){ #chero h1{font-size:clamp(34px,11.5vw,52px)} }
 @media (max-height:600px){
   #chero{min-height:auto}
-  #shelf{height:auto}
-  #shelf .pin{position:static;height:auto}
-  #shelf .sstep{position:relative;opacity:1;transform:none;margin-bottom:20px}
-  .stage{flex-direction:column;gap:56px;min-height:auto;perspective:none}
-  .obj{position:relative;opacity:1;transform:none}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .up{opacity:1;transform:none}
   #chero h1 .l i{transform:none;animation:none}
   #chero .bizcard{animation:none}
-  #shelf{height:auto}
-  #shelf .pin{position:static;height:auto}
-  #shelf .sstep{position:relative;opacity:1;transform:none;margin-bottom:22px}
-  .stage{flex-direction:column;gap:56px;min-height:auto;perspective:none}
-  .obj{position:relative;opacity:1;transform:none}
-  .obj.on{transform:none}
-  .stage .band{display:none}
+  #cwall .mqtrack{animation:none}
+  #cwall .mq{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
 `;
 
-const OBJECTS = [
-  { cls: "o-card", lbl: "BUSINESS CARD", inner: "" },
-  { cls: "o-book", lbl: "BRAND GUIDELINES", inner: "" },
-  { cls: "o-bag", lbl: "PACKAGING", inner: "" },
-  { cls: "o-sign", lbl: "SIGNAGE", inner: "<span>ADMIRATE<i>.</i></span>" },
+/* Everything the brand hands over, in order of what moves business first. */
+const RANGE = [
+  { t: "Brochures", d: "THE PITCH, IN PRINT" },
+  { t: "Company Profiles", d: "WHO YOU ARE, BOUND" },
+  { t: "Catalogues", d: "THE FULL RANGE, ORGANISED" },
+  { t: "Posters", d: "ONE MESSAGE, LARGE" },
+  { t: "Flyers", d: "IN HAND, IN SECONDS" },
+  { t: "Visiting Cards", d: "THE BRAND, POCKET-SIZED" },
+  { t: "Packaging", d: "THE SHELF MOMENT" },
+  { t: "Signage", d: "READ AT A GLANCE" },
+  { t: "Event Branding", d: "THE VENUE, TAKEN OVER" },
+  { t: "Presentation Decks", d: "THE ROOM, WON" },
+  { t: "Stationery", d: "EVERY LETTER ON-BRAND" },
+  { t: "Marketing Material", d: "EVERYTHING IN BETWEEN" },
 ];
 
-const SHELF_STEPS = [
-  { n: "OBJECT 01", h: "The card is the whole brand, shrunk", p: "It is small, it is held, and it is often the only physical thing anyone keeps. Weight, finish and edge do more of the talking here than the layout does." },
-  { n: "OBJECT 02", h: "Guidelines are what survive you", p: "The document that lets a printer, a new hire or an agency you have never met apply the brand correctly. Without it, every future piece is a negotiation." },
-  { n: "OBJECT 03", h: "Packaging competes on a shelf", p: "Designed for the distance it is first seen from and the hands that will open it — not for the render that made it look good in a deck." },
-  { n: "OBJECT 04", h: "Signage is read at a glance, in bad light", p: "Set for the distance, the angle and the lighting it will actually live in. Almost every legibility problem here was invisible on the screen it was approved on." },
-];
-
-const HARD = [
-  { cls: "emb", m: "A.", h: "EMBOSSED", p: "No colour at all — only light and shadow. A mark that relies on its fill has nothing left here." },
-  { cls: "one", m: "A.", h: "ONE COLOUR", p: "Single-colour print, stamps and engraving. Any mark needing two tones to read needs a second version." },
-  { cls: "fab", m: "A.", h: "ON FABRIC", p: "Embroidery loses fine detail and thin strokes close up. The mark has to survive the thread." },
-  { cls: "tiny", m: "A.", h: "VERY SMALL", p: "On a pen, a label, a screw-cap. The smallest case is the one that decides how simple the mark must be." },
+/* The pieces themselves, drawn in CSS. `art` is the object; `lbl` names it. */
+const WALL = [
+  { art: `<div class="ob-broch"><i></i></div>`, lbl: "BROCHURES" },
+  { art: `<div class="ob-prof"><span class="amk">A<u>.</u></span></div>`, lbl: "COMPANY PROFILES" },
+  { art: `<div class="ob-cat"><i></i><i></i><i></i><i></i></div>`, lbl: "CATALOGUES" },
+  { art: `<div class="ob-post"><span class="amk">A<u>.</u></span></div>`, lbl: "POSTERS" },
+  { art: `<div class="ob-fly"><i></i></div>`, lbl: "FLYERS" },
+  { art: `<div class="ob-card"><span class="amk">A<u>.</u></span><i></i></div>`, lbl: "VISITING CARDS" },
+  { art: `<div class="ob-pack"><span class="amk">A<u>.</u></span></div>`, lbl: "PACKAGING" },
+  { art: `<div class="ob-sign"><span>ADMIRATE<u>.</u></span></div>`, lbl: "SIGNAGE" },
+  {
+    art: `<div class="ob-event"><span class="rep">A<u>.</u> A<u>.</u> A<u>.</u> A<u>.</u><br>A<u>.</u> A<u>.</u> A<u>.</u> A<u>.</u><br>A<u>.</u> A<u>.</u> A<u>.</u> A<u>.</u></span></div>`,
+    lbl: "EVENT BRANDING",
+  },
+  { art: `<div class="ob-deck"><b></b><i></i><i></i><s></s></div>`, lbl: "PRESENTATION DECKS" },
+  { art: `<div class="ob-stat"><span class="amk">A<u>.</u></span><i></i><i></i><i></i></div>`, lbl: "STATIONERY" },
+  { art: `<div class="ob-mix"><i></i><i></i><i><span class="amk">A<u>.</u></span></i></div>`, lbl: "MARKETING MATERIAL" },
 ];
 
 const PROOF = [
-  { n: "South Glass", t: "Identity · Print", d: "A technical product whose collateral had to feel as premium as the claim." },
-  { n: "Hope Trust India", t: "Brand · Print", d: "Printed material that had to feel reassuring in the hand, not clinical." },
-  { n: "Patil Group", t: "Corporate · Collateral", d: "Corporate documents carrying fifty years of scale, quietly." },
+  { n: "South Glass", t: "IDENTITY · PRINT", d: "A technical product whose collateral had to feel as premium as the claim." },
+  { n: "Hope Trust India", t: "BRAND · PRINT", d: "Printed material that had to feel reassuring in the hand, not clinical." },
+  { n: "Patil Group", t: "CORPORATE · COLLATERAL", d: "Corporate documents carrying fifty years of scale, quietly." },
 ];
 
 const NEXT = [
@@ -295,6 +282,17 @@ const heroLine = (text: string, start: number, dot = false) => {
     .join(" ");
 };
 
+/* The marquee needs its contents twice: the track translates -50%, so the
+   second copy is what occupies the viewport as the first scrolls out. It is
+   duplicate content, hence aria-hidden on the copy. */
+const wallSet = (hidden: boolean) => `
+      <div class="mqset"${hidden ? ' aria-hidden="true"' : ""}>
+      ${WALL.map(
+        (w) =>
+          `<div class="ocase"><div class="oart">${w.art}</div><div class="olbl">${w.lbl}</div></div>`,
+      ).join("\n      ")}
+      </div>`;
+
 export const COLLAT_HTML = String.raw`
 <div id="cbg"></div>
 <div id="cline"></div>
@@ -305,7 +303,7 @@ export const COLLAT_HTML = String.raw`
   <div>
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Brand Collaterals</b></div>
     <h1>${heroLine("THE PHYSICAL", 0.15)}<br>${heroLine("PROOF", 0.48, true)}</h1>
-    <p class="cp">Business cards, guidelines, packaging and signage — the things people actually hold, carrying the same face your brand shows everywhere else.</p>
+    <p class="cp">Brochures, cards, packaging, signage — everything your brand hands over, carrying the same face it shows everywhere else.</p>
   </div>
   <div>
     <div class="cardwrap"><div class="bizcard"><span class="mk">A<span>.</span></span></div></div>
@@ -313,103 +311,56 @@ export const COLLAT_HTML = String.raw`
   </div>
 </section>
 
-<!-- 2 — SHELF (scrub) -->
-<section id="shelf" data-bg="#0B0B0C" data-label="The shelf">
-  <div class="pin">
-    <div class="stext">
-      <div class="ceb">THE OBJECTS</div>
-      ${SHELF_STEPS.map(
-        (s, i) => `<div class="sstep${i === 0 ? " on" : ""}" data-i="${i}" style="color:#fff">
-        <div class="snum">${s.n}</div>
-        <h2 class="ch" style="color:#fff">${s.h}</h2>
-        <p class="cp" style="color:#a4a4a8">${s.p}</p>
-      </div>`
-      ).join("\n      ")}
-    </div>
-    <div class="stage" id="stage">
-      <div class="band" aria-hidden="true"></div>
-      ${OBJECTS.map(
-        (o, i) => `<div class="obj ${o.cls}${i === 0 ? " on" : ""}" data-i="${i}">${o.inner}<span class="lbl">${o.lbl}</span></div>`
-      ).join("\n      ")}
-    </div>
-    <div class="sprog" aria-hidden="true">${SHELF_STEPS.map((_, i) => `<i${i === 0 ? ' class="on"' : ""}></i>`).join("")}</div>
-  </div>
-</section>
-
-<!-- 3 — PRESS -->
-<section class="cs dark" id="press" data-bg="#0B0B0C" data-label="On press">
-  <div class="ceb up">SCREEN VS PRESS</div>
-  <h2 class="ch up" style="--d:.08s">Screen colour <em>lies</em>.</h2>
-  <div class="pwrap">
-    <div>
-      <p class="cp up" style="--d:.14s">A colour approved on a bright screen and the same colour printed on stock are not the same colour — and the gap is widest exactly where brands care most. Drag the divider.</p>
-      <p class="hint up" style="--d:.22s">// AN ILLUSTRATION, NOT A CALIBRATED PROOF — WHICH IS ITSELF THE POINT.</p>
-    </div>
-    <div class="up" style="--d:.18s">
-      <div id="swatch" role="slider" aria-label="Compare screen colour with printed colour" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
-        <div class="half scr"><span class="tag">AS APPROVED ON SCREEN</span></div>
-        <div class="half prn"><span class="tag">AS IT LANDS ON STOCK</span></div>
-        <div id="shandle"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 4 — HARD CASES -->
-<section class="cs" id="hard" data-bg="#FAFAF8" data-label="Hard cases">
-  <div class="ceb up">THE HARD CASES</div>
-  <h2 class="ch up" style="--d:.08s">Where marks quietly <em>fail</em>.</h2>
-  <p class="cp up" style="--d:.14s">Collateral is where an identity meets its hardest constraints. A mark designed only for full colour on white needs a quiet exception for each of these — and every exception weakens the system.</p>
-  <div class="hgrid">
-    ${HARD.map(
-      (h, i) => `<div class="hc ${h.cls} up" style="--d:${(0.2 + i * 0.06).toFixed(2)}s">
-      <div class="box"><span class="m">${h.m}</span></div>
-      <h3>${h.h}</h3>
-      <p>${h.p}</p>
-    </div>`
+<!-- 2 — THE RANGE -->
+<section class="cs" id="range" data-bg="#FAFAF8" data-label="The range">
+  <h2 class="ch up">Everything your brand <em>hands over</em>.</h2>
+  <p class="cp up" style="--d:.08s">In order of what moves business first.</p>
+  <div class="rgrid">
+    ${RANGE.map(
+      (r, i) =>
+        `<div class="drow up" style="--d:${(0.12 + i * 0.03).toFixed(2)}s"><span class="dn">${String(
+          i + 1,
+        ).padStart(2, "0")}</span><span class="dt">${r.t}</span><span class="dd">${r.d}</span></div>`,
     ).join("\n    ")}
   </div>
 </section>
 
-<!-- 5 — PROOF -->
-<section class="cs" id="cproof" data-bg="#FFFFFF" data-label="Proof">
-  <div class="ceb up">PROOF</div>
-  <h2 class="ch up" style="--d:.08s">Brands that had to hold up in the <em>hand</em>.</h2>
+<!-- 3 — THE WALL -->
+<section class="cs dark" id="cwall" data-bg="#0B0B0C" data-label="The wall">
+  <h2 class="ch up" style="color:#fff">Made to be <em>held</em>.</h2>
+  <p class="cp up" style="--d:.1s;color:#a4a4a8">A rolling shelf of the pieces we produce, end to end.</p>
+  <div class="mq up" style="--d:.18s">
+    <div class="mqtrack">${wallSet(false)}${wallSet(true)}
+    </div>
+  </div>
+</section>
+
+<!-- 4 — HELD IN HAND -->
+<section class="cs" id="cproof" data-bg="#FFFFFF" data-label="In hand">
+  <h2 class="ch up">Brands that hold up in the <em>hand</em>.</h2>
   <div class="plist">
     ${PROOF.map(
       (p, i) => `<div class="prow up" style="--d:${(0.16 + i * 0.05).toFixed(2)}s">
       <span class="pn">${String(i + 1).padStart(2, "0")}</span>
       <span><span class="pnm">${p.n}</span><br><span class="pd">${p.d}</span></span>
-      <span class="pt">${p.t.toUpperCase()}</span>
-    </div>`
+      <span class="pt">${p.t}</span>
+    </div>`,
     ).join("\n    ")}
   </div>
 </section>
 
-<!-- 6 — DEPTH -->
-<section class="cs" id="cdepth" data-bg="#FBF7F1" data-label="In depth">
-  <div class="ceb up">IN DEPTH</div>
-  <h2 class="ch up" style="--d:.08s">The long version, for anyone who wants it.</h2>
-  <div class="dwrap up" style="--d:.16s">
-    <p>Digital work can be corrected quietly. A colour is adjusted, a file replaced, and yesterday's version disappears. Print cannot. Once five thousand cards exist, the decision exists — which is why physical collateral is the honest test of whether an identity was ever really a system, or just a set of screens that happened to agree.</p>
-    <h3>Material is a design decision</h3>
-    <p>Weight, texture and finish communicate before anything is read. A heavy uncoated card and a thin glossy one say different things about the same company, in the same second, without a word being processed. Treating those as procurement details rather than design decisions is how brands end up feeling cheaper in the hand than they look on screen.</p>
-    <h3>The pieces nobody briefs</h3>
-    <p>Most physical brand output is not the launch set — it is the invoice, the name badge, the folder assembled in a hurry before a meeting. Those are produced without designers involved, and they are frequently what a client sees most often. Guidelines exist so those pieces still look like the brand.</p>
-  </div>
-</section>
-
-<!-- 7 — CLOSE -->
+<!-- 5 — CLOSE -->
 <section class="cs dark" id="cclose" data-bg="#0B0B0C" data-label="Close">
-  <div class="ceb up">KEEP GOING</div>
   <h2 class="ch up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">
     ${NEXT.map(
-      (s, i) => `<a class="nrow up" href="/services/${s.slug}" style="--d:${(0.14 + i * 0.05).toFixed(2)}s" data-h>
+      (n, i) => `<a class="nrow up" href="/services/${n.slug}" style="--d:${(0.14 + i * 0.05).toFixed(
+        2,
+      )}s" data-h>
       <span class="nn">${String(i + 1).padStart(2, "0")}</span>
-      <span class="nt">${s.label}</span>
+      <span class="nt">${n.label}</span>
       <span class="na">→</span>
-    </a>`
+    </a>`,
     ).join("\n    ")}
   </div>
   <div class="cta">
@@ -423,5 +374,3 @@ export const COLLAT_HTML = String.raw`
   <footer><div>© 2026 ADMIRATE.IN</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;
-
-export const OBJECT_COUNT = OBJECTS.length;
