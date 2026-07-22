@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import VideoClient from "@/components/service/video-production/VideoClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld } from "@/lib/schema";
+import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
-  title: "Video Production",
+  title: "Video Production in Hyderabad",
   description:
     "Films, ads and brand stories, scripted and shot in-house — built around what the film has to achieve, and cut for every place it has to play.",
   path: "/services/video-production",
@@ -20,7 +20,7 @@ const jsonLd = [
       "Brand films, advertising, scripting, production, post and cutdowns for every placement.",
     url: `${SITE.url}/services/video-production`,
     provider: { "@id": `${SITE.url}/#organization` },
-    areaServed: { "@type": "Country", name: SITE.country },
+    areaServed: AREA_SERVED,
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },

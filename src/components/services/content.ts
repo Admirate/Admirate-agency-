@@ -6,6 +6,8 @@ import {
 } from "@/components/shared/creatives";
 import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
 
+import { NAP_HTML } from "@/lib/seo";
+
 export const SERVICES_CSS = String.raw`
 :root{
   --white:#FFFFFF;
@@ -900,6 +902,7 @@ export const SERVICES_HTML = String.raw`
   </div>
   <footer>
     <div>© 2026 ADMIRATE.IN</div>
+    <div>${NAP_HTML}</div>
     <div>MADE TO CONVERT</div>
   </footer>
 </section>

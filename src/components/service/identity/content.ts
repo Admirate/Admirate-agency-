@@ -16,6 +16,8 @@
 import { clientLogo } from "@/lib/cdn";
 import { CLIENT_LOGOS } from "@/components/shared/clients";
 
+import { NAP_HTML } from "@/lib/seo";
+
 export const IDENTITY_CSS = String.raw`
 :root{
   --white:#FFFFFF;
@@ -397,6 +399,7 @@ export const IDENTITY_HTML = String.raw`
 
   <footer>
     <div>© 2026 ADMIRATE.IN</div>
+    <div>${NAP_HTML}</div>
     <div>MADE TO CONVERT</div>
   </footer>
 </section>

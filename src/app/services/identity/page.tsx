@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import IdentityClient from "@/components/service/identity/IdentityClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld } from "@/lib/schema";
+import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 /**
  * Identity is authored as its own page rather than through the shared
@@ -11,7 +11,7 @@ import { breadcrumbSchema, ld } from "@/lib/schema";
  * there is exactly one route serving /services/identity.
  */
 export const metadata: Metadata = pageMeta({
-  title: "Brand Identity & Logo Design",
+  title: "Brand Identity & Logo Design in Hyderabad",
   description:
     "Logos and brand identity built to be recognised in half a second — a full system of mark, type, colour and rules that keeps your brand looking like itself everywhere.",
   path: "/services/identity",
@@ -26,7 +26,7 @@ const serviceSchema = {
     "Brand identity and logo design: mark, typography, colour and the guidelines that hold them together.",
   url: `${SITE.url}/services/identity`,
   provider: { "@id": `${SITE.url}/#organization` },
-  areaServed: { "@type": "Country", name: SITE.country },
+  areaServed: AREA_SERVED,
 };
 
 const jsonLd = [

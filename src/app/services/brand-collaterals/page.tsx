@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import CollateralsClient from "@/components/service/brand-collaterals/CollateralsClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld } from "@/lib/schema";
+import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
-  title: "Brand Collaterals",
+  title: "Brand Collaterals in Hyderabad",
   description:
     "Business cards, brand guidelines, packaging, merch and signage — the physical proof of a strong identity, specified and produced to hold up in the hand.",
   path: "/services/brand-collaterals",
@@ -20,7 +20,7 @@ const jsonLd = [
       "Stationery, brand guidelines, packaging, print collateral, merchandise and signage.",
     url: `${SITE.url}/services/brand-collaterals`,
     provider: { "@id": `${SITE.url}/#organization` },
-    areaServed: { "@type": "Country", name: SITE.country },
+    areaServed: AREA_SERVED,
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },

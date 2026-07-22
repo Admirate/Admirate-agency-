@@ -12,6 +12,8 @@
  * clips cannot disagree — both are read from the laid-out DOM in measure().
  */
 
+import { NAP_HTML } from "@/lib/seo";
+
 export const VIDEO_CSS = String.raw`
 :root{
   --white:#FFFFFF;--paper:#FAFAF8;--black:#0B0B0C;--red:#E3001B;
@@ -376,6 +378,6 @@ export const VIDEO_HTML = String.raw`
       <a class="vbtn red" href="/start-project?service=Video%20Production" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
-  <footer><div>© 2026 ADMIRATE.IN</div><div>MADE TO CONVERT</div></footer>
+  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

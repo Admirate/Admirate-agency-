@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import DigitalClient from "@/components/service/digital/DigitalClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld } from "@/lib/schema";
+import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
-  title: "Websites & Digital",
+  title: "Websites & Digital in Hyderabad",
   description:
     "Websites that load fast and convert — designed, built and shipped end to end, with performance, structure and search foundations handled properly.",
   path: "/services/digital",
@@ -20,7 +20,7 @@ const jsonLd = [
       "Website design and development: performance, structure, enquiry paths and search foundations.",
     url: `${SITE.url}/services/digital`,
     provider: { "@id": `${SITE.url}/#organization` },
-    areaServed: { "@type": "Country", name: SITE.country },
+    areaServed: AREA_SERVED,
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },

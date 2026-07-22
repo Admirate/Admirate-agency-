@@ -18,6 +18,8 @@
 import { creative, optimized } from "@/lib/cdn";
 import { CLIENT_CREATIVES } from "@/components/shared/creatives";
 
+import { NAP_HTML } from "@/lib/seo";
+
 export const DESIGN_CSS = String.raw`
 :root{
   --white:#FFFFFF;--paper:#FAFAF8;--black:#0B0B0C;--red:#E3001B;
@@ -331,6 +333,6 @@ export const DESIGN_HTML = String.raw`
       <a class="dbtn red" href="/start-project?service=Design" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
-  <footer><div>© 2026 ADMIRATE.IN</div><div>MADE TO CONVERT</div></footer>
+  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

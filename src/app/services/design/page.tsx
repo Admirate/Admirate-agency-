@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import DesignClient from "@/components/service/design/DesignClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld } from "@/lib/schema";
+import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
-  title: "Advertising & Design",
+  title: "Advertising & Design in Hyderabad",
   description:
     "Advertising and design work placed where the eye actually goes — campaign creative, print, digital and art direction built for how people really look at things.",
   path: "/services/design",
@@ -20,7 +20,7 @@ const jsonLd = [
       "Advertising and design: campaign creative, print, digital placements and art direction.",
     url: `${SITE.url}/services/design`,
     provider: { "@id": `${SITE.url}/#organization` },
-    areaServed: { "@type": "Country", name: SITE.country },
+    areaServed: AREA_SERVED,
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },
