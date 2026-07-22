@@ -12,7 +12,7 @@
  * clips cannot disagree — both are read from the laid-out DOM in measure().
  */
 
-import { NAP_HTML } from "@/lib/seo";
+import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const VIDEO_CSS = String.raw`
 :root{
@@ -378,6 +378,6 @@ export const VIDEO_HTML = String.raw`
       <a class="vbtn red" href="/start-project?service=Video%20Production" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
-  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>MADE TO CONVERT</div></footer>
+  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

@@ -10,7 +10,7 @@
  *   SWALL  a rolling strip of posts and reels, each in its own treatment
  */
 
-import { NAP_HTML } from "@/lib/seo";
+import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const SOCIAL_CSS = String.raw`
 :root{
@@ -359,7 +359,7 @@ export const SOCIAL_HTML = String.raw`
       <a class="sbtn red" href="/start-project?service=Social%20Media" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
-  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>MADE TO CONVERT</div></footer>
+  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;
 

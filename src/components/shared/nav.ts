@@ -231,7 +231,10 @@ body.smopen{overflow:hidden}
 }
 `;
 
-export type NavPage = "home" | "services" | "blogs";
+/* "none" is for pages that carry the nav but are not in it — the legal pages,
+   which are reached from the footer. Without it they would have to claim to be
+   one of the three, lighting up a link that does not lead where you are. */
+export type NavPage = "home" | "services" | "blogs" | "none";
 
 const LINKS: { id: NavPage; label: string; href: string }[] = [
   { id: "home", label: "Home", href: "/" },

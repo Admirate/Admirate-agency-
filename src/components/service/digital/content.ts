@@ -13,7 +13,7 @@
 
 import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
 
-import { NAP_HTML } from "@/lib/seo";
+import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const DIGITAL_CSS = String.raw`
 :root{
@@ -337,6 +337,6 @@ export const DIGITAL_HTML = String.raw`
       <a class="dbtn red" href="/start-project?service=Digital" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
-  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>MADE TO CONVERT</div></footer>
+  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

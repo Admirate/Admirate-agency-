@@ -12,7 +12,7 @@
  * records none of them, and they are exactly the detail a client is held to.
  */
 
-import { NAP_HTML } from "@/lib/seo";
+import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const COLLAT_CSS = String.raw`
 :root{
@@ -373,6 +373,6 @@ export const COLLAT_HTML = String.raw`
       <a class="cbtn red" href="/start-project?service=Brand%20Collaterals" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
-  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>MADE TO CONVERT</div></footer>
+  <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

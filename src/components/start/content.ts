@@ -2,7 +2,7 @@ import { asset } from "@/lib/cdn";
 
 const LOGO = asset("admirate logo.webp");
 
-import { NAP_HTML } from "@/lib/seo";
+import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const START_CSS = String.raw`
 :root{
@@ -298,7 +298,7 @@ export const START_HTML = String.raw`
 
 <footer>
   <div>© 2026 ADMIRATE.IN</div>
-  <div>${NAP_HTML}</div>
+  <div>${NAP_HTML}</div><div>${LEGAL_HTML}</div>
   <div>MADE TO CONVERT</div>
 </footer>
 

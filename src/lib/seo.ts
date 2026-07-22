@@ -115,6 +115,20 @@ export const PROFILE_URLS = SOCIALS.filter((s) => s.profile).map((s) => s.href);
  */
 export const NAP_HTML = `${SITE.area}, ${SITE.city} · <a href="${telHref}">${SITE.phone.replace("-", " ")}</a>`;
 
+/**
+ * The legal links, for the compact footers.
+ *
+ * The full footer (shared/footer.ts) has room for its own row; the service,
+ * blog and start-project pages end in a one-line rail instead, and this is what
+ * goes in it. A privacy policy reachable from only four of twenty-six pages is
+ * not really published, so it resolves from here and every one of those rails
+ * gets the same pair.
+ *
+ * No colours or sizing: each host rail already styles its own anchors, and this
+ * inherits so it reads as part of the line it sits in rather than a graft.
+ */
+export const LEGAL_HTML = `<a href="/privacy-policy">Privacy Policy</a> · <a href="/terms">Terms</a>`;
+
 type PageMetaArgs = {
   /** Page title, without the "| ADMIRATE" suffix — the template adds it. */
   title: string;

@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { POSTS } from "@/components/blogs/posts";
 import { SERVICE_LIST } from "@/components/service/registry";
+import { LEGAL_DOCS } from "@/components/legal/docs";
 import { SITE } from "@/lib/seo";
 
 /**
@@ -57,6 +58,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(p.date),
       changeFrequency: "yearly" as const,
       priority: 0.6,
+    })),
+    /* The legal pages are last and lowest: they are indexable and should be
+       discoverable — a policy nobody can find is not much of a policy — but
+       they are not what anyone is searching for, and giving them the same
+       weight as a service page would misstate the site's own priorities.
+       `lastModified` tracks the documents' own revision date, not the build. */
+    ...LEGAL_DOCS.map((d) => ({
+      url: `${SITE.url}/${d.slug}`,
+      lastModified: new Date(d.updated),
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     })),
   ];
 }

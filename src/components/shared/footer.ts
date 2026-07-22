@@ -65,10 +65,23 @@ export const FOOTER_CSS = String.raw`
 .afbig u{text-decoration:none;color:var(--red)}
 .afbig:hover{opacity:.82}
 
-/* ---- bottom rail ---- */
-.afbot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:clamp(12px,1.8vh,18px);border-top:1px solid rgba(255,255,255,.14);font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#77777b}
+/* ---- bottom rail ----
+   White, not the #77777b grey it started as. That grey was chosen against the
+   near-black panel higher up the footer, but this rail sits at the bottom of
+   the red blob, and mid-grey on saturated red is the one combination that
+   fails legibility from both directions — too dark to read, too light to be
+   deliberate. */
+.afbot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:clamp(12px,1.8vh,18px);border-top:1px solid rgba(255,255,255,.14);font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#fff}
 /* Fixed width so the seconds ticking cannot shift the line beside it. */
-.afclock{color:#b4b4b8;font-variant-numeric:tabular-nums}
+.afclock{color:#fff;font-variant-numeric:tabular-nums}
+/* Legal links sit in the bottom rail, which is where a reader looks for them.
+   They inherit the rail's mono/tracked treatment so they read as fine print
+   rather than competing with the sitemap columns above. The hover stays red:
+   on white text over a red field it still reads as a state change, and it is
+   the same hover every other link in this footer uses. */
+.aflegal{display:flex;gap:clamp(14px,2vw,26px);flex-wrap:wrap}
+.aflegal a{color:#fff;text-decoration:none;letter-spacing:.14em;transition:color .22s}
+.aflegal a:hover{color:var(--red)}
 
 .afoot a:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:3px}
 
@@ -143,6 +156,10 @@ export const footerHtml = () => `
 
   <div class="afbot">
     <span>© 2026 ${SITE.name}.IN — MADE TO CONVERT</span>
+    <nav class="aflegal" aria-label="Legal">
+      <a href="/privacy-policy" data-h>Privacy Policy</a>
+      <a href="/terms" data-h>Terms &amp; Conditions</a>
+    </nav>
     <span>${SITE.city} <b class="afclock" id="afclock">--:--:--</b></span>
   </div>
 </div>`;
