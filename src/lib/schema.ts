@@ -1,4 +1,4 @@
-import { SITE } from "@/lib/seo";
+import { SITE, PROFILE_URLS } from "@/lib/seo";
 import { readingMinutes, wordCount, type Post } from "@/components/blogs/posts";
 
 /**
@@ -69,6 +69,9 @@ export const organizationSchema = {
   priceRange: "$$",
   address: ADDRESS,
   areaServed: AREA_SERVED,
+  /* Emitted only once a real profile exists in SOCIALS. An empty sameAs array
+     is not a neutral statement — it asserts the business has no profiles. */
+  ...(PROFILE_URLS.length ? { sameAs: PROFILE_URLS } : {}),
   contactPoint: {
     "@type": "ContactPoint",
     telephone: SITE.phone,

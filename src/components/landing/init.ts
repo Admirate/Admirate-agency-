@@ -2,6 +2,7 @@
 
 import { clientLogo } from "@/lib/cdn";
 import { LOGO_ROWS } from "@/components/shared/clients";
+import { initFooter } from "@/components/shared/footer";
 
 export default function initLanding(){
 let _dead=false, _rafId=0;
@@ -282,6 +283,9 @@ function tick2(){
 }
 _rafId=requestAnimationFrame(tick2);
 if(staticScrub){ Y=scrollY; updateDots(); }
+
+/* The footer clock shows Hyderabad time, not the visitor's. */
+const stopFooter = initFooter();
 
 function cleanup(){
   _dead=true;

@@ -5,8 +5,7 @@ import {
   type Creative,
 } from "@/components/shared/creatives";
 import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
-
-import { NAP_HTML } from "@/lib/seo";
+import { FOOTER_CSS, footerHtml } from "@/components/shared/footer";
 
 export const SERVICES_CSS = String.raw`
 :root{
@@ -324,24 +323,11 @@ ${showcaseCss(".sec.active")}
 #consist p{margin-top:26px;font-weight:300;font-size:clamp(15px,1.6vw,19px);color:#4a4a4d;max-width:52ch;margin-left:auto;margin-right:auto;line-height:1.65}
 
 /* ============ S9 CTA + FOOTER ============ */
-#cta{position:relative;background:var(--black);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 var(--pad);overflow:hidden}
-.ghost{position:absolute;top:50%;left:0;transform:translateY(-50%);white-space:nowrap;font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(110px,20vw,260px);color:transparent;-webkit-text-stroke:1px #1c1c1e;pointer-events:none;user-select:none}
-.ghost span{display:inline-block;animation:tick 46s linear infinite}
+/* The closing section is now only a carrier for shared/footer.ts, which
+   brings its own surface, padding and layout. The CTA headline, buttons and
+   footer strip that used to be styled here went with the markup. */
+#cta{background:var(--black);color:#fff}
 @keyframes tick{to{transform:translateX(-50%)}}
-#cta>*:not(.ghost):not(footer){position:relative;z-index:1}
-#cta h2{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(28px,5vw,64px);text-transform:uppercase;line-height:1.1;margin-bottom:18px;letter-spacing:-.01em}
-#cta h2 em{font-style:normal;color:var(--red)}
-#cta p{font-family:var(--mono);font-size:11px;color:#9a9a9e;margin-bottom:42px;letter-spacing:.12em}
-.btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.btn{font-family:var(--body);font-weight:600;font-size:15px;text-decoration:none;padding:17px 28px;display:inline-flex;align-items:center;gap:10px;transition:transform .18s,box-shadow .18s}
-.btn .ar{display:inline-block;transition:transform .18s}
-.btn:hover{transform:translateY(-2px)}
-.btn:hover .ar{transform:translateX(6px)}
-.btn.dark{background:var(--white);color:var(--black)}
-.btn.dark:hover{box-shadow:4px 4px 0 var(--red)}
-.btn.red{background:var(--red);color:#fff}
-.btn.red:hover{box-shadow:4px 4px 0 var(--white)}
-#cta footer{position:absolute;bottom:0;left:0;right:0;z-index:1;border-top:1px solid #1d1d1f;padding:18px var(--pad);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:10px;color:#77777b;letter-spacing:.12em}
 
 /* ============================================================
    RESPONSIVE
@@ -542,6 +528,9 @@ ${showcaseCss(".sec.active")}
   #eye,#logos,#social,#consist,#hero,#clients{background:var(--paper)}
   #web,#collat{background:var(--black)}
 }
+
+/* ---- site footer (shared/footer.ts) ---- */
+${FOOTER_CSS}
 `;
 
 /**
@@ -892,19 +881,8 @@ export const SERVICES_HTML = String.raw`
 </section>
 
 <!-- S9 CTA + FOOTER -->
-<section id="cta" class="sec full">
-  <div class="ghost"><span>ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — ADMIRATE — </span></div>
-  <h2 class="rise" style="--rd:0s">The journey starts<br>with <em>one click.</em></h2>
-  <p class="rise" style="--rd:.14s">// LESS FLUFF — MORE LEADS. TELL US YOUR GOAL.</p>
-  <div class="btns rise" style="--rd:.28s">
-    <a class="btn dark" href="/" data-h>Back to home <span class="ar">→</span></a>
-    <a class="btn red" href="/start-project" data-h>Start your project <span class="ar">→</span></a>
-  </div>
-  <footer>
-    <div>© 2026 ADMIRATE.IN</div>
-    <div>${NAP_HTML}</div>
-    <div>MADE TO CONVERT</div>
-  </footer>
+<section id="cta" class="sec">
+  ${footerHtml({ altHref: "/", altLabel: "Home" })}
 </section>
 
 <!-- CLIENT OVERLAY -->

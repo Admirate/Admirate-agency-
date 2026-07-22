@@ -56,6 +56,34 @@ export const SITE = {
 /** Phone as a tel: href — digits and a leading +, nothing else. */
 export const telHref = `tel:${SITE.phone.replace(/[^\d+]/g, "")}`;
 
+export const WHATSAPP = `https://wa.me/${SITE.phone.replace(/[^\d]/g, "")}`;
+
+/**
+ * Every external destination the site links to, in one list.
+ *
+ * `profile: true` marks a page that genuinely represents the business — an
+ * Instagram or LinkedIn account. Those, and only those, are published as
+ * `sameAs` in the structured data, which is how Google ties this domain to
+ * profiles it already knows about. WhatsApp is deliberately not one: wa.me is
+ * a chat endpoint, not a profile, and claiming it as identity is the kind of
+ * assertion Google can contradict.
+ *
+ * Adding a real profile here lights up the footer row and the `sameAs` block
+ * at the same time — see ORG_TODO in lib/schema.ts, where this is the first
+ * outstanding item.
+ */
+export type SocialLink = { label: string; href: string; profile?: boolean };
+
+export const SOCIALS: SocialLink[] = [
+  { label: "WhatsApp", href: WHATSAPP },
+  // TODO: the real profile URLs, each with `profile: true`, e.g.
+  // { label: "Instagram", href: "https://instagram.com/<handle>", profile: true },
+  // { label: "LinkedIn",  href: "https://linkedin.com/company/<slug>", profile: true },
+];
+
+/** Profile URLs only — what `sameAs` is allowed to claim. */
+export const PROFILE_URLS = SOCIALS.filter((s) => s.profile).map((s) => s.href);
+
 /**
  * The crawlable NAP line, shared by every public footer.
  *

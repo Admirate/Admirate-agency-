@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { initShowcase } from "@/components/shared/showcase";
+import { initFooter } from "@/components/shared/footer";
 
 export default function initServices(){
 let _dead=false, _rafId=0, _curRaf=0;
@@ -308,6 +309,9 @@ function raf(){
 }
 _rafId=requestAnimationFrame(raf);
 if(staticScrub){ Y=scrollY; updateDots(); }
+
+/* The footer clock shows Hyderabad time, not the visitor's. */
+const stopFooter = initFooter();
 
 function cleanup(){
   _dead=true;
