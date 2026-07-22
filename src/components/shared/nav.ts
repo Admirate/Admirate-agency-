@@ -116,9 +116,9 @@ export const NAV_CSS = String.raw`
 
 /* ---------- SERVICES MEGA MENU ----------
    "Services" is a button, not a link — it opens this panel rather than
-   navigating. The panel carries its own "View all services" link so /services
-   itself is still reachable. Full-screen ink, so it reads as part of the site
-   rather than as a dropdown bolted onto it. */
+   navigating. The panel carries its own "Overview" link so /services itself is
+   still reachable. Full-screen ink, so it reads as part of the site rather than
+   as a dropdown bolted onto it. */
 .pnav .pmenu{
   background:none;border:0;font:inherit;cursor:pointer;
   display:inline-flex;align-items:center;gap:5px;
@@ -286,7 +286,7 @@ export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
     ${svcItemsHtml()}
   </div>
   <div class="smfoot">
-    <a class="small" href="/services" data-h>View all services <span>→</span></a>
+    <a class="small" href="/services" data-h>Overview <span>→</span></a>
     <span class="smnote">STRATEGIC DESIGN &amp; MARKETING</span>
   </div>
 </div>
