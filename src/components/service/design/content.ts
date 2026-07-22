@@ -8,11 +8,15 @@
  *          order the eye is meant to take them
  *   MED    one idea rebuilt for a hoarding, a feed and a printed page, to make
  *          the point that the three are different problems and not one resize
- *   DWORK  a rolling cut of campaign and ad creative
+ *   DWORK  a rolling cut of the real client creatives, drawn from the same
+ *          shared list the #social grid on /services renders
  *
  * The assembly is CSS-only: the section's `.in` class starts it, so it plays
  * once when scrolled to and never needs a frame of JavaScript.
  */
+
+import { creative, optimized } from "@/lib/cdn";
+import { CLIENT_CREATIVES } from "@/components/shared/creatives";
 
 export const DESIGN_CSS = String.raw`
 :root{
@@ -110,32 +114,24 @@ body.smopen{overflow:hidden}
 
 /* ============ 4 — THE WORK ============ */
 #dwork .mq{margin-top:clamp(30px,5vh,52px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-#dwork .mqtrack{display:flex;width:max-content;animation:mqx 46s linear infinite}
+/* 120s, not the 46s this ran at while the strip was six drawn cards. The track
+   is ~2.6x longer now, and translateX(-50%) covers whatever it holds in the
+   duration given — at 46s the same set scrolls 2.6x faster and the drift turns
+   into a blur. This keeps the original px/sec. */
+#dwork .mqtrack{display:flex;width:max-content;animation:mqx 120s linear infinite}
 #dwork .mq:hover .mqtrack{animation-play-state:paused}
 .mqset{display:flex;gap:clamp(14px,2vw,24px);padding-right:clamp(14px,2vw,24px)}
 @keyframes mqx{to{transform:translateX(-50%)}}
-.wcard{flex:0 0 auto;width:clamp(210px,24vw,300px)}
-.wart{aspect-ratio:4/5;border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;background:#fff;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s}
+/* Cards are sized by height, not width — the reverse of the #social grid on
+   /services. The strip carries both 4:5 and 1:1 creatives, so a fixed width
+   would leave a ragged bottom edge; a fixed height with the image's true ratio
+   on --ar keeps the top and bottom lines straight and lets the ratio show as
+   width. object-fit:cover therefore never actually crops: the box is already
+   the shape of the image inside it. */
+.wcard{flex:0 0 auto}
+.wart{height:clamp(260px,30vw,375px);aspect-ratio:var(--ar,1);border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative;background:#fff;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s}
+.wart img{display:block;width:100%;height:100%;object-fit:cover}
 .wcard:hover .wart{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,11,12,.14)}
-.wmeta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--grey);white-space:nowrap}
-.wmeta b{color:var(--black);font-weight:500}
-.wart.w1{background:var(--black)}
-.wart.w1 .t{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(44px,5.4vw,66px);line-height:.88;letter-spacing:-.03em;color:#fff;text-transform:uppercase}
-.wart.w1 .t i{font-style:normal;display:inline-block;border-bottom:5px solid var(--red)}
-.wart.w2 .t{font-family:var(--body);font-weight:300;font-size:clamp(17px,1.8vw,22px);letter-spacing:.42em;text-transform:uppercase;color:var(--black);padding-left:.42em}
-.wart.w2::after{content:"";position:absolute;inset:12px;border:1px solid var(--line);border-radius:3px}
-.wart.w2 .d{position:absolute;bottom:22%;width:7px;height:7px;border-radius:50%;background:var(--red)}
-.wart.w3{background:#FBF7F1}
-.wart.w3 .t{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(30px,3.4vw,42px);color:var(--black);text-transform:lowercase}
-.wart.w3 .o{position:absolute;width:52%;aspect-ratio:1;border:1.5px solid var(--red);border-radius:50%;opacity:.85}
-.wart.w4{background:var(--black)}
-.wart.w4 .t{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(17px,1.9vw,23px);line-height:1.25;color:#fff;text-transform:uppercase;text-align:center;max-width:9ch}
-.wart.w4 .t u{text-decoration:none;color:var(--red)}
-.wart.w5 .t{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(78px,9vw,116px);line-height:1;color:var(--red);letter-spacing:-.04em}
-.wart.w5 .s{position:absolute;bottom:16%;font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--grey)}
-.wart.w6{background:#FAFAF8}
-.wart.w6 .t{font-family:var(--body);font-weight:300;font-size:clamp(26px,3vw,36px);letter-spacing:.16em;color:var(--black);text-transform:lowercase}
-.wart.w6 .l{position:absolute;bottom:24%;width:34%;height:1.5px;background:var(--red)}
 
 /* ============ 5 — CLOSE ============ */
 #dclose .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
@@ -204,17 +200,6 @@ const MEDIUMS = [
 ];
 const MEDIUM_LINE = `Stop<span>.</span> Look here first`;
 
-/* Campaign and ad creative. `art` is the composition; each sits on its own
-   .w1–.w6 treatment so the strip does not read as one template repeated. */
-const WORK = [
-  { cls: "w1", art: `<span class="t">GAME<br><i>ON</i></span>`, b: "Hitex SportExpo", tag: "CAMPAIGN" },
-  { cls: "w2", art: `<span class="t">Clarity</span><span class="d"></span>`, b: "South Glass", tag: "PRINT" },
-  { cls: "w3", art: `<span class="o"></span><span class="t">breathe</span>`, b: "Our Sacred Space", tag: "EVENT CREATIVE" },
-  { cls: "w4", art: `<span class="t">You're not<br><u>alone</u>.</span>`, b: "Hope Trust India", tag: "AD CREATIVE" },
-  { cls: "w5", art: `<span class="t">50</span><span class="s">YEARS ON THE JOB</span>`, b: "Patil Group", tag: "CORPORATE" },
-  { cls: "w6", art: `<span class="t">stretch</span><span class="l"></span>`, b: "Samyoga Studio", tag: "AD CREATIVE" },
-];
-
 const NEXT = [
   { slug: "identity", label: "Identity" },
   { slug: "social-media", label: "Social Media" },
@@ -247,12 +232,21 @@ const heroLine = (text: string, start: number, dot = false) => {
 
 /* The marquee needs its contents twice: the track translates -50%, so the
    second copy is what occupies the viewport as the first scrolls out. It is
-   duplicate content, hence aria-hidden on the copy. */
+   duplicate content, hence aria-hidden on the copy — and an empty alt on its
+   images, so the artwork is not announced twice by anything that walks the
+   images directly rather than honouring the container.
+
+   The URLs are byte-identical to the ones the #social grid on /services emits
+   (same optimizer width and quality), so arriving here from that page is a
+   cache hit rather than fourteen fresh downloads. `q` must stay 75 — Next 16
+   ships only that in images.qualities and 400s anything else. */
 const workSet = (hidden: boolean) => `
       <div class="mqset"${hidden ? ' aria-hidden="true"' : ""}>
-      ${WORK.map(
-        (w) =>
-          `<div class="wcard"><div class="wart ${w.cls}">${w.art}</div><div class="wmeta"><b>${w.b}</b><span>${w.tag}</span></div></div>`,
+      ${CLIENT_CREATIVES.map(
+        (c) =>
+          `<div class="wcard"><div class="wart" style="--ar:${c.ar}"><img src="${optimized(
+            creative(c.file),
+          )}" alt="${hidden ? "" : c.alt}" loading="lazy" decoding="async"></div></div>`,
       ).join("\n      ")}
       </div>`;
 

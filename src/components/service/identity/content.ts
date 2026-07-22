@@ -6,12 +6,15 @@
  *           construction geometry retracts and leaves the letterform behind
  *   ANAT    a three-stage scroll scrub: the mark is picked out of visual
  *           noise, echoed once it is gone, then left standing alone
- *   BRANDS  a tile wall of marks now doing their job out in the world, each
- *           set in its own typography rather than shown as a logo file
+ *   BRANDS  a tile wall of the twelve marks now doing their job out in the
+ *           world, drawn from the shared client list the landing marquee reads
  *
  * The scrub is switched off below 768px (see IS_M in init.ts), where the three
  * stages simply stack and are all visible.
  */
+
+import { clientLogo } from "@/lib/cdn";
+import { CLIENT_LOGOS } from "@/components/shared/clients";
 
 export const IDENTITY_CSS = String.raw`
 :root{
@@ -148,24 +151,25 @@ body.idhover #idcur{width:56px;height:56px;background:rgba(227,0,27,.08)}
 
 /* ============ 3 — BRANDS WE'VE CRAFTED ============ */
 #brands .bsub{margin-top:14px}
-#brands .bwall{margin-top:clamp(32px,5vh,56px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+/* Fixed column counts rather than auto-fit. Twelve marks divide evenly by
+   6/4/3/2, so every row fills at every breakpoint — auto-fit left whatever did
+   not fit the last row as a bare stretch of the wall's own background, which
+   read as a rendering fault rather than as space. */
+#brands .bwall{margin-top:clamp(32px,5vh,56px);display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
 .btile{position:relative;background:#fff;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:clamp(18px,2.4vw,30px);overflow:hidden;transition:background .4s ease}
-.btile .bmk{color:var(--black);text-align:center;line-height:1.05;transition:color .4s ease,transform .5s cubic-bezier(.16,1,.3,1);white-space:nowrap}
-.btile .bmk u{text-decoration:none;color:var(--red)}
-.btile .btag{position:absolute;left:14px;bottom:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--grey);transition:color .4s ease}
-.btile:hover{background:var(--black)}
-.btile:hover .bmk{color:#fff;transform:scale(1.05)}
-.btile:hover .btag{color:var(--red)}
-.mk-a{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(19px,1.9vw,26px);letter-spacing:-.02em;text-transform:uppercase}
-.mk-b{font-family:var(--body);font-weight:300;font-size:clamp(15px,1.5vw,20px);letter-spacing:.34em;text-transform:uppercase;padding-left:.34em}
-.mk-c{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(19px,1.9vw,26px);letter-spacing:-.01em;text-transform:lowercase}
-.mk-d{font-family:var(--display);font-weight:900;font-stretch:106%;font-size:clamp(18px,1.8vw,24px);letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--red);padding-bottom:6px}
-.mk-e{font-family:var(--mono);font-weight:400;font-size:clamp(13px,1.3vw,17px);letter-spacing:.26em;text-transform:lowercase}
-.mk-f{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(20px,2vw,28px);letter-spacing:-.015em;text-transform:uppercase}
-.mk-f small{display:block;font-family:var(--body);font-weight:300;font-size:.42em;letter-spacing:.5em;color:var(--grey);margin-top:5px;padding-left:.5em}
-.btile:hover .mk-f small{color:#8a8a8e}
-.mk-g{font-family:var(--display);font-weight:800;font-stretch:110%;font-size:clamp(18px,1.8vw,25px);letter-spacing:.14em;text-transform:uppercase}
-.mk-h{font-family:var(--body);font-weight:300;font-size:clamp(16px,1.6vw,21px);letter-spacing:.28em;text-transform:lowercase}
+/* The marks are real files of assorted proportions, so each is contained
+   inside the tile rather than sized to it, and --s lifts the ones whose file
+   carries its own padding up to the same optical size as the rest. */
+.btile img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform:scale(var(--s,1));transition:transform .5s cubic-bezier(.16,1,.3,1)}
+/* Zythum is drawn white on transparent and would be an empty tile here. */
+.btile img.inv{filter:invert(1)}
+/* The tile used to go black on hover, which worked when the mark was type this
+   page set itself. It cannot survive real logo files: anything black-on-
+   transparent disappears, and inverting to compensate turns a two-colour mark
+   into a colour negative. The lift is the hover now, and the marks stay exactly
+   as their owners drew them. */
+.btile:hover{background:var(--paper)}
+.btile:hover img{transform:scale(calc(var(--s,1) * 1.06))}
 
 /* ============ 4 — CLOSE ============ */
 #close{position:relative;overflow:hidden}
@@ -200,6 +204,10 @@ body.idhover #idcur{width:56px;height:56px;background:rgba(227,0,27,.08)}
 
 a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:4px}
 
+/* Twelve divides by every count used here, so the wall never ends on a part
+   row at any width. */
+@media (max-width:1180px){ #brands .bwall{grid-template-columns:repeat(4,1fr)} }
+
 /* ============ MOBILE ============ */
 @media (max-width:768px){
   #idrail,#idcur{display:none}
@@ -214,10 +222,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #anat .astep{position:relative;opacity:1;transform:none;margin-bottom:24px}
   #anat .aprog{display:none}
   #anatsvg{width:min(80%,320px)}
+  #brands .bwall{grid-template-columns:repeat(3,1fr)}
   .btile{aspect-ratio:16/9}
 }
 @media (max-width:480px){
   #mark h1{font-size:clamp(38px,12vw,56px)}
+  #brands .bwall{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-height:600px){
   #mark{min-height:auto}
@@ -254,18 +264,11 @@ const PHILOSOPHY = [
   "Understood at a glance",
 ];
 
-/* Marks out in the world. Each is set in its own typography rather than shown
-   as a logo file, so the wall reads as eight brands and not eight images. */
-const BRANDS = [
-  { cls: "mk-a", mk: `SPORTE<u>X</u>PO`, tag: "IDENTITY · CAMPAIGN" },
-  { cls: "mk-b", mk: `South Glass`, tag: "IDENTITY · WEB" },
-  { cls: "mk-c", mk: `hope trust<u>.</u>`, tag: "BRAND · CONTENT" },
-  { cls: "mk-d", mk: `Patil Group`, tag: "CORPORATE IDENTITY" },
-  { cls: "mk-e", mk: `our sacred space`, tag: "BRAND SYSTEM" },
-  { cls: "mk-f", mk: `AVVENT<small>GLOBAL</small>`, tag: "LOGO + SYSTEM" },
-  { cls: "mk-g", mk: `VALUCOR`, tag: "IDENTITY" },
-  { cls: "mk-h", mk: `samyoga`, tag: "STUDIO BRAND" },
-];
+/* Marks out in the world. These were previously eight wordmarks this page set
+   in its own typography — a recreation of each brand rather than the brand's
+   own mark. They are now the real files, from the same list the landing
+   marquee reads, so the wall shows what was actually delivered and covers all
+   twelve clients rather than the eight that had been redrawn. */
 
 const NEXT_SERVICES = [
   { slug: "design", label: "Design" },
@@ -359,9 +362,11 @@ export const IDENTITY_HTML = String.raw`
   <h2 class="idh up">Brands we've <em>crafted</em>.</h2>
   <p class="idp bsub up" style="--d:.1s">Marks and identities now doing their job out in the world.</p>
   <div class="bwall up" style="--d:.18s">
-    ${BRANDS.map(
+    ${CLIENT_LOGOS.map(
       (b) =>
-        `<div class="btile"><span class="bmk ${b.cls}">${b.mk}</span><span class="btag">${b.tag}</span></div>`,
+        `<div class="btile"><img src="${clientLogo(b.file)}" alt="${b.name}"${
+          b.inv ? ' class="inv"' : ""
+        }${b.scale ? ` style="--s:${b.scale}"` : ""} loading="lazy" decoding="async"></div>`,
     ).join("\n    ")}
   </div>
 </section>

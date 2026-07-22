@@ -69,8 +69,25 @@ body.smopen{overflow:hidden}
 }
 @keyframes swipe{0%,12%{transform:translateY(0);opacity:0}20%{opacity:1}70%{transform:translateY(-116px);opacity:1}88%,100%{transform:translateY(-140px);opacity:0}}
 
+/* While the reels are following the scroll they have to track it exactly. The
+   easing that makes the timer's discrete jumps land softly reads as lag when
+   the input is a scroll wheel, so both transitions come off. The thumb goes
+   too: the visitor's own scroll is the gesture now, and a loop running on its
+   own clock would be contradicting it rather than illustrating it. */
+.fone.scrubbing{will-change:transform}
+.fone.scrubbing .reeltrack,.fone.scrubbing .bar i{transition:none}
+.fone.scrubbing .thumb{display:none}
+
 /* ============ 1 — HERO ============ */
-#shero{min-height:100svh;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,76px);align-items:center}
+/* The section's height is scroll distance, not layout. .spin pins to the
+   viewport and holds the headline and the phone still while that distance is
+   spent scrubbing the reels — the same shape as the scrub sections on the
+   landing page. Below 900px, on short viewports, and under reduced motion the
+   rules further down collapse this back to an ordinary one-viewport hero, and
+   initSocial() puts the phone back on its timer to match. */
+#shero{height:260vh;padding:0}
+#shero .spin{position:sticky;top:0;height:100svh;display:flex;align-items:center;padding:clamp(96px,14vh,150px) var(--pad) clamp(70px,11vh,120px)}
+#shero .sgrid{width:100%;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,76px);align-items:center}
 #shero .crumb{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--grey);margin-bottom:clamp(20px,3.4vh,34px);display:flex;gap:10px;flex-wrap:wrap}
 #shero .crumb a{color:var(--grey);text-decoration:none;transition:color .25s}
 #shero .crumb a:hover{color:var(--red)}
@@ -153,20 +170,32 @@ body.smopen{overflow:hidden}
 
 a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:4px}
 
+/* Un-pin the hero. Pinning the very first screen of a phone is a heavier
+   landing than the reels are worth, so the scrub is a desktop enhancement and
+   this is the fallback it degrades to. The breakpoint is mirrored by scrubMQ in
+   init.ts — change one and the other has to move with it. */
+@media (max-width:900px){
+  #shero{height:auto;min-height:100svh;padding:clamp(96px,15vh,130px) var(--pad) clamp(70px,11vh,120px)}
+  #shero .spin{position:static;height:auto;padding:0}
+}
 @media (max-width:768px){
   #smrail{display:none}
-  #shero{grid-template-columns:1fr;gap:34px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
+  #shero .sgrid{grid-template-columns:1fr;gap:34px}
   #shero .pwrap{order:-1}
   .fone{width:min(64%,210px)}
 }
 @media (max-width:480px){ #shero h1{font-size:clamp(36px,12vw,54px)} }
+/* A landscape phone has no room to give away to a pinned hero. */
 @media (max-height:600px){
-  #shero{min-height:auto}
+  #shero{height:auto;min-height:auto;padding:clamp(96px,15vh,130px) var(--pad) clamp(70px,11vh,120px)}
+  #shero .spin{position:static;height:auto;padding:0}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .up{opacity:1;transform:none}
   #shero h1 .l i{transform:none;animation:none}
+  #shero{height:auto;min-height:100svh;padding:clamp(96px,15vh,130px) var(--pad) clamp(70px,11vh,120px)}
+  #shero .spin{position:static;height:auto;padding:0}
   .fone .thumb{display:none}
   .reeltrack{transition:none}
   #rsvg .rlive{stroke-dashoffset:0;transition:none}
@@ -267,12 +296,16 @@ export const SOCIAL_HTML = String.raw`
 
 <!-- 1 — HERO -->
 <section class="sms dark" id="shero" data-bg="#0B0B0C" data-label="Social">
-  <div>
-    <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Social Media</b></div>
-    <h1>${heroLine("MADE TO", 0.15)}<br>${heroLine("CONVERT", 0.4, true)}</h1>
-    <p class="smp">Reels, creatives and campaigns produced to send people somewhere — not to fill a content calendar and quietly disappear.</p>
+  <div class="spin">
+    <div class="sgrid">
+      <div>
+        <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Social Media</b></div>
+        <h1>${heroLine("MADE TO", 0.15)}<br>${heroLine("CONVERT", 0.4, true)}</h1>
+        <p class="smp">Reels, creatives and campaigns produced to send people somewhere — not to fill a content calendar and quietly disappear.</p>
+      </div>
+      <div class="pwrap">${phone("hreel", true)}</div>
+    </div>
   </div>
-  <div class="pwrap">${phone("hreel", true)}</div>
 </section>
 
 <!-- 2 — ROUTE -->

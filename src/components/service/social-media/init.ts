@@ -5,10 +5,21 @@ import { REEL_COUNT } from "./content";
 /**
  * SOCIAL MEDIA page engine.
  *
- * The one moving part of its own is the hero phone, which advances a reel
- * every 3.4s on a timer rather than on scroll — it is meant to play while the
- * visitor reads the headline beside it. Under reduced motion it holds on the
- * first reel with the bar already full.
+ * The one moving part of its own is the hero phone, and it runs in one of two
+ * modes:
+ *
+ *   scrub  the hero is pinned (see `#shero .spin` in content.ts) and its extra
+ *          height is spent dragging the reel track under the screen, so the
+ *          reels advance with the visitor's scroll rather than on a clock —
+ *          the same handling the landing page gives its #reels section
+ *   timer  the hero is an ordinary one-viewport section and a reel advances
+ *          every 3.4s, which is what the page did everywhere before
+ *
+ * Which one applies is a media query, not a one-time reading, so rotating a
+ * tablet or dragging a window across the breakpoint switches cleanly instead of
+ * leaving a scrub transform stranded on an unpinned hero. Under reduced motion
+ * it is always `timer`, which in that case holds on the first reel with the bar
+ * already full.
  *
  * The route diagram draws itself from CSS off the section's `.in` class, and
  * the work strip is a marquee, so neither needs a frame of JavaScript.
@@ -28,6 +39,8 @@ const line=document.getElementById('smline');
 const rail=document.getElementById('smrail');
 const hreel=document.getElementById('hreel');
 const hreelBar=document.getElementById('hreelbar');
+const fone=hreel?hreel.closest('.fone'):null;
+const hero=document.getElementById('shero');
 
 /* ---------- rail ---------- */
 if(rail && secs.length){
@@ -44,6 +57,7 @@ const railBtns=rail?[...rail.children]:[];
 /* ---------- geometry, measured rather than read per frame ---------- */
 let Y=scrollY,dirty=true,VH=innerHeight,DOCH=1;
 let TOPS=[],lastSec=-1;
+let heroTop=0,heroH=1;
 
 const offTop=el=>{ let y=0,n=el; while(n){ y+=n.offsetTop; n=n.offsetParent; } return y; };
 
@@ -51,6 +65,10 @@ function measure(){
   VH=innerHeight;
   DOCH=document.documentElement.scrollHeight;
   TOPS=secs.map(offTop);
+  /* Held separately from TOPS because the scrub needs the hero's height as
+     well as its top, and it is the one section whose height is scroll
+     distance rather than content. */
+  if(hero){ heroTop=offTop(hero); heroH=hero.offsetHeight; }
   dirty=true;
 }
 
@@ -66,6 +84,7 @@ function render(){
     if(bg&&surface) bg.style.backgroundColor=surface;
     if(rail) rail.classList.toggle('ondark',secs[cur].classList.contains('dark'));
   }
+  renderHero();
 }
 
 const onScroll=()=>{ dirty=true; };
@@ -100,8 +119,23 @@ if(reduced){
 }
 
 /* ---------- hero phone ---------- */
-if(hreel && !reduced){
+/* Mirrors the media queries that pin `#shero` in content.ts. If that breakpoint
+   moves, this has to move with it — a scrubbing phone on an unpinned hero would
+   scroll its reels past in the fraction of a screen the hero now occupies. */
+const scrubMQ=matchMedia('(min-width:901px) and (min-height:601px)');
+
+let heroMode=null,scrubbing=false,heroTimer=0;
+
+const stopTimer=()=>{ if(heroTimer){ clearTimeout(heroTimer); heroTimer=0; } };
+
+function startTimer(){
+  stopTimer();
+  if(hreel) hreel.style.transform='translateY(0%)';
+  /* Reduced motion holds on the first reel with the bar already full, rather
+     than advancing on any clock at all. */
+  if(reduced){ if(hreelBar) hreelBar.style.width='100%'; return; }
   let i=0;
+  if(hreelBar) hreelBar.style.width=(100/REEL_COUNT)+'%';
   const tick=()=>{
     if(_dead) return;
     /* Skip the advance while the tab is hidden, so returning to it does not
@@ -111,15 +145,46 @@ if(hreel && !reduced){
       hreel.style.transform=`translateY(${-i*100}%)`;
       if(hreelBar) hreelBar.style.width=((i+1)/REEL_COUNT)*100+'%';
     }
-    _timers.push(setTimeout(tick,3400));
+    heroTimer=setTimeout(tick,3400);
   };
-  if(hreelBar) hreelBar.style.width=(100/REEL_COUNT)+'%';
-  _timers.push(setTimeout(tick,3400));
-}else if(hreelBar){
-  hreelBar.style.width='100%';
+  heroTimer=setTimeout(tick,3400);
 }
 
+/* One reel per screen of pinned scroll: with three reels the track travels two
+   of its own heights over the hero's spare height. */
+function renderHero(){
+  if(!scrubbing||!hreel) return;
+  const pr=clamp((Y-heroTop)/((heroH-VH)||1),0,1);
+  hreel.style.transform=`translateY(${-pr*(REEL_COUNT-1)*100}%)`;
+  if(hreelBar) hreelBar.style.width=(pr*100)+'%';
+  /* The slow counter-rotation the landing phone makes as it is scrolled past.
+     Kept small — the phone is beside a headline here, not centred on a stage. */
+  if(fone) fone.style.transform=`rotate(${(1.6-3.2*pr).toFixed(2)}deg)`;
+}
+
+function setHeroMode(){
+  if(!hreel) return;
+  const mode=(scrubMQ.matches&&!reduced)?'scrub':'timer';
+  if(mode===heroMode) return;
+  heroMode=mode;
+  scrubbing=mode==='scrub';
+  if(fone) fone.classList.toggle('scrubbing',scrubbing);
+  if(scrubbing){
+    stopTimer();
+    renderHero();
+  }else{
+    /* Drop the scrub's leftovers before the timer takes over, or the phone
+       keeps whatever rotation it was pinned at. */
+    if(fone) fone.style.transform='';
+    startTimer();
+  }
+}
+
+const onScrubMQ=()=>{ measure(); setHeroMode(); dirty=true; };
+on(scrubMQ,'change',onScrubMQ);
+
 measure();
+setHeroMode();
 
 function loop(){
   if(_dead) return;
@@ -131,6 +196,10 @@ _rafId=requestAnimationFrame(loop);
 return function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId);
+  /* The reel timer re-arms itself each tick, so it is held on its own handle
+     rather than accumulating one entry per tick in _timers for the lifetime of
+     the page. */
+  stopTimer();
   _timers.forEach(clearTimeout);
   _obs.forEach(o=>{ try{ o.disconnect(); }catch(e){} });
   _win.forEach(([t,h])=>removeEventListener(t,h));

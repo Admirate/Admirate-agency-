@@ -11,6 +11,8 @@
  *   BUILT    the four things a build is held to, as a plain pillar row
  */
 
+import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
+
 export const DIGITAL_CSS = String.raw`
 :root{
   --white:#FFFFFF;--paper:#FAFAF8;--black:#0B0B0C;--red:#E3001B;
@@ -118,18 +120,10 @@ body.smopen{overflow:hidden}
 .pillar h3{font-family:var(--display);font-weight:900;font-stretch:110%;text-transform:uppercase;font-size:clamp(17px,1.8vw,22px);letter-spacing:-.01em}
 .pillar p{font-size:13.5px;line-height:1.6;color:#5a5a5e;margin-top:9px}
 
-/* ============ 5 — THE WORK ============ */
-#dproof .plist{margin-top:clamp(30px,5vh,52px);border-top:1px solid var(--line)}
-.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(14px,3vw,40px);align-items:center;padding:clamp(18px,2.6vh,30px) 0;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
-.prow::before{content:"";position:absolute;inset:0;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1)}
-.prow>*{position:relative;z-index:1;transition:color .35s}
-.prow:hover::before{transform:scaleX(1)}
-.prow .pn{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--red)}
-.prow .pnm{font-family:var(--display);font-weight:800;font-stretch:106%;text-transform:uppercase;font-size:clamp(19px,3vw,38px);line-height:1.08;letter-spacing:-.018em;transition:transform .45s cubic-bezier(.16,1,.3,1),color .35s}
-.prow .pd{font-size:13.5px;line-height:1.5;color:#5a5a5e;max-width:54ch}
-.prow .pt{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--grey);white-space:nowrap}
-.prow:hover .pn,.prow:hover .pd,.prow:hover .pt{color:rgba(255,255,255,.88)}
-.prow:hover .pnm{color:#fff;transform:translateX(clamp(5px,1vw,12px))}
+/* ============ 5 — THE WORK ============
+   The showcase brings its own styles. .dgs.in is what this page puts on a
+   section once it is on screen, so that is the hook its entrance hangs off. */
+${showcaseCss(".dgs.in")}
 
 /* ============ 6 — CLOSE ============ */
 #dclose .nlist{margin-top:clamp(26px,4vh,46px);border-top:1px solid rgba(255,255,255,.14)}
@@ -163,8 +157,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #dgrail{display:none}
   #dhero{grid-template-columns:1fr;gap:32px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
   #race .rwrap{grid-template-columns:1fr;gap:26px}
-  .prow{grid-template-columns:auto minmax(0,1fr);row-gap:7px}
-  .prow .pt{grid-column:2;justify-self:start}
 }
 @media (max-width:480px){ #dhero h1{font-size:clamp(36px,12vw,54px)} }
 @media (max-height:600px){
@@ -204,12 +196,10 @@ const PILLARS = [
   { h: "Conversion-first", p: "Every page has one job, one path and one clear next step." },
 ];
 
-const PROOF = [
-  { n: "Hitex SportExpo", t: "Web · Registration", d: "Built to hold up under launch-week traffic, with visitor registration and exhibitor enquiries on one clean path." },
-  { n: "Patil Group", t: "Web · Corporate", d: "A corporate site carrying fifty years of scale without raising its voice." },
-  { n: "Hope Trust India", t: "Web · Content", d: "Built for someone reaching out at their lowest — clear programmes, honest copy, a therapist one click away." },
-  { n: "Our Sacred Space", t: "Web · Bookings", d: "A venue whose calendar is the product, with booking never more than one click away." },
-];
+/* The four clients this section used to list in type are the same four the
+   showcase opens, with the same claims made about them — so the list is gone
+   and the roster now comes from shared/showcase.ts, where the dashboard can
+   also replace it. */
 
 const NEXT = [
   { slug: "identity", label: "Identity" },
@@ -319,15 +309,8 @@ export const DIGITAL_HTML = String.raw`
 <!-- 5 — THE WORK -->
 <section class="dgs" id="dproof" data-bg="#FFFFFF" data-label="The work">
   <h2 class="dgh up">Journeys already doing the <em>job</em>.</h2>
-  <div class="plist">
-    ${PROOF.map(
-      (p, i) => `<div class="prow up" style="--d:${(0.16 + i * 0.05).toFixed(2)}s">
-      <span class="pn">${String(i + 1).padStart(2, "0")}</span>
-      <span><span class="pnm">${p.n}</span><br><span class="pd">${p.d}</span></span>
-      <span class="pt">${p.t.toUpperCase()}</span>
-    </div>`,
-    ).join("\n    ")}
-  </div>
+  <p class="dgp up" style="--d:.1s">Pick a client and their site loads here. Every one of them is live right now — open it and judge the work yourself.</p>
+  ${SHOWCASE_HTML}
 </section>
 
 <!-- 6 — CLOSE -->

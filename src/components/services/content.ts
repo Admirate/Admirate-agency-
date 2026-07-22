@@ -1,4 +1,10 @@
 import { creative, optimized } from "@/lib/cdn";
+import {
+  CREATIVES,
+  TRENDS_SLIDES,
+  type Creative,
+} from "@/components/shared/creatives";
+import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
 
 export const SERVICES_CSS = String.raw`
 :root{
@@ -179,77 +185,13 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 .wcomp.c3 .whd{background:#f0f0ec}.wcomp.c3 .whd::after{color:#111}
 
 /* ============ S5 CLIENT WEBSITES (full) ============
-   This section has to prove the studio ships real websites, so it shows real
-   websites. One large browser frame holds an actual screenshot of the live page;
-   a rail switches which site is loaded. Picking a client retypes the domain in
-   the address bar and sweeps a load bar under it — the section behaves like the
-   thing it is showing. Hovering the frame scrolls the page inside it, so what
-   you get is the site, not a thumbnail of it.
+   The whole component — styles, markup and engine — lives in
+   shared/showcase.ts, because /services/digital carries the same section. All
+   this page supplies is the selector it uses to mark a section revealed.
 
    It replaces four gradient tiles that carried nothing but the client's name in
    type, plus a modal that repeated them. */
-.showcase{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(230px,.85fr);gap:clamp(20px,2.8vw,40px);width:min(1120px,100%);align-items:start}
-
-/* ---- the browser ---- */
-.bframe{position:relative;background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 26px 60px rgba(11,11,12,.13),6px 6px 0 rgba(11,11,12,.05);opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
-.sec.active .bframe{opacity:1;transform:none;transition-delay:.2s}
-.bbar{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);background:#FBFBFA}
-.bdots{display:flex;gap:6px;flex:0 0 auto}
-.bdots i{width:8px;height:8px;border-radius:50%;background:#DDD}
-.bdots i:first-child{background:var(--red)}
-.baddr{flex:1;min-width:0;display:flex;align-items:center;background:#F0F0ED;border-radius:5px;padding:6px 11px;font-family:var(--mono);font-size:11px;color:#55555a;white-space:nowrap;overflow:hidden}
-.baddr b{font-weight:400;color:#2a2a2e}
-/* The caret only blinks while the domain is being typed — it is a state, not decoration. */
-.bcaret{width:1px;height:12px;background:var(--red);margin-left:2px;opacity:0;flex:0 0 1px}
-.bframe.loading .bcaret{opacity:1;animation:bcar .66s steps(2) infinite}
-@keyframes bcar{50%{opacity:0}}
-.bgo{flex:0 0 auto;width:27px;height:27px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--grey);text-decoration:none;font-size:13px;transition:background .2s,color .2s}
-.bgo:hover{background:var(--red);color:#fff}
-.bload{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--red);transform:scaleX(0);transform-origin:left;opacity:0}
-.bframe.loading .bload{animation:bload .9s cubic-bezier(.2,.8,.2,1) forwards}
-@keyframes bload{0%{opacity:1;transform:scaleX(0)}72%{opacity:1;transform:scaleX(.92)}100%{opacity:0;transform:scaleX(1)}}
-
-.bview{position:relative;aspect-ratio:16/10;overflow:hidden;background:#EFEFEC}
-/* --pan is how far this particular shot can travel inside the frame. JS measures
-   it per image, so a dashboard-supplied screenshot of any height still lands
-   flush at the bottom instead of over- or under-scrolling. */
-/* The captures include the browser's own scrollbar down their right edge. The
-   extra width pushes that strip past the frame instead of showing it.
-   max-width:none is required — Tailwind's preflight sets img{max-width:100%}
-   globally from globals.css, which silently clamps the overhang back to zero. */
-/* --pandur is set per shot in init.ts (measurePan), so the pan holds a constant
-   speed across screenshots of very different heights. 7s is the fallback only. */
-.bview img{position:absolute;top:0;left:0;width:calc(100% + 18px);max-width:none;height:auto;display:block;opacity:0;transition:opacity .5s ease,transform var(--pandur,7s) linear}
-.bview img.in{opacity:1}
-@media (hover:hover){
-  .bframe:hover .bview img.in{transform:translateY(var(--pan,0px))}
-}
-.bhint{position:absolute;right:11px;bottom:10px;z-index:2;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:#fff;background:rgba(11,11,12,.55);backdrop-filter:blur(4px);padding:5px 10px;border-radius:20px;opacity:0;transition:opacity .35s;pointer-events:none}
-.sec.active .bframe .bhint{opacity:1;transition-delay:1.2s}
-.sec.active .bframe:hover .bhint{opacity:0;transition-delay:0s}
-@media (pointer:coarse){.bhint{display:none}}
-
-/* ---- the client rail ---- */
-.cside{display:flex;flex-direction:column;gap:18px;opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
-.sec.active .cside{opacity:1;transform:none;transition-delay:.32s}
-.crail{display:flex;flex-direction:column;border-top:1px solid var(--line)}
-.cli{position:relative;width:100%;text-align:left;background:none;padding:13px 14px 13px 17px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:3px;transition:background .25s}
-.cli::before{content:"";position:absolute;left:0;top:-1px;bottom:-1px;width:2px;background:var(--red);transform:scaleY(0);transform-origin:top;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
-.cli.on::before{transform:scaleY(1)}
-.cli:hover{background:rgba(11,11,12,.03)}
-.cln{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--grey);transition:color .25s}
-.cli.on .cln,.cli:hover .cln{color:var(--black)}
-.cls{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--grey);transition:color .25s}
-.cli.on .cls{color:var(--red)}
-
-.cdesc{font-weight:300;font-size:14px;line-height:1.62;color:#4a4a4d}
-.chips{display:flex;flex-wrap:wrap;gap:7px}
-.chips span{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;border:1px solid var(--line);padding:6px 10px;border-radius:20px;color:#3a3a3d}
-.cvisit{align-self:flex-start;font-family:var(--body);font-weight:600;font-size:13.5px;text-decoration:none;background:var(--black);color:#fff;padding:12px 18px;display:inline-flex;gap:8px;align-items:center;transition:transform .18s,box-shadow .18s}
-.cvisit .ar{transition:transform .18s}
-.cvisit:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--red)}
-.cvisit:hover .ar{transform:translate(2px,-2px)}
-.cli:focus-visible,.bgo:focus-visible,.cvisit:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+${showcaseCss(".sec.active")}
 
 /* ============ VIDEO PRODUCTION (scrub) ============
    Ported from the landing page's #tv section. The scrub is driven by P('tv') in
@@ -418,7 +360,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 
   .full,.scrub .stage{padding-right:calc(var(--pad) + 30px)}
   .lgrid{grid-template-columns:repeat(4,minmax(78px,120px));gap:12px}
-  .showcase{grid-template-columns:minmax(0,1.5fr) minmax(200px,1fr);width:min(880px,100%)}
   .mgrid{width:min(760px,100%)}
   .comp{height:min(52svh,420px)}
   .citem{width:clamp(120px,20vw,170px)}
@@ -451,11 +392,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .wticks{margin-top:16px}
   .browser{width:min(560px,100%)}
 
-  /* Frame over rail. The rail turns into a two-up row of tabs so all four
-     clients stay reachable without a scroll. */
-  .showcase{grid-template-columns:1fr;width:min(620px,100%)}
-  .crail{display:grid;grid-template-columns:1fr 1fr}
-  .cli{padding-left:15px}
 
   /* Two columns on a phone. Nothing is hidden any more — the section flows, so
      it can be as tall as the work is. */
@@ -477,10 +413,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   #scrollhint{margin-top:30px}
 
   .lgrid{grid-template-columns:repeat(2,minmax(96px,132px));gap:12px}
-  .showcase{gap:16px}
-  .cln{font-size:12.5px}
-  .cls{font-size:9px;letter-spacing:.08em}
-  .baddr{font-size:10px}
   .mgrid{width:min(340px,100%);gap:10px}
   .citem{width:clamp(120px,40vw,150px)}
   .shelfring{display:none}
@@ -572,7 +504,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
   .browser{width:min(440px,100%)}
   .mgrid{grid-template-columns:repeat(4,1fr);width:min(560px,100%)}
   .lgrid{grid-template-columns:repeat(4,minmax(70px,110px))}
-  .showcase{grid-template-columns:minmax(0,1.6fr) minmax(190px,1fr);width:min(760px,100%)}
 }
 
 /* ============ CROSS-LINK OUT ============
@@ -603,8 +534,6 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
      sections' own backgrounds, as the sections above already do. */
   #tv{background:var(--paper)}
   #reels{background:var(--black)}
-  /* No page-pan without motion — the shot simply sits at the top of the frame. */
-  .bview img{transform:none!important;transition:none!important}
   .wcomp{position:static;margin-bottom:20px}
   .wstep{position:static;margin-bottom:20px}
   #bgfade{display:none}
@@ -616,45 +545,40 @@ body.ready #scrollhint{animation:fadeUp .7s 1.7s forwards}
 /**
  * Real client creatives for #social, laid out as four independent columns.
  *
- * `ar` is each image's true aspect ratio — 1 for the square posts, .8 for the
- * 4:5 ones — so nothing is cropped to fit a single card shape. The columns are
- * split to come out roughly level in height (a 4:5 card is 1.25x the height of
- * a square at the same width), not simply 4/4/3/3 down the list.
+ * The object names and true aspect ratios live in shared/creatives.ts, which
+ * /services/design also reads. What stays here is the arrangement: which
+ * creative sits in which column, in what order.
+ *
+ * The split is what makes the four columns come out roughly level in height (a
+ * 4:5 card is 1.25x the height of a square at the same width) — it is not
+ * simply 4/4/3/3 down the list, so it is spelled out rather than generated.
+ *
+ * The five "Design Trends 2026" slides are ADMIRATE's own carousel. They lead
+ * separate columns rather than being stacked together, so the set reads as work
+ * in the grid instead of a block of house marketing bolted onto the end.
  */
-/* The five "Design trends 2026" slides are ADMIRATE's own carousel and live in a
-   subfolder of the same bucket — note the double space in "admirate  creatives",
-   which is part of the real object name. They are led into separate columns
-   rather than stacked together, so the set reads as work in the grid instead of
-   a block of house marketing bolted onto the end. All five are 4:5. */
-const TRENDS = "admirate  creatives";
-
-const CREATIVE_COLS: { file: string; ar: number; alt: string }[][] = [
+const CREATIVE_COLS: Creative[][] = [
+  [TRENDS_SLIDES[0], CREATIVES.adivaram, CREATIVES.handloom, TRENDS_SLIDES[4]],
   [
-    { file: `${TRENDS}/1.jpg`, ar: 0.8, alt: "ADMIRATE — Design Trends 2026 carousel cover" },
-    { file: "adivaramangadi2.png", ar: 0.8, alt: "Adivara Mangadi — campaign creative" },
-    { file: "handloomexpo2.png", ar: 0.8, alt: "Handloom Expo — campaign creative" },
-    { file: `${TRENDS}/5.jpg`, ar: 0.8, alt: "Design Trends 2026 — surveillance design" },
+    TRENDS_SLIDES[1],
+    CREATIVES.parkinsons,
+    CREATIVES.sastriyaYoga,
+    CREATIVES.ms,
+    CREATIVES.one,
   ],
   [
-    { file: `${TRENDS}/2.jpg`, ar: 0.8, alt: "Design Trends 2026 — exaggerated, bold text" },
-    { file: "parkinsons.png", ar: 0.8, alt: "Parkinson's awareness — campaign creative" },
-    { file: "sastriyayoga2.png", ar: 0.8, alt: "Sastriya Yoga — campaign creative" },
-    { file: "ms.jpg", ar: 1, alt: "Client social creative" },
-    { file: "1.jpg", ar: 1, alt: "Client social creative" },
+    TRENDS_SLIDES[2],
+    CREATIVES.veganMarket,
+    CREATIVES.one72,
+    CREATIVES.artboard1copy,
+    CREATIVES.f172,
   ],
   [
-    { file: `${TRENDS}/3.jpg`, ar: 0.8, alt: "Design Trends 2026 — collage-style compositions" },
-    { file: "veganmarket2.png", ar: 0.8, alt: "Vegan Market — campaign creative" },
-    { file: "1@72x-100.jpg", ar: 1, alt: "Client social creative" },
-    { file: "Artboard 1 copy.jpg", ar: 1, alt: "Client social creative" },
-    { file: "f1@72x-100.jpg", ar: 1, alt: "Client social creative" },
-  ],
-  [
-    { file: `${TRENDS}/4.jpg`, ar: 0.8, alt: "Design Trends 2026 — imperfect design" },
-    { file: "Artboard 1@100x-100.jpg", ar: 0.8, alt: "Client social creative" },
-    { file: "Artboard 6@100x-100.jpg", ar: 1, alt: "Client social creative" },
-    { file: "Artboard 1@72x-100.jpg", ar: 1, alt: "Client social creative" },
-    { file: "Find Your game_1080x1080.jpg", ar: 1, alt: "Find Your Game — campaign creative" },
+    TRENDS_SLIDES[3],
+    CREATIVES.artboard1at100,
+    CREATIVES.artboard6at100,
+    CREATIVES.artboard1at72,
+    CREATIVES.findYourGame,
   ],
 ];
 
@@ -799,27 +723,7 @@ export const SERVICES_HTML = String.raw`
     <p class="rise" style="--rd:.2s">Pick a client and their site loads here. Every one of them is live right now — open it and judge the work yourself.</p>
   </div>
   <div class="stagewrap">
-    <div class="showcase">
-      <div class="bframe" id="bframe">
-        <div class="bbar">
-          <span class="bdots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="baddr"><b id="baddr"></b><em class="bcaret" aria-hidden="true"></em></span>
-          <a class="bgo" id="bgo" target="_blank" rel="noopener noreferrer" data-h aria-label="Open this site in a new tab">↗</a>
-          <span class="bload" aria-hidden="true"></span>
-        </div>
-        <div class="bview">
-          <img id="bshot" alt="">
-          <span class="bhint" aria-hidden="true">HOVER TO SCROLL THE PAGE</span>
-        </div>
-      </div>
-
-      <aside class="cside">
-        <div class="crail" id="crail"></div>
-        <p class="cdesc" id="cdesc"></p>
-        <div class="chips" id="cchips"></div>
-        <a class="cvisit" id="cvisit" target="_blank" rel="noopener noreferrer" data-h>Open <span id="cvisitd"></span> <span class="ar">↗</span></a>
-      </aside>
-    </div>
+    ${SHOWCASE_HTML}
   </div>
 </section>
 

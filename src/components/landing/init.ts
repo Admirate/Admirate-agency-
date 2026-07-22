@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { clientLogo } from "@/lib/cdn";
+import { LOGO_ROWS } from "@/components/shared/clients";
 
 export default function initLanding(){
 let _dead=false, _rafId=0;
@@ -28,29 +29,15 @@ if(!skipLoader) document.body.classList.add('locked');
 /* ---------- content fills ---------- */
 const words = 'BRANDING — LOGO DESIGN — WEBSITES — PACKAGING — SOCIAL MEDIA — VIDEO PRODUCTION — PRINT ADS — BRAND COLLATERALS — BOOKING SYSTEMS — CHATBOTS — ';
 document.getElementById('tickTrack').textContent = (words + words).repeat(2);
-/* Client marks. `file` is the object name in the "client logos" bucket.
-   `inv` flags a white-on-transparent mark that must be inverted to read on the
-   white marquee (see .mk img.inv); `s` scales a mark whose file carries heavy
-   empty padding, so every logo lands at the same optical size. */
-const row1 = [
-  {n:'Hitex',             file:'hitex logo.webp'},
-  {n:'Patil Group',       file:'patilgroup logo.webp'},
-  {n:'Hope Trust India',  file:'hopetrust logo.webp'},
-  {n:'South Glass',       file:'southglass logo.webp'},
-  {n:'Our Sacred Space',  file:'osslogo.png'},
-  {n:'Samyoga Studio',    file:'samyoga_logo.webp'},
-];
-const row2 = [
-  {n:'Avvent Global',     file:'avvent global logo.webp'},
-  {n:'Valucor',           file:'VALUCOR-LOGO 1.webp'},
-  {n:'Zythum',            file:'zythum logo.webp', inv:true},
-  {n:'EUI',               file:'EUI LOGO.webp'},
-  {n:'Hitex SportExpo',   file:'sportex_logo.webp', s:1.45},
-  {n:'AA',                file:'AA Logo.webp'},
-];
+/* Client marks. Which brands exist and how each file has to be handled lives in
+   shared/clients.ts, which the identity page's tile wall reads as well; `inv`
+   flags a white-on-transparent mark that must be inverted to read on the white
+   marquee (see .mk img.inv), and `scale` sizes a mark whose file carries heavy
+   empty padding so every logo lands at the same optical size. */
+const [row1, row2] = LOGO_ROWS;
 function fill(id, arr){
   document.getElementById(id).innerHTML = arr.map(b=>
-    `<span class="mk"><img src="${clientLogo(b.file)}" alt="${b.n}"${b.inv?' class="inv"':''}${b.s?` style="--s:${b.s}"`:''} loading="lazy" decoding="async"></span>`
+    `<span class="mk"><img src="${clientLogo(b.file)}" alt="${b.name}"${b.inv?' class="inv"':''}${b.scale?` style="--s:${b.scale}"`:''} loading="lazy" decoding="async"></span>`
   ).join('');
 }
 fill('m1',row1); fill('m1b',row1); fill('m2',row2); fill('m2b',row2);

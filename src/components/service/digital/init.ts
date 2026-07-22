@@ -10,7 +10,12 @@
  * version, and they make the point without inventing anything.
  *
  * The journey diagram draws itself from CSS off the section's `.in` class.
+ *
+ * THE WORK is the shared client showcase (shared/showcase.ts) — it owns its
+ * own listeners and teardown, so all this page does is start it and stop it.
  */
+import { initShowcase } from "@/components/shared/showcase";
+
 export default function initDigital() {
 let _dead=false,_rafId=0,_raceRaf=0;
 const _win=[],_els=[],_timers=[],_obs=[];
@@ -140,10 +145,15 @@ function loop(){
 }
 _rafId=requestAnimationFrame(loop);
 
+/* This page has no custom cursor, so the rail needs no re-binding when the
+   dashboard roster replaces it. */
+const stopShowcase=initShowcase();
+
 return function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId);
   cancelAnimationFrame(_raceRaf);
+  stopShowcase();
   _timers.forEach(clearTimeout);
   _obs.forEach(o=>{ try{ o.disconnect(); }catch(e){} });
   _win.forEach(([t,h])=>removeEventListener(t,h));

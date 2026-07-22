@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { optimized } from "@/lib/cdn";
+import { initShowcase } from "@/components/shared/showcase";
 
 export default function initServices(){
 let _dead=false, _rafId=0, _curRaf=0;
@@ -147,158 +147,14 @@ const wsteps=[...document.querySelectorAll('.wstep')];
 const wticks=[...document.querySelectorAll('.wticks i')];
 let lastWi=0;
 
-/* ---------- CLIENT SHOWCASE ---------- */
-/* One browser frame, one rail. Copy here is written from the live sites, not
-   invented: Patil Group is railway infrastructure (it was previously described
-   as real estate, which it is not).
-   If /api/portfolio returns projects (managed from the dashboard's Portfolio
-   page), they replace this seeded roster. */
-let CLIENTS=[
-  {name:'SPORTEX', tag:'Sports expo', url:'sportex.in', shot:'/shots/sportex.jpeg',
-   desc:"India's largest sports, fitness and wellness expo. Built to hold up under launch-week traffic, with visitor registration and exhibitor enquiries on one clean path.",
-   chips:['WEB','EVENT','REGISTRATION']},
-  {name:'PATIL GROUP', tag:'Railway infrastructure', url:'patilgroup.com', shot:'/shots/patil.jpeg',
-   desc:"The world's largest sleeper manufacturer, fifty years on the job. A corporate site that carries the scale of the work without raising its voice.",
-   chips:['WEB','CORPORATE','PROJECTS']},
-  {name:'HOPE TRUST INDIA', tag:'Mental health & rehab', url:'hopetrustindia.com', shot:'/shots/hopetrust.jpeg',
-   desc:'Addiction and mental-health care. This site had to work for someone reaching out at their lowest — clear programmes, honest copy, a therapist one click away.',
-   chips:['WEB','BRAND','CONTENT']},
-  {name:'OUR SACRED SPACE', tag:'Arts & culture venue', url:'oursacredspace.com', shot:'/shots/oss.jpeg',
-   desc:'Art, movement and mindful living. A venue whose calendar is the product — events, classes and workshops up front, and booking a space never more than one click away.',
-   chips:['WEB','EVENTS','BOOKINGS']},
-  {name:'SOUTH GLASS', tag:'Premium glass', url:'southglass.in', shot:'/shots/southglass.jpeg',
-   desc:'Glass and facades, established 2014. A technical product made to feel premium — product ranges, finishes, and a quote request that actually converts.',
-   chips:['IDENTITY','WEB','QUOTES']},
-];
-
-const bframe=document.getElementById('bframe'), bshot=document.getElementById('bshot');
-const baddr=document.getElementById('baddr'), bgo=document.getElementById('bgo');
-const crail=document.getElementById('crail');
-const cdesc=document.getElementById('cdesc'), cchips=document.getElementById('cchips');
-const cvisit=document.getElementById('cvisit'), cvisitd=document.getElementById('cvisitd');
-let ci=-1, typeTimer=0, loadTimer=0;
-
-/* Only http(s) may ever reach an href here. `external_url` arrives from the
-   portfolio table, and /api/portfolio accepts writes without authentication, so
-   a stored "javascript:" URL would otherwise execute on this public page the
-   moment a visitor clicked the link. Anything that is not http(s) is refused
-   rather than rendered — a dead link beats a script sink. */
-const hrefOf=c=>{
-  const raw=String(c.href||('https://'+String(c.url||''))).trim();
-  try{
-    const u=new URL(raw);
-    if(u.protocol==='http:'||u.protocol==='https:') return u.href;
-  }catch(e){/* unparseable — fall through */}
-  return '#';
-};
-
-function renderRail(){
-  crail.innerHTML=CLIENTS.map((c,i)=>
-    `<button class="cli" data-i="${i}" data-h aria-pressed="false">
-      <span class="cln">${esc(c.name)}</span>
-      <span class="cls">${esc(c.tag)}</span>
-    </button>`).join('');
-  if(dot && finePointer && !reduced) bindHover(crail);
-}
-
-/* The shot is taller than the frame; --pan is exactly how far it may travel so it
-   comes to rest flush with its own bottom edge rather than over-scrolling. */
-function measurePan(){
-  const view=bshot.parentElement;
-  if(!view || !bshot.naturalWidth) return;
-  /* Read the height the image actually renders at, so the CSS that widens it to
-     crop the scrollbar is accounted for rather than guessed around. */
-  const imgH=bshot.getBoundingClientRect().height;
-  const pan=Math.max(0, Math.round(imgH-view.clientHeight));
-  bframe.style.setProperty('--pan', `-${pan}px`);
-  /* Pan at a constant speed rather than in a constant time. The shots are real
-     full-page captures and their heights differ by more than 2x, so a fixed
-     duration made the tall ones race and the short ones crawl — the same gesture
-     reading as a different speed per client. ~230px/s is roughly a human scroll;
-     clamped so nothing is over in a blink or outstays its welcome. */
-  bframe.style.setProperty('--pandur', `${Math.min(16, Math.max(4, pan/230)).toFixed(1)}s`);
-}
-
-/* Typing the domain is the section's one flourish: the frame navigates, like the
-   thing it is showing. Under reduced motion it simply appears. */
-function typeUrl(text){
-  clearInterval(typeTimer);
-  if(reduced){ baddr.textContent=text; return; }
-  baddr.textContent='';
-  let i=0;
-  typeTimer=setInterval(()=>{
-    if(_dead){clearInterval(typeTimer);return;}
-    baddr.textContent=text.slice(0,++i);
-    if(i>=text.length) clearInterval(typeTimer);
-  },26);
-}
-
-function selectClient(i){
-  if(i===ci) return;
-  ci=(i+CLIENTS.length)%CLIENTS.length;
-  const c=CLIENTS[ci];
-
-  [...crail.children].forEach((b,j)=>{
-    b.classList.toggle('on',j===ci);
-    b.setAttribute('aria-pressed',j===ci?'true':'false');
-  });
-
-  typeUrl(c.url);
-  if(!reduced){
-    bframe.classList.remove('loading');
-    void bframe.offsetWidth;
-    bframe.classList.add('loading');
-    clearTimeout(loadTimer);
-    loadTimer=setTimeout(()=>{ if(!_dead) bframe.classList.remove('loading'); },950);
-  }
-
-  bshot.classList.remove('in');
-  bshot.alt=c.name+' website';
-  /* Print-scale screenshots go through Next's optimizer rather than down the wire. */
-  bshot.src=c.shot?optimized(c.shot,1200):'';
-
-  cdesc.textContent=c.desc;
-  cchips.innerHTML=c.chips.map(x=>`<span>${esc(x)}</span>`).join('');
-  cvisit.href=hrefOf(c);
-  cvisitd.textContent=c.url;
-  bgo.href=hrefOf(c);
-}
-
-bshot.addEventListener('load',()=>{ measurePan(); bshot.classList.add('in'); });
-bshot.addEventListener('error',()=>{ bshot.classList.remove('in'); });
-
-crail.addEventListener('click',e=>{
-  const b=e.target.closest('.cli');
-  if(b) selectClient(+b.dataset.i);
+/* ---------- CLIENT SHOWCASE ----------
+   Styles, markup and engine all live in shared/showcase.ts, which
+   /services/digital renders as well. All this page adds is its custom cursor:
+   the rail is rebuilt when the dashboard roster arrives, so the replacement
+   buttons have to be re-bound to it. */
+const stopShowcase = initShowcase({
+  onRailRendered: rail => { if(dot && finePointer && !reduced) bindHover(rail); },
 });
-
-renderRail();
-selectClient(0);
-
-/* Pull the dashboard-managed portfolio; keep the seeded roster if it's empty. */
-(async ()=>{
-  try{
-    const res=await fetch('/api/portfolio');
-    if(!res.ok) return;
-    const data=await res.json();
-    if(_dead || !Array.isArray(data) || data.length===0) return;
-    CLIENTS=data.map(p=>({
-      name:p.title,
-      tag:(p.tags&&p.tags[0])||'Client website',
-      url:String(p.external_url||'').replace(/^https?:\/\//,'').replace(/\/$/,''),
-      href:p.external_url,
-      shot:p.image_url||'',
-      desc:p.description,
-      chips:(p.tags||[]).map(t=>String(t).toUpperCase()),
-    }));
-    renderRail();
-    ci=-1;
-    selectClient(0);
-  }catch{
-    /* keep the seeded roster */
-  }
-})();
-
 /* ---------- SOCIAL card tilts ----------
    The columns used to be scrubbed up and down against scroll. They are static
    now — the only motion left here is the pointer-driven tilt below. */
@@ -360,7 +216,6 @@ function measure(){
   /* The phone's full tilt throw reads as jitter on a small screen. */
   AMPF=IS_M?0.45:1;
   buildGaze();
-  measurePan();
   dirty=true;
 }
 const P=id=>{const g=GEOMAP[id];return g?clamp((Y-g.top)/((g.h-VH)||1),0,1):0;};
@@ -458,7 +313,7 @@ function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId); cancelAnimationFrame(_curRaf);
   if(cntRaf)cancelAnimationFrame(cntRaf);
-  clearInterval(typeTimer); clearTimeout(loadTimer);
+  stopShowcase();
   try{ioS.disconnect();}catch(e){}
   try{stopRecog();}catch(e){}
   document.removeEventListener('visibilitychange',_onVis);
