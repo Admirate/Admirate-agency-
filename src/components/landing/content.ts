@@ -1,5 +1,5 @@
 import { FOOTER_CSS, footerHtml } from "@/components/shared/footer";
-import { optimized } from "@/lib/cdn";
+import { logoPhase, optimized } from "@/lib/cdn";
 
 export const LANDING_CSS = String.raw`
 :root{
@@ -100,7 +100,7 @@ html.no-loader #loader{display:none}
    The transform is on the wrapper for centring and the animation is on the
    img, because riseIn ends at translateY(0) and would otherwise cancel the
    -50% that does the centring. */
-#hero .heroart{position:absolute;top:50%;right:clamp(20px,3.5vw,64px);transform:translateY(-50%);width:clamp(340px,calc(100vw - 980px),920px);z-index:1;pointer-events:none}
+#hero .heroart{position:absolute;top:50%;right:clamp(20px,3.5vw,64px);transform:translateY(-50%);width:clamp(340px,calc(100vw - 940px),940px);z-index:1;pointer-events:none}
 #hero .heroart img{display:block;width:100%;height:auto;opacity:0;transform:translateY(26px)}
 body.loaded #hero .heroart img{animation:riseIn .8s 1.9s forwards cubic-bezier(.2,.8,.2,1)}
 @media (max-width:1279px){#hero .heroart{display:none}}
@@ -189,14 +189,20 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 
 /* ---- S4 LOGOS ---- */
 #logos{background:var(--white)}
-#logos .grid{display:grid;grid-template-columns:repeat(3,minmax(104px,168px));gap:clamp(12px,2vw,22px)}
-.tile{aspect-ratio:1;background:var(--white);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:clamp(17px,2.2vw,27px);box-shadow:5px 5px 0 rgba(11,11,12,.05);opacity:0;transform:translateX(var(--dx,-130px)) rotate(var(--dr,-7deg)) scale(.82);transition:box-shadow .25s,border-color .25s,opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1)}
+/* Four columns, because the tiles are now a sequence — the four construction
+   phases of the mark, in order. Three would orphan the finished logo onto a
+   row of its own and break the read. */
+#logos .grid{display:grid;grid-template-columns:repeat(4,minmax(104px,168px));gap:clamp(12px,2vw,22px)}
+.tile{aspect-ratio:1;background:var(--white);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:5px 5px 0 rgba(11,11,12,.05);opacity:0;transform:translateX(var(--dx,-130px)) rotate(var(--dr,-7deg)) scale(.82);transition:box-shadow .25s,border-color .25s,opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1)}
 .sec.active .tile{opacity:1;transform:none;transition-delay:0s,0s,calc(var(--i)*85ms + .15s),calc(var(--i)*85ms + .15s)}
 .tile:hover{box-shadow:8px 8px 0 rgba(227,0,27,.16);border-color:var(--red)}
-.tile span{color:var(--black)}
-.tile .dot{color:var(--red)}
-.tile:nth-child(2) span,.tile:nth-child(5) span{color:var(--red)}
-.tile:nth-child(4){background:var(--black)} .tile:nth-child(4) span{color:#fff}
+/* The artwork is square and carries its own light ground, so it fills the tile
+   edge to edge rather than sitting inside it as an icon. The type styling that
+   used to be here went with the placeholder letterforms, as did the nth-child
+   rules that reddened two tiles and blacked out a third — that fourth tile is
+   now the finished logo on white, and a black panel behind it would have
+   buried the wordmark. */
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ---- S5 VIDEO ---- */
 #tv{height:260vh;background:var(--paper)}
@@ -353,7 +359,7 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .tvframe{width:min(500px,88vw)}
   .phone{height:min(56svh,470px)}
   .objcap{font-size:clamp(24px,4.6vw,44px)}
-  #logos .grid{grid-template-columns:repeat(3,minmax(92px,140px));gap:14px}
+  #logos .grid{grid-template-columns:repeat(4,minmax(92px,140px));gap:14px}
   .svcgrid{gap:12px}
 }
 
@@ -376,7 +382,7 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .phone{height:min(48svh,420px)}
   .browser{width:min(520px,100%)}
   .tvframe{width:min(460px,100%)}
-  #logos .grid{grid-template-columns:repeat(3,minmax(78px,116px));gap:12px}
+  #logos .grid{grid-template-columns:repeat(4,minmax(78px,116px));gap:12px}
 }
 
 /* ---------- PHONE ---------- */
@@ -477,7 +483,7 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 
   /* the mocks, sized for a short screen */
   .phone{height:min(82svh,330px)}
-  #logos .grid{grid-template-columns:repeat(3,minmax(70px,104px));gap:10px}
+  #logos .grid{grid-template-columns:repeat(4,minmax(70px,104px));gap:10px}
   .tvframe{width:min(380px,100%)}
   .browser{width:min(440px,100%)}
   .site{padding:12px}
@@ -500,17 +506,6 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .wbtn,.sicon,.livechip{transform:none!important;opacity:1!important}
   #services .stagewrap{padding-top:0}
 }
-
-/* ============ S8b APPROACH ============
-   A reading section, so it is measured in line length rather than viewport
-   height: 68ch is about 12 words a line, which is where prose stays scannable. */
-#approach{background:var(--paper);padding:clamp(84px,12vh,140px) var(--pad)}
-#approach .awrap{max-width:78ch}
-#approach h2{margin-bottom:clamp(20px,3vh,32px)}
-#approach p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.75;color:#3a3a3d;max-width:68ch;margin-bottom:18px}
-#approach p:last-child{margin-bottom:0}
-#approach a{color:var(--black);text-decoration:none;border-bottom:1px solid rgba(227,0,27,.45);transition:color .2s,border-color .2s}
-#approach a:hover{color:var(--red);border-bottom-color:var(--red)}
 
 /* ---- site footer (shared/footer.ts) ---- */
 ${FOOTER_CSS}
@@ -581,18 +576,22 @@ export const LANDING_HTML = String.raw`
 
 <!-- S4 LOGOS -->
 <section id="logos" class="sec full">
-  <div class="shead">
-    <div class="eb rise" style="--rd:0s">IDENTITY</div>
-    <h2 class="light rise" style="--rd:.12s">Logos &amp;<br>brand identity</h2>
-  </div>
+  <!-- No .shead at all: that slot is the small red eyebrow pinned top-left,
+       and this section's label is the centred .objcap instead — the same
+       treatment "Video Production", "Websites" and "Social Media" get in the
+       sections below, so the four now read as one series. -->
   <div class="stagewrap">
+    <div class="objcap">Identity</div>
+    <!-- The four construction phases of ADMIRATE's own mark, in order: pencil
+         sketch, geometric construction, clean outline, finished logo. These
+         replaced six invented placeholder logos (A., KO, NEXA and so on) that
+         claimed clients the studio does not have. Showing the studio's own
+         mark being built is both true and a better argument for the service. -->
     <div class="grid">
-      <div class="tile" style="--i:0;--dx:-130px;--dr:-7deg"><span>A<span class="dot">.</span></span></div>
-      <div class="tile" style="--i:1;--dx:130px;--dr:7deg"><span>KO</span></div>
-      <div class="tile" style="--i:2;--dx:-130px;--dr:-7deg"><span>▲RC</span></div>
-      <div class="tile" style="--i:3;--dx:130px;--dr:7deg"><span>NEXA</span></div>
-      <div class="tile" style="--i:4;--dx:-130px;--dr:-7deg"><span>Ø</span></div>
-      <div class="tile" style="--i:5;--dx:130px;--dr:7deg"><span>M/8</span></div>
+      <div class="tile" style="--i:0;--dx:-130px;--dr:-7deg"><img src="${optimized(logoPhase(1), 384)}" alt="Phase one of the ADMIRATE logo: the mark drawn by hand on dotted paper." width="384" height="384" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--i:1;--dx:130px;--dr:7deg"><img src="${optimized(logoPhase(2), 384)}" alt="Phase two: the mark rebuilt over a geometric grid of circles and guides." width="384" height="384" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--i:2;--dx:-130px;--dr:-7deg"><img src="${optimized(logoPhase(3), 384)}" alt="Phase three: the construction stripped back to a clean outline." width="384" height="384" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--i:3;--dx:130px;--dr:7deg"><img src="${optimized(logoPhase(4), 384)}" alt="Phase four: the finished ADMIRATE logo in red with the admirate wordmark." width="384" height="384" loading="lazy" decoding="async"></div>
     </div>
   </div>
 </section>
@@ -738,25 +737,6 @@ export const LANDING_HTML = String.raw`
   <div>
     <div class="marquee"><div class="mtrack" id="m1"></div><div class="mtrack" aria-hidden="true" id="m1b"></div></div>
     <div class="marquee rev"><div class="mtrack" id="m2"></div><div class="mtrack" aria-hidden="true" id="m2b"></div></div>
-  </div>
-</section>
-
-<!-- S8b APPROACH
-     Prose, deliberately. The rest of this page argues visually, which left it
-     with 447 words in two <p> tags and none of the H1's own vocabulary
-     ("seriously", "creative") anywhere in the body — a page whose headline
-     and content did not corroborate each other. This is also the only place
-     the six service pages are linked in a sentence rather than a menu, so the
-     anchor text describes what is on the other end. -->
-<section id="approach" class="sec">
-  <div class="awrap">
-    <div class="eb rise" style="--rd:0s">HOW WE WORK</div>
-    <h2 class="light rise" style="--rd:.08s">What a seriously creative agency actually does.</h2>
-    <p class="rise" style="--rd:.14s">Seriously creative is not a style — it is a way of working. Understand the business first, then design something that moves it. ADMIRATE is an advertising and design agency based in Banjara Hills, Hyderabad, working with founders and marketing teams across Telangana and the rest of India.</p>
-    <p class="rise" style="--rd:.18s">Most agency work fails quietly. The logo is fine. The website loads. The posts go out on schedule. And none of it sends anyone anywhere, because nobody asked what the person on the other end was supposed to do next. We start from that question rather than arriving at it: what should someone do after they see this, and what has to be true for them to actually do it. Everything here is built backwards from that answer.</p>
-    <p class="rise" style="--rd:.22s">That runs across the whole range. <a href="/services/identity">Brand identity and logo design</a>, so a business is recognised in half a second rather than explained in a paragraph. <a href="/services/design">Advertising and design</a> placed where the eye actually goes, not where there happened to be room. <a href="/services/digital">Websites</a> built to load fast and turn a visit into an enquiry. <a href="/services/social-media">Social media creatives and reels</a> made to convert rather than to fill a content calendar. <a href="/services/video-production">Video production</a> scripted, shot and directed in-house. And <a href="/services/brand-collaterals">brand collaterals</a> — the printed proof that an identity holds up in the hand as well as on a screen.</p>
-    <p class="rise" style="--rd:.26s">None of it is decoration. A brand is a business asset, and the only honest test of creative work is whether it moved something: more enquiries, better-fit clients, a shorter argument about price. That is the standard the work here is held to.</p>
-    <p class="rise" style="--rd:.3s">If that sounds like the brief, <a href="/start-project">tell us the goal</a>. We reply within one working day.</p>
   </div>
 </section>
 

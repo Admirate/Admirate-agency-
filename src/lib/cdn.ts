@@ -21,6 +21,17 @@ export const creative = (path: string) =>
   `${CDN_HOST}${STORAGE_PATH}/creatives%20new/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
 
 /**
+ * The four construction stages of ADMIRATE's own mark, numbered 1-4.
+ *
+ * The objects are named "1@100x.png" through "4@100x.png" — the "@100x" is the
+ * export suffix the artwork came out of the design tool with, not a size to
+ * reason about; the files are 1500px square. The `@` is percent-encoded so the
+ * URL is well-formed regardless of what is reading it.
+ */
+export const logoPhase = (n: number) =>
+  `${CDN_HOST}${STORAGE_PATH}/logo-phases/${encodeURIComponent(`${n}@100x.png`)}`;
+
+/**
  * Post artwork, keyed by the object name in the "blogs images" bucket.
  *
  * The names are the post titles verbatim — spaces, commas, apostrophes,

@@ -78,15 +78,85 @@ export const CREATIVES = {
     ar: 1,
     alt: "Find Your Game — campaign creative",
   },
+
+  /* Samyoga Studio, in a subfolder of the same bucket. All four are 4:5 and
+     4500x5625 — print scale, so they go through the optimizer like the rest.
+     `samWeekend` is named "Weekend1-2.png" in the bucket but the artwork is
+     the full Pilates class timetable, morning and evening; the alt describes
+     the creative rather than repeating a filename that disagrees with it. */
+  samOneHour: {
+    file: "samyoga new creatives/1hour.png",
+    ar: 0.8,
+    alt: "Samyoga Studio — “1 Hour. A Better You.” daily practice creative",
+  },
+  samDidYouKnow: {
+    file: "samyoga new creatives/DidYouKnow.png",
+    ar: 0.8,
+    alt: "Samyoga Studio — “Did You Know?” yoga and Pilates benefits creative",
+  },
+  samStartAnytime: {
+    file: "samyoga new creatives/StartAnytime.png",
+    ar: 0.8,
+    alt: "Samyoga Studio — “The Best Time to Begin Is Now” Pilates studio creative",
+  },
+  samTimings: {
+    file: "samyoga new creatives/Weekend1-2.png",
+    ar: 0.8,
+    alt: "Samyoga Studio — Pilates class timings, morning and evening batches",
+  },
 } satisfies Record<string, Creative>;
 
 /**
- * Every client creative, in declaration order.
+ * Every client creative, in wall order.
  *
  * The /services/design marquee runs this flat — it is a strip of client work,
  * so the house slides below are deliberately not part of it.
+ *
+ * The order is authored rather than taken from the record above, because
+ * declaration order groups the work by shape: all six 4:5 posters are declared
+ * first and all eight squares after them, which ran the wall as a block of
+ * tall cards followed by a block of short ones. That reads as two batches
+ * rather than one body of work.
+ *
+ * So the shapes alternate, and the order is also spread by *subject*, which
+ * matters more than shape once you look at what the work actually is. Left
+ * alone, the wall opened with three health pieces back to back — the two Hope
+ * Trust creatives on either side of the Parkinson's session — which read as a
+ * healthcare portfolio rather than a general one. The four Samyoga Studio
+ * pieces are the same trap: one brand, one palette, four slots. They are
+ * placed every fourth card, the two Hope Trust pieces are pushed apart, and
+ * Parkinson's now sits late in the run rather than near the front.
+ *
+ * Ten portraits against eight squares cannot alternate perfectly — two
+ * portraits have to sit together somewhere — so the pair is parked at the
+ * tail, where the marquee's seam already breaks the rhythm.
+ *
+ * It is a fixed order, not a shuffle. These pages are prerendered, so a
+ * random sort would either bake one arbitrary order in at build time or
+ * disagree between server and client and blow up hydration. Jumbled is a
+ * layout decision here, so it is made once, on purpose, and stays put.
+ *
+ * Typed against the record's keys: a typo will not compile. Adding a creative
+ * above means adding its key here too, or it will not appear on the wall.
  */
-export const CLIENT_CREATIVES: Creative[] = Object.values(CREATIVES);
+const WALL_ORDER = [
+  "ms",
+  "handloom",
+  "one",
+  "one72",
+  "sastriyaYoga",
+  "f172",
+  "veganMarket",
+  "artboard6at100",
+  "adivaram",
+  "findYourGame",
+  "parkinsons",
+  "artboard1at100",
+  "artboard1copy",
+  "artboard1at72",
+] as const satisfies readonly (keyof typeof CREATIVES)[];
+
+export const CLIENT_CREATIVES: Creative[] = WALL_ORDER.map((k) => CREATIVES[k]);
 
 /* ADMIRATE's own "Design Trends 2026" carousel. It lives in a subfolder of the
    same bucket — the double space in "admirate  creatives" is part of the real
