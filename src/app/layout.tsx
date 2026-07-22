@@ -4,6 +4,20 @@ import Script from "next/script";
 import { SITE } from "@/lib/seo";
 import { organizationSchema, websiteSchema, ld } from "@/lib/schema";
 
+/**
+ * GA4 measurement ID.
+ *
+ * A constant rather than typed twice, because the snippet Google hands you
+ * repeats it — once in the loader URL and once in `gtag('config', …)` — and
+ * those two silently disagreeing is the classic way to end up with a tag that
+ * loads and reports nothing.
+ *
+ * Not in .env: this is public either way (it ships in the HTML of every page),
+ * and an env var that must be present at build time for analytics to work is a
+ * quieter failure than a literal that obviously is one.
+ */
+const GA_ID = "G-X6FY0NJT62";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
@@ -112,6 +126,25 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: ld(jsonLd) }}
         />
+
+        {/* Google Analytics 4.
+            Google's copy-paste instructions say "immediately after <head>",
+            which is advice for hand-written HTML. Here it goes through
+            next/script at afterInteractive — the same treatment Clarity below
+            gets — so the tag loads once per navigation without blocking first
+            paint. App Router client-side route changes are picked up by gtag's
+            own history listener, so no per-route pageview call is needed. */}
+        <Script
+          id="ga4-loader"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-config" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}');`}
+        </Script>
 
         <Script id="ms-clarity" strategy="afterInteractive">
           {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "u512498vm3");`}
