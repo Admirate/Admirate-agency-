@@ -472,6 +472,17 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   #services .stagewrap{padding-top:0}
 }
 
+/* ============ S8b APPROACH ============
+   A reading section, so it is measured in line length rather than viewport
+   height: 68ch is about 12 words a line, which is where prose stays scannable. */
+#approach{background:var(--paper);padding:clamp(84px,12vh,140px) var(--pad)}
+#approach .awrap{max-width:78ch}
+#approach h2{margin-bottom:clamp(20px,3vh,32px)}
+#approach p{font-size:clamp(15px,1.35vw,17.5px);line-height:1.75;color:#3a3a3d;max-width:68ch;margin-bottom:18px}
+#approach p:last-child{margin-bottom:0}
+#approach a{color:var(--black);text-decoration:none;border-bottom:1px solid rgba(227,0,27,.45);transition:color .2s,border-color .2s}
+#approach a:hover{color:var(--red);border-bottom-color:var(--red)}
+
 /* ---- site footer (shared/footer.ts) ---- */
 ${FOOTER_CSS}
 `;
@@ -695,9 +706,28 @@ export const LANDING_HTML = String.raw`
   </div>
 </section>
 
+<!-- S8b APPROACH
+     Prose, deliberately. The rest of this page argues visually, which left it
+     with 447 words in two <p> tags and none of the H1's own vocabulary
+     ("seriously", "creative") anywhere in the body — a page whose headline
+     and content did not corroborate each other. This is also the only place
+     the six service pages are linked in a sentence rather than a menu, so the
+     anchor text describes what is on the other end. -->
+<section id="approach" class="sec">
+  <div class="awrap">
+    <div class="eb rise" style="--rd:0s">HOW WE WORK</div>
+    <h2 class="light rise" style="--rd:.08s">What a seriously creative agency actually does.</h2>
+    <p class="rise" style="--rd:.14s">Seriously creative is not a style — it is a way of working. Understand the business first, then design something that moves it. ADMIRATE is an advertising and design agency based in Banjara Hills, Hyderabad, working with founders and marketing teams across Telangana and the rest of India.</p>
+    <p class="rise" style="--rd:.18s">Most agency work fails quietly. The logo is fine. The website loads. The posts go out on schedule. And none of it sends anyone anywhere, because nobody asked what the person on the other end was supposed to do next. We start from that question rather than arriving at it: what should someone do after they see this, and what has to be true for them to actually do it. Everything here is built backwards from that answer.</p>
+    <p class="rise" style="--rd:.22s">That runs across the whole range. <a href="/services/identity">Brand identity and logo design</a>, so a business is recognised in half a second rather than explained in a paragraph. <a href="/services/design">Advertising and design</a> placed where the eye actually goes, not where there happened to be room. <a href="/services/digital">Websites</a> built to load fast and turn a visit into an enquiry. <a href="/services/social-media">Social media creatives and reels</a> made to convert rather than to fill a content calendar. <a href="/services/video-production">Video production</a> scripted, shot and directed in-house. And <a href="/services/brand-collaterals">brand collaterals</a> — the printed proof that an identity holds up in the hand as well as on a screen.</p>
+    <p class="rise" style="--rd:.26s">None of it is decoration. A brand is a business asset, and the only honest test of creative work is whether it moved something: more enquiries, better-fit clients, a shorter argument about price. That is the standard the work here is held to.</p>
+    <p class="rise" style="--rd:.3s">If that sounds like the brief, <a href="/start-project">tell us the goal</a>. We reply within one working day.</p>
+  </div>
+</section>
+
 <!-- S9 FOOTER (replaces the old CTA — see shared/footer.ts) -->
 <section id="cta" class="sec dark">
-  ${footerHtml({ altHref: "/services", altLabel: "Services" })}
+  ${footerHtml()}
 </section>
 
 `;

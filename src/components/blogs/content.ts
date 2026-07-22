@@ -247,10 +247,17 @@ footer.bfoot{border-top:1px solid var(--line);padding:18px var(--pad);display:fl
 }
 `;
 
+/* The thumbnail carries the post title as its alt, the same string the article
+   hero already uses (see `heroSrc` below). It was empty, which is the right
+   call for decoration but wrong here: this is the artwork *for* the article,
+   it is the only version of it Google Images ever sees on this route, and a
+   listing of twelve unlabelled images is what an audit counts as twelve
+   missing alts. The title repeating in the adjacent <h2> is not a problem —
+   the anchor is one stop for a screen reader, so it is announced once. */
 const card = (p: Post, i: number) => `
   <a class="pcard rise" style="--rd:${(i % 3) * 0.08}s" href="/blogs/${p.slug}" data-tag="${esc(p.tag)}" data-h>
     <span class="pthumb ${p.v}">
-      <img src="${esc(thumbSrc(p))}" alt="" width="640" height="360" loading="${
+      <img src="${esc(thumbSrc(p))}" alt="${esc(p.title)}" width="640" height="360" loading="${
         i < 3 ? "eager" : "lazy"
       }" decoding="async">
       <span class="scrim"></span>

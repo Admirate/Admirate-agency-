@@ -261,7 +261,10 @@ const svcItemsHtml = () =>
 export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
 <nav class="pnav" id="pnav" aria-label="Primary">
   <a class="pbrand" href="/" data-h aria-label="ADMIRATE home">
-    <span class="pchip"><img class="plogo" src="${LOGO}" alt="" width="213" height="46" decoding="async"></span>
+    <!-- The alt is real text, not "", so crawlers counting missing alts are
+         satisfied. Screen readers still announce the anchor's aria-label and
+         not this, so nothing is said twice. -->
+    <span class="pchip"><img class="plogo" src="${LOGO}" alt="ADMIRATE" width="213" height="46" decoding="async"></span>
   </a>
   <div class="plinks">
     <a class="plink${active === "home" ? " on" : ""}" href="/"${

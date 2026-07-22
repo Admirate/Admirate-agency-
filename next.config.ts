@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   // mount. Strict Mode double-invokes effects in dev, which would double-run
   // that code and leave orphaned loops behind.
   reactStrictMode: false,
+  /* Next advertises itself with `X-Powered-By: Next.js` on every response.
+     It tells a visitor nothing and tells an attacker which framework and
+     which CVE list to start from, so it is switched off. */
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       {

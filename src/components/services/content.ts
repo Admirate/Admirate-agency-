@@ -882,7 +882,7 @@ export const SERVICES_HTML = String.raw`
 
 <!-- S9 CTA + FOOTER -->
 <section id="cta" class="sec">
-  ${footerHtml({ altHref: "/", altLabel: "Home" })}
+  ${footerHtml()}
 </section>
 
 <!-- CLIENT OVERLAY -->

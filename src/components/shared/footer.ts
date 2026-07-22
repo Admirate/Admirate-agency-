@@ -90,16 +90,12 @@ const col = (heading: string, rows: string) =>
   `<div class="afcol"><h3>${heading}</h3>${rows}</div>`;
 
 /**
- * @param altLink The second sitemap destination, which differs by page: the
- *   landing page points at /services, /services points back home.
+ * The sitemap column is the same four links on every page, including a link to
+ * the page you are already on. That is ordinary footer behaviour and it is what
+ * a crawler expects; the first attempt varied one slot per host to avoid the
+ * self-link, and on /services that produced two "Home" entries side by side.
  */
-export const footerHtml = ({
-  altHref,
-  altLabel,
-}: {
-  altHref: string;
-  altLabel: string;
-}) => `
+export const footerHtml = () => `
 <div class="afoot">
   <div class="afblob" aria-hidden="true"></div>
 
@@ -118,7 +114,7 @@ export const footerHtml = ({
     <div class="afcols">
       ${col(
         "Sitemap",
-        `<a href="/" data-h>Home</a><a href="${altHref}" data-h>${altLabel}</a><a href="/blogs" data-h>Blogs</a><a href="/start-project" data-h>Start a project</a>`,
+        `<a href="/" data-h>Home</a><a href="/services" data-h>Services</a><a href="/blogs" data-h>Blogs</a><a href="/start-project" data-h>Start a project</a>`,
       )}
       ${col(
         "Services",
@@ -128,11 +124,16 @@ export const footerHtml = ({
       )}
       ${col(
         "Contact",
+        /* "Chat on WhatsApp" rather than "WhatsApp": the same anchor text
+           already appears in the rail above, and repeated anchor text over one
+           destination is a link-structure warning as well as a weaker signal
+           about what is on the other end. */
         `<address>
         <span>${SITE.area}, ${SITE.city}</span>
         <span>${SITE.region}, ${SITE.country}</span>
         <a href="${telHref}" data-h>${SITE.phone.replace("-", " ")}</a>
-        <a href="${WHATSAPP}" target="_blank" rel="noopener noreferrer" data-h>WhatsApp</a>
+        <a href="mailto:${SITE.email}" data-h>Email us</a>
+        <a href="${WHATSAPP}" target="_blank" rel="noopener noreferrer" data-h>Chat on WhatsApp</a>
       </address>`,
       )}
     </div>

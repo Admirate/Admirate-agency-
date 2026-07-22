@@ -31,8 +31,17 @@ export const SITE = {
   title: "ADMIRATE: Design & Marketing Agency in Hyderabad",
   /** Descriptive line used on the OG card footer — not the page title. */
   tagline: "Strategic Design & Marketing Agency",
+  /**
+   * Kept under ~155 characters.
+   *
+   * Google truncates on rendered width, not character count, and an audit put
+   * the previous wording at 1248px against a 1000px budget — the tail was
+   * being cut off in results. The city stays (it is the point of the local
+   * targeting) and the service list is trimmed to the four that matter most,
+   * rather than listing everything and having the sentence clipped mid-word.
+   */
   description:
-    "ADMIRATE is a strategic design and marketing agency in Hyderabad, working with clients across India. Branding, web design, social media, video production, and digital advertising — done the right way.",
+    "Strategic design and marketing agency in Hyderabad. Branding, web design, social media and video production for clients across India.",
   logo: "https://mshehtxywddtdxxkbnuu.supabase.co/storage/v1/object/public/website%20assets/admirate%20logo.webp",
   phone: "+91-8374494954",
   email: "essentials@admirate.in",
@@ -68,17 +77,30 @@ export const WHATSAPP = `https://wa.me/${SITE.phone.replace(/[^\d]/g, "")}`;
  * a chat endpoint, not a profile, and claiming it as identity is the kind of
  * assertion Google can contradict.
  *
- * Adding a real profile here lights up the footer row and the `sameAs` block
- * at the same time — see ORG_TODO in lib/schema.ts, where this is the first
- * outstanding item.
+ * Adding a profile here lights up the footer row and the `sameAs` block at the
+ * same time. Instagram and LinkedIn are in; a YouTube or X account would slot
+ * in the same way — see ORG_TODO in lib/schema.ts.
  */
 export type SocialLink = { label: string; href: string; profile?: boolean };
 
+/* The share-sheet tracking parameters the URLs arrived with (`?igsh=…`,
+   `?feedView=all`) are stripped. `sameAs` is an identity claim, and the
+   canonical profile URL is what Google matches against the profile it already
+   knows; a tracking-tagged variant is a different string and reads as a
+   different page. The trailing `/posts/` is dropped for the same reason — the
+   company root is the profile, the posts feed is a view of it. */
 export const SOCIALS: SocialLink[] = [
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/admirate.in",
+    profile: true,
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/admirateindia",
+    profile: true,
+  },
   { label: "WhatsApp", href: WHATSAPP },
-  // TODO: the real profile URLs, each with `profile: true`, e.g.
-  // { label: "Instagram", href: "https://instagram.com/<handle>", profile: true },
-  // { label: "LinkedIn",  href: "https://linkedin.com/company/<slug>", profile: true },
 ];
 
 /** Profile URLs only — what `sameAs` is allowed to claim. */

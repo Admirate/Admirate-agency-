@@ -182,7 +182,11 @@ export const START_HTML = String.raw`
 <div id="cdot"></div><div id="cring"></div>
 
 <nav>
-  <a class="logo" href="/" data-h aria-label="ADMIRATE home"><img src="${LOGO}" alt="" width="213" height="46" decoding="async"></a>
+  <!-- This page carries its own header rather than shared/nav.ts, so the logo
+       alt has to be fixed here too. Same reasoning as there: real text, so a
+       crawler counting missing alts is satisfied, while the anchor's
+       aria-label is what a screen reader announces — nothing is said twice. -->
+  <a class="logo" href="/" data-h aria-label="ADMIRATE home"><img src="${LOGO}" alt="ADMIRATE" width="213" height="46" decoding="async"></a>
   <a class="back" href="/" data-h>← BACK TO SITE</a>
 </nav>
 

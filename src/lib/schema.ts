@@ -1,16 +1,16 @@
 import { SITE, PROFILE_URLS } from "@/lib/seo";
+import { SERVICE_LIST } from "@/components/service/registry";
 import { readingMinutes, wordCount, type Post } from "@/components/blogs/posts";
 
 /**
  * JSON-LD builders.
  *
  * Every claim here is one the site can actually back up. The studio is based in
- * Banjara Hills, Hyderabad, so the address is now stated to locality level.
+ * Banjara Hills, Hyderabad, so the address is now stated to locality level, and
+ * `sameAs` now carries the real Instagram and LinkedIn profiles.
  * Still absent, and still deliberately: `streetAddress` and `geo` (no verified
  * building or coordinates — an invented pin is worse than no pin, because
- * Google can and does contradict it), `openingHours`, and `sameAs` (no social
- * profile URLs; the only external link is a wa.me number, which is a chat
- * endpoint, not a profile). See ORG_TODO below.
+ * Google can and does contradict it) and `openingHours`. See ORG_TODO below.
  */
 
 const ORG_ID = `${SITE.url}/#organization`;
@@ -102,28 +102,46 @@ export const websiteSchema = {
   publisher: { "@id": ORG_ID },
 };
 
-/** The six services, matching the nav menu and the sections on /services. */
-const SERVICES = [
-  ["Design", "Advertising and design work placed where the eye actually goes."],
-  ["Identity", "Logos and brand identity built to be recognised in half a second."],
-  ["Digital", "Websites that load fast and convert."],
-  ["Websites", "Client websites designed, built and shipped end to end."],
-  ["Social Media", "Reels, creatives and campaigns made to convert, not just post."],
-  ["Video Production", "Films, ads and brand stories, scripted and shot in-house."],
-  ["Brand Collaterals", "The physical proof of a strong identity."],
-] as const;
+/**
+ * One line per service, keyed by the slug it is published under.
+ *
+ * This used to be a standalone array of seven, and the drift showed: it claimed
+ * a "Websites" service that has no page and no nav entry, sitting next to a
+ * "Digital" entry describing the same work. Structured data that lists a
+ * service the site cannot show is exactly the kind of claim Google discounts
+ * the rest of the block for.
+ *
+ * Keying off SERVICE_LIST — the same registry the nav, the sitemap and the
+ * routes read — means the schema can only ever describe services that exist,
+ * in the order the site presents them. A new service is a page plus a line
+ * here; miss the line and TypeScript says so.
+ */
+const SERVICE_DESC: Record<string, string> = {
+  identity: "Logos and brand identity built to be recognised in half a second.",
+  design: "Advertising and design work placed where the eye actually goes.",
+  "social-media":
+    "Reels, creatives and campaigns made to convert, not just post.",
+  digital:
+    "Websites designed and built end to end, to load fast and turn a visit into an enquiry.",
+  "video-production":
+    "Films, ads and brand stories, scripted and shot in-house.",
+  "brand-collaterals": "The physical proof of a strong identity.",
+};
 
 export const servicesSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: "Services",
-  itemListElement: SERVICES.map(([name, description], i) => ({
+  itemListElement: SERVICE_LIST.map((s, i) => ({
     "@type": "ListItem",
     position: i + 1,
     item: {
       "@type": "Service",
-      name,
-      description,
+      name: s.label,
+      description: SERVICE_DESC[s.slug],
+      /* Each service names the page that actually documents it, so the entry
+         is a destination Google can follow rather than a bare assertion. */
+      url: `${SITE.url}/services/${s.slug}`,
       provider: { "@id": ORG_ID },
       areaServed: AREA_SERVED,
     },
@@ -171,11 +189,12 @@ export function blogPostingSchema(post: Post) {
 
 /**
  * ORG_TODO — the address is now stated to locality level (Hyderabad,
- * Telangana, IN). What is still missing, in the order it is worth supplying:
+ * Telangana, IN), and `sameAs` now publishes the Instagram and LinkedIn
+ * profiles. What is still missing, in the order it is worth supplying:
  *
- *   1. `sameAs` — Instagram, LinkedIn, YouTube, X profile URLs. Cheapest win
- *      left: it is what ties the site to the profiles Google already has and
- *      is the usual trigger for a knowledge panel.
+ *   1. `sameAs` for YouTube and X, if those accounts exist. The two that are
+ *      published already do the main job — tying this domain to profiles
+ *      Google knows — so these are additions, not a gap.
  *   2. `streetAddress` + `postalCode` — the building and PIN in Banjara Hills,
  *      exactly as they read on the Google Business Profile.
  *   3. `geo` — latitude/longitude, taken from the verified Business Profile
