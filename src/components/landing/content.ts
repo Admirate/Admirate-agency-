@@ -1,4 +1,5 @@
 import { FOOTER_CSS, footerHtml } from "@/components/shared/footer";
+import { optimized } from "@/lib/cdn";
 
 export const LANDING_CSS = String.raw`
 :root{
@@ -76,6 +77,34 @@ html.no-loader #loader{display:none}
 #hero .orbit{position:absolute;top:50%;right:5%;width:46vmin;height:46vmin;border:1px solid var(--line);border-radius:50%;transform:translateY(-50%);pointer-events:none;animation:orb 36s linear infinite}
 #hero .orbit::after{content:"";position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--red)}
 @keyframes orb{to{transform:translateY(-50%) rotate(360deg)}}
+/* ---- hero artwork ----
+   The work collage, sitting inside the orbit ring on the right.
+
+   Absolutely positioned rather than added to the flow: #hero is a centred
+   flex column whose height is the viewport, and putting a 1:1 image in that
+   column would push the sub-heading and the scroll hint off the fold.
+
+   The width is measured against the headline rather than picked. The h1 is
+   capped at 16ch and tops out at 88px, so its right edge parks around 870px
+   on any wide screen; the art therefore takes the leftover — 100vw minus a
+   980px allowance for the text and a gutter — instead of a flat vw share.
+   A fixed percentage cannot do this: 46vw looks right at 1920 and lands on
+   top of the word ADVERTISING at 1440, because the text stops growing while
+   the percentage does not. This way it fills the space at 1920 and gives
+   ground first as the window narrows.
+
+   Below 1280 there is no leftover worth having, so it is dropped and the
+   hero is text-only, as it was before — rather than a headline fighting an
+   image for the same pixels.
+
+   The transform is on the wrapper for centring and the animation is on the
+   img, because riseIn ends at translateY(0) and would otherwise cancel the
+   -50% that does the centring. */
+#hero .heroart{position:absolute;top:50%;right:clamp(20px,3.5vw,64px);transform:translateY(-50%);width:clamp(340px,calc(100vw - 980px),920px);z-index:1;pointer-events:none}
+#hero .heroart img{display:block;width:100%;height:auto;opacity:0;transform:translateY(26px)}
+body.loaded #hero .heroart img{animation:riseIn .8s 1.9s forwards cubic-bezier(.2,.8,.2,1)}
+@media (max-width:1279px){#hero .heroart{display:none}}
+
 #hero .inner{position:relative;z-index:1;max-width:1080px}
 #hero h1{font-family:var(--display);font-weight:900;font-stretch:112%;font-size:clamp(33px,6.3vw,88px);line-height:1.05;text-transform:uppercase;letter-spacing:-.01em;max-width:16ch}
 #hero h1 .w{display:inline-block;opacity:0;transform:translateY(40px);filter:blur(6px)}
@@ -509,6 +538,12 @@ export const LANDING_HTML = String.raw`
   <div class="grid-bg"></div>
   <div class="glowbg"></div>
   <div class="orbit"></div>
+  <!-- Real alt, not decoration: this is the only place on the homepage that
+       shows the actual output, and it is what the H1's claim is evidence for.
+       Sent through Next's optimizer because the source is a 674KB PNG. -->
+  <div class="heroart">
+    <img src="${optimized("/1 creative list.png", 1080)}" alt="A selection of ADMIRATE's work — client websites, social media creatives, event posters and brand campaigns." width="1080" height="1080" fetchpriority="high" decoding="async">
+  </div>
   <div class="inner">
     <h1 id="h1">
       <span class="w">A</span> <span class="w">seriously,</span> <span class="w">seriously</span>
