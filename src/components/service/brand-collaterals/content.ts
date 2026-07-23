@@ -13,6 +13,9 @@
  */
 
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
+import { asset } from "@/lib/cdn";
+
+const LOGO = asset("admirate logo.webp");
 
 export const COLLAT_CSS = String.raw`
 :root{
@@ -66,8 +69,12 @@ body.smopen{overflow:hidden}
   display:flex;align-items:center;justify-content:center;
 }
 @keyframes hover{0%,100%{transform:rotateX(46deg) rotateZ(-19deg) translateY(0)}50%{transform:rotateX(42deg) rotateZ(-16deg) translateY(-16px)}}
-#chero .bizcard .mk{font-family:var(--display);font-weight:900;font-stretch:116%;font-size:clamp(26px,4vw,46px);color:#fff}
-#chero .bizcard .mk span{color:var(--red)}
+/* The real mark, not a letter standing in for it. The asset is a red glyph
+   beside a near-black wordmark, so on a card this dark the wordmark would
+   simply disappear — brightness(0) flattens every visible pixel to black and
+   invert(1) lifts it to white, leaving the alpha alone. That is also how the
+   mark would actually be printed here: one colour, white ink on black stock. */
+#chero .bizcard .mk{display:block;width:min(58%,168px);height:auto;filter:brightness(0) invert(1);opacity:.94}
 #chero .bizcard::after{
   content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;
   background:linear-gradient(118deg,transparent 38%,rgba(255,255,255,.16) 50%,transparent 62%);
@@ -308,7 +315,7 @@ export const COLLAT_HTML = String.raw`
     <p class="cp">Brochures, cards, packaging, signage — everything your brand hands over, carrying the same face it shows everywhere else.</p>
   </div>
   <div>
-    <div class="cardwrap"><div class="bizcard"><span class="mk">A<span>.</span></span></div></div>
+    <div class="cardwrap"><div class="bizcard"><img class="mk" src="${LOGO}" alt="ADMIRATE" width="213" height="46" decoding="async"></div></div>
     <div class="shadow" aria-hidden="true"></div>
   </div>
 </section>

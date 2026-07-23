@@ -172,6 +172,13 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 .svcblock .nm{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(12px,1.25vw,16px);letter-spacing:.02em;text-transform:uppercase;color:var(--black);transition:color .25s;line-height:1.25}
 .svcin:hover .n,.svcin:hover .nm{color:#fff}
 .svcin:hover .ico{color:#fff;transform:rotate(-8deg) scale(1.12)}
+/* The way out of the grid and into /services. Deliberately built from the same
+   parts as .svcin — the 1px line, the offset shadow, the red hover that lifts —
+   so it reads as the eleventh tile rather than a button dropped underneath. */
+.svall{display:inline-flex;align-items:center;gap:10px;margin-top:clamp(10px,2vh,18px);background:var(--white);border:1px solid var(--line);box-shadow:5px 5px 0 rgba(11,11,12,.05);padding:14px clamp(20px,2.4vw,28px);font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(11px,1.1vw,13px);letter-spacing:.08em;text-transform:uppercase;color:var(--black);text-decoration:none;transition:background .25s,border-color .25s,box-shadow .25s,transform .25s,color .25s}
+.svall:hover{background:var(--red);border-color:var(--red);color:#fff;box-shadow:7px 7px 0 rgba(11,11,12,.85);transform:translateY(-4px)}
+.svall .ar{transition:transform .25s}
+.svall:hover .ar{transform:translateX(4px)}
 
 /* ============ SCRUB SECTIONS ============ */
 .scrub{position:relative}
@@ -424,6 +431,7 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .svcblock .n{font-size:9px}
   .svcblock .ico{width:15px;height:15px}
   .svcblock .nm{font-size:10px;letter-spacing:.01em}
+  .svall{font-size:10.5px;padding:12px 18px;gap:8px}
 
   #logos .grid{grid-template-columns:repeat(2,minmax(0,132px))}
 
@@ -564,6 +572,9 @@ export const LANDING_HTML = String.raw`
   </div>
   <div class="stagewrap">
     <div class="svcgrid" id="svcgrid"></div>
+    <!-- Lands after the last tile: ten blocks stagger at 50ms each from .15s,
+         so the grid has settled by .65s. -->
+    <a class="svall rise" style="--rd:.75s" href="/services">View all services <span class="ar">→</span></a>
   </div>
 </section>
 
