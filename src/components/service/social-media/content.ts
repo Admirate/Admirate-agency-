@@ -7,7 +7,7 @@
  *   ROUTE  a four-node path from view to enquiry, drawn in as the section
  *          arrives: the claim that attention without a destination is worth
  *          nothing, made as a diagram rather than a sentence
- *   SWALL  a rolling strip of posts and reels, each in its own treatment
+ *   SWALL  the real client posts, embedded live from Instagram
  */
 
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
@@ -114,33 +114,27 @@ body.smopen{overflow:hidden}
 #rsvg .ntxt{font-family:var(--mono);font-size:8px;letter-spacing:.1em;fill:#4a4a4e}
 #rsvg .nnum{font-family:var(--mono);font-size:7px;fill:var(--red)}
 
-/* ============ 3 — SOCIALS THAT STAND OUT ============ */
-#swall .mq{margin-top:clamp(30px,5vh,52px);overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-#swall .mqtrack{display:flex;width:max-content;animation:mqx 48s linear infinite}
-#swall .mq:hover .mqtrack{animation-play-state:paused}
-.mqset{display:flex;gap:clamp(14px,2vw,24px);padding-right:clamp(14px,2vw,24px)}
-@keyframes mqx{to{transform:translateX(-50%)}}
-.scard2{flex:0 0 auto;width:clamp(178px,20vw,236px)}
-.stile{aspect-ratio:9/16;border-radius:16px;border:1px solid var(--line);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:18px;background:#fff;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s}
-.scard2:hover .stile{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,11,12,.16)}
-.stile .chip{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--grey)}
-.stile .chip i{width:6px;height:6px;border-radius:50%;background:var(--red)}
-.stile .hook{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(17px,1.9vw,23px);line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;text-align:center}
-.stile .hash{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:var(--grey)}
-.stile.s-dark{background:linear-gradient(160deg,#1a1a1e,#0B0B0C 70%)}
-.stile.s-dark .hook{color:#fff}
-.stile.s-dark .hook u{text-decoration:none;color:var(--red)}
-.stile.s-warm{background:#FBF7F1}
-.stile.s-warm .hook{font-family:var(--body);font-weight:300;font-size:clamp(15px,1.7vw,20px);letter-spacing:.06em;text-transform:lowercase;color:var(--black)}
-.stile.s-red{background:linear-gradient(160deg,#E3001B,#a80014 78%)}
-.stile.s-red .hook{color:#fff}
-.stile.s-red .hash{color:rgba(255,255,255,.6)}
-.stile.s-red .chip{color:rgba(255,255,255,.7)}
-.stile.s-red .chip i{background:#fff}
-.stile.s-paper{background:#FAFAF8}
-.stile.s-paper .hook{color:var(--black)}
-.stile.s-paper .hook u{text-decoration:none;color:var(--red)}
-.stile.s-air .hook{font-family:var(--body);font-weight:300;font-size:clamp(14px,1.6vw,18px);letter-spacing:.3em;text-transform:uppercase;color:var(--black);padding-left:.3em}
+/* ============ 3 — SOCIALS THAT STAND OUT ============
+   Real posts, embedded live from Instagram rather than drawn in CSS.
+
+   Two consequences follow from the embed being a cross-origin iframe, and both
+   shaped this block. Nothing inside it can be styled — the white card, the
+   avatar row and the action bar are Instagram's and stay Instagram's — so the
+   card design that used to live here is gone rather than fighting it. And the
+   marquee went with it: an auto-scrolling track of iframes is a moving target
+   the visitor cannot click, and the duplicated half would have doubled eight
+   embeds into sixteen page loads.
+
+   These are bare iframes on purpose. Instagram's own snippet ships a
+   blockquote plus embed.js, which pulls a third-party script into every page
+   view; the /embed/ URL renders the same post with no script at all. The cost
+   is that nothing reports the content height back, so it is fixed here —
+   measured at 533-641px across these seven at this width, hence 660. */
+#swall .igrid{margin-top:clamp(30px,5vh,52px);display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,326px));gap:clamp(16px,2.2vw,26px);justify-content:center}
+.igcard{display:flex;flex-direction:column;min-width:0}
+.igframe{width:100%;height:660px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s}
+.igcard:hover .igframe{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,11,12,.16)}
+.igframe iframe{display:block;width:100%;height:100%;border:0}
 .smeta{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--grey);white-space:nowrap}
 .smeta b{color:var(--black);font-weight:500}
 
@@ -201,8 +195,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   .fone .thumb{display:none}
   .reeltrack{transition:none}
   #rsvg .rlive{stroke-dashoffset:0;transition:none}
-  #swall .mqtrack{animation:none}
-  #swall .mq{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
+  /* The embed grid has no motion of its own to stop — the hover lift is the
+     only thing, and the blanket transition-duration above already covers it. */
 }
 `;
 
@@ -219,15 +213,34 @@ const ROUTE_NODES = [
   { x: 570, label: "THE ENQUIRY" },
 ];
 
-/* Posts and reels as they actually ran. Each carries its own treatment so the
-   strip reads as six accounts rather than one template filled in six times. */
+/**
+ * Posts as they actually ran, by Instagram shortcode.
+ *
+ * `code` is the segment in instagram.com/p/<code>/ — the whole permalink is
+ * rebuilt from it below, so a post is added by dropping in its shortcode.
+ *
+ * `b` is the client as the rest of this site names them, which is not always
+ * how the account names itself: the embed's own header says "SportExpo
+ * (@sport_expo)" while every other page here says "Hitex SportExpo". The line
+ * under each embed carries our name for them so the section still reads in the
+ * site's voice rather than Instagram's.
+ *
+ * Ordered so no two consecutive cards are the same account — three of the
+ * eight are SportExpo and two are Hope Trust, which clustered would read as
+ * two clients rather than five.
+ */
 const WALL = [
-  { cls: "s-dark", chip: "REEL", hook: `GAME<br><u>DAY</u>.`, hash: "#SPORTEXPO #GAMEON", b: "Hitex SportExpo", tag: "CAMPAIGN" },
-  { cls: "s-warm", chip: "POST", hook: `this weekend,<br>at the space`, hash: "#EVENTS #COMMUNITY", b: "Our Sacred Space", tag: "FEED" },
-  { cls: "s-paper", chip: "REEL", hook: `One breath<br>at a <u>time</u>.`, hash: "#PRACTICE #STUDIO", b: "Samyoga Studio", tag: "REELS" },
-  { cls: "s-dark", chip: "POST", hook: `Recovery starts with a <u>conversation</u>.`, hash: "#CARE #SUPPORT", b: "Hope Trust India", tag: "CONTENT" },
-  { cls: "s-air", chip: "POST", hook: `Clearly premium`, hash: "#GLASS #FACADES", b: "South Glass", tag: "FEED" },
-  { cls: "s-red", chip: "REEL", hook: `MADE TO<br>CONVERT.`, hash: "#ADMIRATE", b: "ADMIRATE", tag: "REELS" },
+  { code: "DbEFeTvTs_2", b: "Hitex SportExpo" },
+  { code: "DbAo_nOTze9", b: "Hope Trust India" },
+  { code: "Dae4IvJy068", b: "Plantarium Vegan Space" },
+  { code: "Da6REdOzYFu", b: "Hitex SportExpo" },
+  { code: "DbFtNm2BCM1", b: "Our Sacred Space" },
+  /* The one house post in the set. It sits sixth rather than first: opening on
+     our own work would frame the section as self-promotion instead of a
+     client wall, which is the argument the surrounding copy is making. */
+  { code: "DWyUQDAEXXn", b: "ADMIRATE" },
+  { code: "DYwV85KMOGo", b: "Hope Trust India" },
+  { code: "DaIWGURzQ_x", b: "Hitex SportExpo" },
 ];
 
 const NEXT = [
@@ -280,16 +293,22 @@ const phone = (id: string, withThumb: boolean) => `
   ${withThumb ? '<div class="thumb" aria-hidden="true"></div>' : ""}
 </div>`;
 
-/* The marquee needs its contents twice: the track translates -50%, so the
-   second copy is what occupies the viewport as the first scrolls out. It is
-   duplicate content, hence aria-hidden on the copy. */
-const wallSet = (hidden: boolean) => `
-      <div class="mqset"${hidden ? ' aria-hidden="true"' : ""}>
-      ${WALL.map(
-        (w) =>
-          `<div class="scard2"><div class="stile ${w.cls}"><span class="chip"><i></i>${w.chip}</span><span class="hook">${w.hook}</span><span class="hash">${w.hash}</span></div><div class="smeta"><b>${w.b}</b><span>${w.tag}</span></div></div>`,
-      ).join("\n      ")}
-      </div>`;
+/* `loading="lazy"` matters more here than usual: each frame is a full
+   Instagram page, and eight of them fetched at once would cost more than the
+   rest of the route put together. The title is what a screen reader announces
+   in place of the frame, so it names the post rather than saying "iframe". */
+const wallSet = () =>
+  WALL.map(
+    (w) => `<div class="igcard">
+        <div class="igframe">
+          <iframe src="https://www.instagram.com/p/${w.code}/embed/"
+            title="Instagram post by ${w.b}"
+            loading="lazy" scrolling="no" allowtransparency="true"
+            allow="encrypted-media; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="smeta"><b>${w.b}</b><span>INSTAGRAM</span></div>
+      </div>`,
+  ).join("\n      ");
 
 export const SOCIAL_HTML = String.raw`
 <div id="smbg"></div>
@@ -331,9 +350,8 @@ export const SOCIAL_HTML = String.raw`
 <section class="sms" id="swall" data-bg="#FBF7F1" data-label="The work">
   <h2 class="smh up">Socials that <em>stand out</em>.</h2>
   <p class="smp up" style="--d:.1s">Accounts and creatives cut through the scroll — and send people somewhere.</p>
-  <div class="mq up" style="--d:.18s">
-    <div class="mqtrack">${wallSet(false)}${wallSet(true)}
-    </div>
+  <div class="igrid up" style="--d:.18s">
+      ${wallSet()}
   </div>
 </section>
 
