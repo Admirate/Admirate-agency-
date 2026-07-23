@@ -104,6 +104,11 @@ export const CREATIVES = {
     ar: 0.8,
     alt: "Samyoga Studio — Pilates class timings, morning and evening batches",
   },
+  samMoveBetter: {
+    file: "samyoga new creatives/MoveBetter.png",
+    ar: 0.8,
+    alt: "Samyoga Studio — Move Better Pilates studio creative",
+  },
 } satisfies Record<string, Creative>;
 
 /**

@@ -726,7 +726,6 @@ export const SERVICES_HTML = String.raw`
   <div class="stage">
     <div class="shead">
       <div class="eb rise" style="--rd:0s">SOCIAL MEDIA</div>
-      <h2 class="rise" style="--rd:.1s">Reels built to convert</h2>
       <a class="svmore rise" style="--rd:.2s" href="/services/social-media" data-h>EXPLORE SOCIAL MEDIA <span class="ar">→</span></a>
     </div>
     <div class="stagewrap">
@@ -817,7 +816,6 @@ export const SERVICES_HTML = String.raw`
   <div class="stage">
     <div class="shead">
       <div class="eb rise" style="--rd:0s">VIDEO PRODUCTION</div>
-      <h2 class="rise" style="--rd:.1s">Films, ads &amp; brand stories</h2>
       <a class="svmore rise" style="--rd:.2s" href="/services/video-production" data-h>EXPLORE VIDEO PRODUCTION <span class="ar">→</span></a>
     </div>
     <div class="stagewrap">

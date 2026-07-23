@@ -51,7 +51,7 @@ const ioS=new IntersectionObserver(es=>{
       if(e.target.id==='logos') stopRecog();
     }
   });
-},{threshold:.35});
+},{threshold:.1});
 secs.forEach(s=>ioS.observe(s));
 let lastDot=-1;
 function updateDots(){
