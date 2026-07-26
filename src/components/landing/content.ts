@@ -305,32 +305,20 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
 .pbar i{display:block;width:100%;height:0;background:var(--red);border-radius:2px}
 
 /* ============ S8 BRANDS ============ */
-#brands{background:var(--white);display:flex;flex-direction:column;justify-content:center}
-.marquee{display:flex;white-space:nowrap;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--white)}
-.marquee + .marquee{border-top:none}
-.marquee .mtrack{display:flex;flex-shrink:0;animation:mq 32s linear infinite}
-.marquee.rev .mtrack{animation:mqr 38s linear infinite}
-.marquee:hover .mtrack{animation-play-state:paused}
-@keyframes mq{to{transform:translateX(-100%)}}
-@keyframes mqr{from{transform:translateX(-100%)}to{transform:translateX(0)}}
-/* Real client marks, not their names set in type. They arrive at wildly different
-   proportions (0.99 to 2.93 wide), so they are sized by a common height and left
-   to take whatever width that gives — the standard logo-wall treatment. The
-   square marks would otherwise read as tiny next to the wordmarks. */
-.mk{padding:24px clamp(20px,3.2vw,40px);display:inline-flex;align-items:center;gap:clamp(20px,3.2vw,40px)}
-/* Bounded by height AND width, not height alone. Height alone lets a long
-   wordmark (Samyoga, 5.7:1) sprawl while a stacked mark (Seniors for Change,
-   1:1, icon over two lines) shrinks to nothing. Capping both makes the set
-   self-balancing: wide marks bind on width, square ones on height.
-   --s then nudges any file that carries heavy empty padding (Sportex). */
-.mk img{display:block;width:auto;height:auto;object-fit:contain;
-  max-height:calc(clamp(34px,4vw,52px) * var(--s,1));
-  max-width:calc(clamp(110px,13vw,180px) * var(--s,1))}
-/* Zythum's mark is white-on-transparent and would be invisible on this white
-   row. It is a single-colour mark, so inverting it yields a clean black one. */
-.mk img.inv{filter:invert(1)}
-.mk::after{content:"—";color:var(--red);font-family:var(--body);font-weight:700;font-size:20px}
-.note{font-family:var(--mono);font-size:10px;color:var(--grey);padding:22px var(--pad) 0}
+#brands{background:var(--white);display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(104px,14vh,150px) 0 clamp(72px,9vh,112px);overflow:visible}
+#brands .shead{position:static;padding:0 var(--pad);margin-bottom:clamp(36px,5vw,64px)}
+.client-grid{list-style:none;margin:0;padding:0 var(--pad);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.client-cell{min-width:0;min-height:clamp(160px,14vw,220px);padding:clamp(24px,3vw,44px);display:flex;align-items:center;justify-content:center;background:var(--white);border-right:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;transition:background-color .28s ease}
+.client-cell img{display:block;width:min(74%,220px);height:auto;max-height:88px;object-fit:contain;scale:var(--s,1);filter:grayscale(1) saturate(0) contrast(1.18);transform:scale(1);transition:filter .28s ease,transform .28s cubic-bezier(.2,.8,.2,1)}
+.client-cell img.inv{filter:invert(1) grayscale(1) saturate(0) contrast(1.18)}
+@media (hover:hover) and (pointer:fine){
+  .client-cell:hover img{filter:none;transform:scale(1.05)}
+  .client-cell.is-inverted:hover{background:var(--black)}
+}
+@media (hover:none){
+  .client-cell img,.client-cell img.inv{filter:none}
+  .client-cell.is-inverted{background:var(--black)}
+}
 
 /* ============ S9 CTA ============ */
 /* The closing section is now only a carrier for shared/footer.ts, which
@@ -362,6 +350,8 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .phone{height:min(56svh,470px)}
   .objcap{font-size:clamp(24px,4.6vw,44px)}
   #logos .grid{grid-template-columns:repeat(4,minmax(92px,140px));gap:14px}
+  .client-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .client-cell{min-height:clamp(148px,19vw,190px)}
   .svcgrid{gap:12px}
 }
 
@@ -406,8 +396,11 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .reel .rh{font-size:14px}
   .reel .rc{font-size:10.5px}
 
-  .mk{padding:18px 20px;gap:20px}
-  .mk img{max-height:calc(32px * var(--s,1));max-width:calc(104px * var(--s,1))}
+  #brands{padding-top:96px;padding-bottom:72px}
+  #brands .shead{margin-bottom:28px}
+  .client-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .client-cell{min-height:clamp(124px,40vw,164px);padding:20px 14px}
+  .client-cell img{width:min(82%,170px);max-height:68px}
 }
 
 /* ---------- MOBILE (matches admirate-landing-mobile-v3.html) ---------- */
@@ -508,6 +501,8 @@ body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
   .whero{clip-path:none!important}
   .wbtn,.sicon,.livechip{transform:none!important;opacity:1!important}
   #services .stagewrap{padding-top:0}
+  .client-cell,.client-cell img{transition:none!important}
+  .client-cell:hover img{transform:none!important}
 }
 
 /* ---- site footer (shared/footer.ts) ---- */
