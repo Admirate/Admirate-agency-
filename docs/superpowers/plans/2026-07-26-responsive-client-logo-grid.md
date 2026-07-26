@@ -4,7 +4,7 @@
 
 **Goal:** Replace the homepage's duplicated logo marquees with a large responsive client grid whose monochrome logos reveal their original colors on hover-capable devices.
 
-**Architecture:** Keep `CLIENT_LOGOS` as the single data source. Render it once from the existing landing-page initializer into a semantic list owned by `content.ts`, then use CSS media queries for the four/three/two-column layout and hover/no-hover behavior. No new component framework, image asset, runtime state, or dependency is needed.
+**Architecture:** Keep `CLIENT_LOGOS` as the single data source. A small pure `renderClientGrid` helper converts the registry into one semantic list, letting Node test the real renderer without a DOM dependency; the existing landing-page initializer mounts that result into markup owned by `content.ts`. CSS media queries provide the four/three/two-column layout and hover/no-hover behavior. No new component framework, image asset, runtime state, or dependency is needed.
 
 **Tech Stack:** Next.js 16, React 19, TypeScript, raw HTML/CSS landing-page strings, browser DOM initialization, Node's built-in test runner.
 
@@ -25,54 +25,55 @@
 ### Task 1: Render one semantic client grid
 
 **Files:**
-- Create: `tests/homepage-client-logo-grid.test.mjs`
+- Create: `src/components/landing/clientGrid.ts`
+- Create: `tests/client-grid-renderer.test.mjs`
 - Modify: `src/components/landing/content.ts:725-734`
 - Modify: `src/components/landing/init.ts:3-44`
 
 **Interfaces:**
 - Consumes: `CLIENT_LOGOS: ClientLogo[]` and `clientLogo(path: string): string`.
-- Produces: one `<ul class="client-grid" id="clientGrid" aria-label="Client brands">` populated with one `<li class="client-cell">` per registry entry.
+- Produces: `renderClientGrid(logos: readonly ClientGridLogo[], getUrl: (file: string) => string): string` and one `<ul class="client-grid" id="clientGrid" aria-label="Client brands">` populated with the returned list items.
 
 - [ ] **Step 1: Write the failing structural regression test**
 
-Create `tests/homepage-client-logo-grid.test.mjs`:
+Create `tests/client-grid-renderer.test.mjs`. The guarded dynamic import makes the first run an ordinary assertion failure while the production module is still absent, then exercises the real helper as soon as it exists:
 
 ```js
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const content = readFileSync(
-  resolve(here, "../src/components/landing/content.ts"),
-  "utf8",
-);
-const init = readFileSync(
-  resolve(here, "../src/components/landing/init.ts"),
-  "utf8",
-);
+const moduleUrl = pathToFileURL(
+  resolve(here, "../src/components/landing/clientGrid.ts"),
+).href;
+let renderClientGrid;
+try {
+  ({ renderClientGrid } = await import(moduleUrl));
+} catch {
+  // The RED run reaches the explicit function assertion below.
+}
 
-test("homepage renders every registered client once in one static grid", () => {
-  assert.match(
-    content,
-    /<ul class="client-grid" id="clientGrid" aria-label="Client brands"><\/ul>/,
+test("client grid renderer emits every supplied logo once with its display metadata", () => {
+  assert.equal(typeof renderClientGrid, "function", "renderClientGrid is missing");
+
+  const html = renderClientGrid(
+    [
+      { name: "Wide Brand", file: "wide logo.webp" },
+      { name: "White Brand", file: "white.webp", inv: true },
+      { name: "Padded Brand", file: "padded.webp", scale: 1.45 },
+    ],
+    (file) => `/clients/${encodeURIComponent(file)}`,
   );
 
-  for (const removedId of ["m1", "m1b", "m2", "m2b"]) {
-    assert.doesNotMatch(content, new RegExp(`id="${removedId}"`));
-  }
-  assert.doesNotMatch(content, /class="marquee/);
-
-  assert.match(
-    init,
-    /import \{ CLIENT_LOGOS \} from "@\/components\/shared\/clients";/,
+  assert.equal(
+    html,
+    '<li class="client-cell"><img src="/clients/wide%20logo.webp" alt="Wide Brand" loading="lazy" decoding="async"></li>' +
+      '<li class="client-cell is-inverted"><img src="/clients/white.webp" alt="White Brand" class="inv" loading="lazy" decoding="async"></li>' +
+      '<li class="client-cell"><img src="/clients/padded.webp" alt="Padded Brand" style="--s:1.45" loading="lazy" decoding="async"></li>',
   );
-  assert.match(init, /CLIENT_LOGOS\.map\(b=>/);
-  assert.match(init, /class="client-cell\$\{b\.inv\?' is-inverted':''\}"/);
-  assert.doesNotMatch(init, /LOGO_ROWS/);
-  assert.doesNotMatch(init, /fill\('m1'/);
 });
 ```
 
@@ -81,10 +82,10 @@ test("homepage renders every registered client once in one static grid", () => {
 Run:
 
 ```powershell
-node --test tests/homepage-client-logo-grid.test.mjs
+node --test tests/client-grid-renderer.test.mjs
 ```
 
-Expected: one failing test because `clientGrid` is absent and the marquee IDs still exist.
+Expected: one failing assertion with `renderClientGrid is missing` because the production module does not exist yet.
 
 - [ ] **Step 3: Replace the duplicated marquee container**
 
@@ -94,21 +95,39 @@ In `src/components/landing/content.ts`, retain the heading and replace the two m
 <ul class="client-grid" id="clientGrid" aria-label="Client brands"></ul>
 ```
 
-- [ ] **Step 4: Render `CLIENT_LOGOS` exactly once**
+- [ ] **Step 4: Implement the pure renderer and mount `CLIENT_LOGOS` exactly once**
 
-In `src/components/landing/init.ts`, replace the `LOGO_ROWS` import with:
+Create `src/components/landing/clientGrid.ts`:
+
+```ts
+export type ClientGridLogo = {
+  name: string;
+  file: string;
+  inv?: boolean;
+  scale?: number;
+};
+
+export const renderClientGrid = (
+  logos: readonly ClientGridLogo[],
+  getUrl: (file: string) => string,
+) =>
+  logos.map(b =>
+    `<li class="client-cell${b.inv?' is-inverted':''}"><img src="${getUrl(b.file)}" alt="${b.name}"${b.inv?' class="inv"':''}${b.scale?` style="--s:${b.scale}"`:''} loading="lazy" decoding="async"></li>`
+  ).join('');
+```
+
+In `src/components/landing/init.ts`, replace the `LOGO_ROWS` import and add the renderer import:
 
 ```ts
 import { CLIENT_LOGOS } from "@/components/shared/clients";
+import { renderClientGrid } from "@/components/landing/clientGrid";
 ```
 
 Replace the two-row fill logic with:
 
 ```ts
 const clientGrid = document.getElementById('clientGrid');
-clientGrid.innerHTML = CLIENT_LOGOS.map(b=>
-  `<li class="client-cell${b.inv?' is-inverted':''}"><img src="${clientLogo(b.file)}" alt="${b.name}"${b.inv?' class="inv"':''}${b.scale?` style="--s:${b.scale}"`:''} loading="lazy" decoding="async"></li>`
-).join('');
+clientGrid.innerHTML = renderClientGrid(CLIENT_LOGOS, clientLogo);
 ```
 
 Update the adjacent comment so it describes one grid, the `inv` flag, and the optical `scale` correction rather than two marquee rows.
@@ -118,7 +137,7 @@ Update the adjacent comment so it describes one grid, the `inv` flag, and the op
 Run:
 
 ```powershell
-node --test tests/homepage-client-logo-grid.test.mjs
+node --test tests/client-grid-renderer.test.mjs
 ```
 
 Expected: one passing test, zero failures.
@@ -126,7 +145,7 @@ Expected: one passing test, zero failures.
 - [ ] **Step 6: Commit the semantic grid**
 
 ```powershell
-git add -- tests/homepage-client-logo-grid.test.mjs src/components/landing/content.ts src/components/landing/init.ts
+git add -- tests/client-grid-renderer.test.mjs src/components/landing/clientGrid.ts src/components/landing/content.ts src/components/landing/init.ts
 git commit -m "refactor: render clients in one homepage grid"
 ```
 
@@ -135,7 +154,6 @@ git commit -m "refactor: render clients in one homepage grid"
 ### Task 2: Add bold responsive sizing and color reveal
 
 **Files:**
-- Modify: `tests/homepage-client-logo-grid.test.mjs`
 - Modify: `src/components/landing/content.ts:307-333`
 - Modify: `src/components/landing/content.ts` responsive blocks near `@media (max-width:1024px)`, `@media (max-width:640px)`, and `@media (prefers-reduced-motion:reduce)`
 
@@ -143,57 +161,13 @@ git commit -m "refactor: render clients in one homepage grid"
 - Consumes: `.client-grid`, `.client-cell`, `.client-cell.is-inverted`, `img.inv`, and optional image custom property `--s` produced by Task 1.
 - Produces: a 4/3/2-column responsive grid, hover color reveal, original-color touch state, and reduced-motion-safe transitions.
 
-- [ ] **Step 1: Add the failing responsive and interaction test**
+- [ ] **Step 1: Verify the current rendered behavior is RED**
 
-Append this test to `tests/homepage-client-logo-grid.test.mjs`:
+Run the local application and inspect `/` in a real browser after Task 1. At a desktop viewport, read the computed styles for `.client-grid` and its first image.
 
-```js
-test("client grid is bold, responsive, and reveals original logo colors", () => {
-  const css = content.replace(/\s+/g, "");
+Expected: the grid does not yet compute to four columns, the first image has no monochrome filter, and the old marquee CSS remains unused. This is the failing behavioral baseline for the presentation change.
 
-  assert.ok(
-    css.includes(".client-grid{list-style:none;margin:0;padding:0var(--pad);display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"),
-    "missing four-column desktop grid",
-  );
-  assert.ok(
-    css.includes("@media(max-width:1024px){") &&
-      css.includes(".client-grid{grid-template-columns:repeat(3,minmax(0,1fr))}"),
-    "missing three-column tablet grid",
-  );
-  assert.ok(
-    css.includes("@media(max-width:640px){") &&
-      css.includes(".client-grid{grid-template-columns:repeat(2,minmax(0,1fr))}"),
-    "missing two-column mobile grid",
-  );
-  assert.match(content, /@media \(hover:hover\) and \(pointer:fine\)/);
-  assert.match(
-    content,
-    /\.client-cell:hover img\{filter:none;transform:scale\(1\.05\)\}/,
-  );
-  assert.match(
-    content,
-    /\.client-cell\.is-inverted:hover\{background:var\(--black\)\}/,
-  );
-  assert.match(content, /@media \(hover:none\)/);
-  assert.match(
-    content,
-    /\.client-cell img,.client-cell img\.inv\{filter:none\}/,
-  );
-  assert.doesNotMatch(content, /@keyframes mq/);
-});
-```
-
-- [ ] **Step 2: Run the focused test and verify RED**
-
-Run:
-
-```powershell
-node --test tests/homepage-client-logo-grid.test.mjs
-```
-
-Expected: the structural test passes and the new style test fails because the marquee CSS and old image caps still exist.
-
-- [ ] **Step 3: Replace marquee CSS with the desktop grid and interaction states**
+- [ ] **Step 2: Replace marquee CSS with the desktop grid and interaction states**
 
 Replace the complete `S8 BRANDS` style block in `src/components/landing/content.ts` with:
 
@@ -215,7 +189,7 @@ Replace the complete `S8 BRANDS` style block in `src/components/landing/content.
 }
 ```
 
-- [ ] **Step 4: Add tablet and mobile sizing**
+- [ ] **Step 3: Add tablet and mobile sizing**
 
 Inside the existing `@media (max-width:1024px)` block add:
 
@@ -241,17 +215,13 @@ Inside the existing `@media (prefers-reduced-motion:reduce)` block add:
 .client-cell:hover img{transform:none!important}
 ```
 
-- [ ] **Step 5: Run the focused test and verify GREEN**
+- [ ] **Step 4: Verify computed browser behavior is GREEN**
 
-Run:
+In the real browser, verify the computed `.client-grid` column count at desktop, tablet, and mobile widths; verify the monochrome filter and hover reveal on desktop; verify original colors under no-hover mobile emulation; and verify the Zythum cell changes between white and ink surfaces as specified.
 
-```powershell
-node --test tests/homepage-client-logo-grid.test.mjs
-```
+Expected: four, three, and two computed columns at their respective widths, with every color-state check matching the approved design.
 
-Expected: two passing tests, zero failures.
-
-- [ ] **Step 6: Run the full automated checks**
+- [ ] **Step 5: Run the full automated checks**
 
 Run:
 
@@ -263,10 +233,10 @@ git diff --check
 
 Expected: all Node tests pass, TypeScript exits `0`, and `git diff --check` reports no whitespace errors.
 
-- [ ] **Step 7: Commit the responsive visual treatment**
+- [ ] **Step 6: Commit the responsive visual treatment**
 
 ```powershell
-git add -- tests/homepage-client-logo-grid.test.mjs src/components/landing/content.ts
+git add -- src/components/landing/content.ts
 git commit -m "feat: showcase clients in a responsive logo grid"
 ```
 
@@ -277,7 +247,8 @@ git commit -m "feat: showcase clients in a responsive logo grid"
 **Files:**
 - Verify only: `src/components/landing/content.ts`
 - Verify only: `src/components/landing/init.ts`
-- Verify only: `tests/homepage-client-logo-grid.test.mjs`
+- Verify only: `src/components/landing/clientGrid.ts`
+- Verify only: `tests/client-grid-renderer.test.mjs`
 
 **Interfaces:**
 - Consumes: the complete static client grid from Tasks 1 and 2.
