@@ -4,7 +4,7 @@
 
 **Goal:** Replace the homepage's duplicated logo marquees with a large responsive client grid whose monochrome logos reveal their original colors on hover-capable devices.
 
-**Architecture:** Keep `CLIENT_LOGOS` as the single data source. A small pure `renderClientGrid` helper converts the registry into one semantic list, letting Node test the real renderer without a DOM dependency; the existing landing-page initializer mounts that result into markup owned by `content.ts`. CSS media queries provide the four/three/two-column layout and hover/no-hover behavior. No new component framework, image asset, runtime state, or dependency is needed.
+**Architecture:** Keep `CLIENT_LOGOS` as the single data source. A small pure ESM `renderClientGrid` helper converts the registry into one semantic list, letting Node test the real renderer without a DOM dependency; the existing landing-page initializer mounts that result into markup owned by `content.ts`. CSS media queries provide the four/three/two-column layout and hover/no-hover behavior. No new component framework, image asset, runtime state, or dependency is needed.
 
 **Tech Stack:** Next.js 16, React 19, TypeScript, raw HTML/CSS landing-page strings, browser DOM initialization, Node's built-in test runner.
 
@@ -25,7 +25,7 @@
 ### Task 1: Render one semantic client grid
 
 **Files:**
-- Create: `src/components/landing/clientGrid.ts`
+- Create: `src/components/landing/clientGrid.mjs`
 - Create: `tests/client-grid-renderer.test.mjs`
 - Modify: `src/components/landing/content.ts:725-734`
 - Modify: `src/components/landing/init.ts:3-44`
@@ -47,7 +47,7 @@ import { pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const moduleUrl = pathToFileURL(
-  resolve(here, "../src/components/landing/clientGrid.ts"),
+  resolve(here, "../src/components/landing/clientGrid.mjs"),
 ).href;
 let renderClientGrid;
 try {
@@ -97,20 +97,10 @@ In `src/components/landing/content.ts`, retain the heading and replace the two m
 
 - [ ] **Step 4: Implement the pure renderer and mount `CLIENT_LOGOS` exactly once**
 
-Create `src/components/landing/clientGrid.ts`:
+Create `src/components/landing/clientGrid.mjs`:
 
-```ts
-export type ClientGridLogo = {
-  name: string;
-  file: string;
-  inv?: boolean;
-  scale?: number;
-};
-
-export const renderClientGrid = (
-  logos: readonly ClientGridLogo[],
-  getUrl: (file: string) => string,
-) =>
+```js
+export const renderClientGrid = (logos, getUrl) =>
   logos.map(b =>
     `<li class="client-cell${b.inv?' is-inverted':''}"><img src="${getUrl(b.file)}" alt="${b.name}"${b.inv?' class="inv"':''}${b.scale?` style="--s:${b.scale}"`:''} loading="lazy" decoding="async"></li>`
   ).join('');
@@ -120,7 +110,7 @@ In `src/components/landing/init.ts`, replace the `LOGO_ROWS` import and add the 
 
 ```ts
 import { CLIENT_LOGOS } from "@/components/shared/clients";
-import { renderClientGrid } from "@/components/landing/clientGrid";
+import { renderClientGrid } from "@/components/landing/clientGrid.mjs";
 ```
 
 Replace the two-row fill logic with:
@@ -145,7 +135,7 @@ Expected: one passing test, zero failures.
 - [ ] **Step 6: Commit the semantic grid**
 
 ```powershell
-git add -- tests/client-grid-renderer.test.mjs src/components/landing/clientGrid.ts src/components/landing/content.ts src/components/landing/init.ts
+git add -- tests/client-grid-renderer.test.mjs src/components/landing/clientGrid.mjs src/components/landing/content.ts src/components/landing/init.ts docs/superpowers/plans/2026-07-26-responsive-client-logo-grid.md
 git commit -m "refactor: render clients in one homepage grid"
 ```
 
@@ -247,7 +237,7 @@ git commit -m "feat: showcase clients in a responsive logo grid"
 **Files:**
 - Verify only: `src/components/landing/content.ts`
 - Verify only: `src/components/landing/init.ts`
-- Verify only: `src/components/landing/clientGrid.ts`
+- Verify only: `src/components/landing/clientGrid.mjs`
 - Verify only: `tests/client-grid-renderer.test.mjs`
 
 **Interfaces:**

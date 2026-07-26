@@ -1,7 +1,8 @@
 // @ts-nocheck
 
 import { clientLogo } from "@/lib/cdn";
-import { LOGO_ROWS } from "@/components/shared/clients";
+import { CLIENT_LOGOS } from "@/components/shared/clients";
+import { renderClientGrid } from "@/components/landing/clientGrid.mjs";
 import { initFooter } from "@/components/shared/footer";
 
 export default function initLanding(){
@@ -30,18 +31,11 @@ if(!skipLoader) document.body.classList.add('locked');
 /* ---------- content fills ---------- */
 const words = 'BRANDING — LOGO DESIGN — WEBSITES — PACKAGING — SOCIAL MEDIA — VIDEO PRODUCTION — PRINT ADS — BRAND COLLATERALS — BOOKING SYSTEMS — CHATBOTS — ';
 document.getElementById('tickTrack').textContent = (words + words).repeat(2);
-/* Client marks. Which brands exist and how each file has to be handled lives in
-   shared/clients.ts, which the identity page's tile wall reads as well; `inv`
-   flags a white-on-transparent mark that must be inverted to read on the white
-   marquee (see .mk img.inv), and `scale` sizes a mark whose file carries heavy
-   empty padding so every logo lands at the same optical size. */
-const [row1, row2] = LOGO_ROWS;
-function fill(id, arr){
-  document.getElementById(id).innerHTML = arr.map(b=>
-    `<span class="mk"><img src="${clientLogo(b.file)}" alt="${b.name}"${b.inv?' class="inv"':''}${b.scale?` style="--s:${b.scale}"`:''} loading="lazy" decoding="async"></span>`
-  ).join('');
-}
-fill('m1',row1); fill('m1b',row1); fill('m2',row2); fill('m2b',row2);
+/* Client marks. The shared registry also feeds the identity page; this page
+   maps it once into a static grid. `inv` identifies the white Zythum artwork,
+   while `scale` corrects source files with unusually generous empty padding. */
+const clientGrid = document.getElementById('clientGrid');
+clientGrid.innerHTML = renderClientGrid(CLIENT_LOGOS, clientLogo);
 
 /* ---------- hero: per-letter split ---------- */
 const h1words=[...document.querySelectorAll('#hero h1 .w')];

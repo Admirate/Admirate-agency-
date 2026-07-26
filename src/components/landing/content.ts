@@ -727,10 +727,7 @@ export const LANDING_HTML = String.raw`
   <div class="shead">
     <h2 class="light rise" style="--rd:.12s">Brands we've worked with</h2>
   </div>
-  <div>
-    <div class="marquee"><div class="mtrack" id="m1"></div><div class="mtrack" aria-hidden="true" id="m1b"></div></div>
-    <div class="marquee rev"><div class="mtrack" id="m2"></div><div class="mtrack" aria-hidden="true" id="m2b"></div></div>
-  </div>
+  <ul class="client-grid" id="clientGrid" aria-label="Client brands"></ul>
 </section>
 
 <!-- S9 FOOTER (replaces the old CTA — see shared/footer.ts) -->
