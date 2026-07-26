@@ -559,7 +559,7 @@ export const LANDING_HTML = String.raw`
 <section id="intro" class="sec full dark">
   <div class="kglow"></div>
   <div class="iwrap">
-    <div class="tag">// WHAT IS ADMIRATE</div>
+    <div class="tag">WHAT IS ADMIRATE</div>
     <p class="big" id="introTxt">We're a full-stack ad agency obsessed with three things: <span class="acc">good design</span>, <span class="acc">user journeys</span> and <span class="acc">quick&nbsp;leads</span>. We build strong advertising material that moves buyers to act — not <span class="strike">social media fluff</span> that just sits there looking pretty.</p>
   </div>
 </section>
@@ -603,9 +603,6 @@ export const LANDING_HTML = String.raw`
 <!-- S5 VIDEO (scrub) -->
 <section id="tv" class="sec scrub">
   <div class="stage">
-    <div class="shead">
-      <div class="eb rise" style="--rd:0s">VIDEO PRODUCTION</div>
-    </div>
     <div class="stagewrap">
       <div class="objcap">Video Production</div>
       <div class="tvframe">
@@ -628,9 +625,6 @@ export const LANDING_HTML = String.raw`
 <!-- S6 WEBSITE (scrub) -->
 <section id="web" class="sec scrub">
   <div class="stage">
-    <div class="shead">
-      <div class="eb rise" style="--rd:0s">DIGITAL</div>
-    </div>
     <div class="stagewrap">
       <div class="objcap">Websites</div>
       <div class="browser">
@@ -657,9 +651,6 @@ export const LANDING_HTML = String.raw`
 <!-- S7 REELS (scrub) -->
 <section id="reels" class="sec scrub dark">
   <div class="stage">
-    <div class="shead">
-      <div class="eb rise" style="--rd:0s">SOCIAL MEDIA</div>
-    </div>
     <div class="stagewrap">
       <div class="objcap">Social Media</div>
       <div class="phone" id="phone">
@@ -734,7 +725,6 @@ export const LANDING_HTML = String.raw`
 <!-- S8 BRANDS -->
 <section id="brands" class="sec full">
   <div class="shead">
-    <div class="eb rise" style="--rd:0s">CLIENTS</div>
     <h2 class="light rise" style="--rd:.12s">Brands we've worked with</h2>
   </div>
   <div>
