@@ -137,6 +137,21 @@ test("sitemap client bundles omit full article and policy bodies", async () => {
   );
 });
 
+test("video production renders the supplied showreel in the existing player", async () => {
+  const response = await fetch(`${baseUrl}/services/video-production`);
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(
+    html,
+    /<video id="rvid"[^>]*playsinline[^>]*muted[^>]*loop[^>]*preload="metadata"[^>]*disablepictureinpicture[^>]*>/,
+  );
+  assert.match(
+    html,
+    /<source src="https:\/\/mshehtxywddtdxxkbnuu\.supabase\.co\/storage\/v1\/object\/public\/videos\/admirate%20summary%203%20\(1\)\.mp4" type="video\/mp4">/,
+  );
+});
+
 test("full and compact public footers link to the HTML sitemap", async () => {
   const sitemapHtml = await (await fetch(`${baseUrl}/sitemap`)).text();
   const fullFooter = sitemapHtml.match(

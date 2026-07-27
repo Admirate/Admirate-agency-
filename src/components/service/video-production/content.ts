@@ -21,7 +21,7 @@ import { video } from "@/lib/cdn";
  *
  * Nothing else references the name, so a re-cut or a rename is this one string.
  */
-const SHOWREEL = "showreel.mp4";
+const SHOWREEL = "admirate summary 3 (1).mp4";
 
 export const VIDEO_CSS = String.raw`
 :root{
