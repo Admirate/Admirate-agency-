@@ -554,7 +554,7 @@ export const LANDING_HTML = String.raw`
 <section id="intro" class="sec full dark">
   <div class="kglow"></div>
   <div class="iwrap">
-    <div class="tag">WHAT IS ADMIRATE</div>
+    <div class="tag">WHO WE ARE</div>
     <p class="big" id="introTxt">We're a full-stack ad agency obsessed with three things: <span class="acc">good design</span>, <span class="acc">user journeys</span> and <span class="acc">quick&nbsp;leads</span>. We build strong advertising material that moves buyers to act — not <span class="strike">social media fluff</span> that just sits there looking pretty.</p>
   </div>
 </section>

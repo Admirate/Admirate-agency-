@@ -11,7 +11,7 @@ const source = readFileSync(
 );
 
 test("homepage removes the requested red eyebrow labels and keeps its main captions", () => {
-  assert.match(source, /<div class="tag">WHAT IS ADMIRATE<\/div>/);
+  assert.match(source, /<div class="tag">WHO WE ARE<\/div>/);
 
   for (const label of ["VIDEO PRODUCTION", "DIGITAL", "SOCIAL MEDIA", "CLIENTS"]) {
     assert.doesNotMatch(
