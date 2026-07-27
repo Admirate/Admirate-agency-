@@ -19,6 +19,18 @@
 - Preserve the existing XML priorities, change frequencies, and last-modified behavior for current pages.
 - Keep links as ordinary crawlable anchors and preserve keyboard focus and reduced-motion behavior.
 
+## Execution Amendments
+
+- The catalog groups use descriptive headings without `01`–`04` prefixes. The
+  groups are categories, not a sequence, so numbering would communicate a
+  false order.
+- Source-text assertions shown in Tasks 2 and 3 are superseded by real catalog
+  renderer tests plus production build and local HTTP checks. Framework glue,
+  metadata objects, and CSS receive TypeScript/build/browser verification
+  rather than brittle tests that only grep implementation text.
+- Footer and XML integration are verified against the rendered `/sitemap` and
+  `/sitemap.xml` responses after the production build.
+
 ---
 
 ### Task 1: Create the public sitemap catalog and renderer
