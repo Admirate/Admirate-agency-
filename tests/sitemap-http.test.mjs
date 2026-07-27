@@ -116,3 +116,32 @@ test("HTML sitemap renders every public destination with canonical metadata", as
   assert.doesNotMatch(html, /href="\/dashboard/);
   assert.doesNotMatch(html, /href="\/api/);
 });
+
+test("full and compact public footers link to the HTML sitemap", async () => {
+  const sitemapHtml = await (await fetch(`${baseUrl}/sitemap`)).text();
+  const fullFooter = sitemapHtml.match(
+    /<nav class="aflegal" aria-label="Legal">([\s\S]*?)<\/nav>/,
+  );
+  assert.ok(fullFooter, "full footer legal navigation is missing");
+  assert.match(fullFooter[1], /href="\/sitemap"[^>]*>Sitemap<\/a>/);
+
+  const startProjectHtml = await (
+    await fetch(`${baseUrl}/start-project`)
+  ).text();
+  const compactFooter = startProjectHtml.match(/<footer>([\s\S]*?)<\/footer>/);
+  assert.ok(compactFooter, "compact footer is missing");
+  assert.match(compactFooter[1], /href="\/sitemap"[^>]*>Sitemap<\/a>/);
+});
+
+test("crawler files advertise the XML feed and include only public content", async () => {
+  const sitemapResponse = await fetch(`${baseUrl}/sitemap.xml`);
+  const sitemapXml = await sitemapResponse.text();
+
+  assert.equal(sitemapResponse.status, 200);
+  assert.match(sitemapXml, /<loc>https:\/\/admirate\.in\/sitemap<\/loc>/);
+  assert.doesNotMatch(sitemapXml, /\/dashboard/);
+  assert.doesNotMatch(sitemapXml, /\/api\//);
+
+  const robots = await (await fetch(`${baseUrl}/robots.txt`)).text();
+  assert.match(robots, /Sitemap: https:\/\/admirate\.in\/sitemap\.xml/);
+});

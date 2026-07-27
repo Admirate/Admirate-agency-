@@ -159,6 +159,7 @@ export const footerHtml = () => `
     <nav class="aflegal" aria-label="Legal">
       <a href="/privacy-policy" data-h>Privacy Policy</a>
       <a href="/terms" data-h>Terms &amp; Conditions</a>
+      <a href="/sitemap" data-h>Sitemap</a>
     </nav>
     <span>${SITE.city} <b class="afclock" id="afclock">--:--:--</b></span>
   </div>

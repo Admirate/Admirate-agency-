@@ -35,6 +35,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    {
+      url: `${SITE.url}/sitemap`,
+      lastModified: PAGES_UPDATED,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
     /* The six service pages sit just below /services, which remains the
        overview that links to them, and above the posts. */
     ...SERVICE_LIST.map((s) => ({
