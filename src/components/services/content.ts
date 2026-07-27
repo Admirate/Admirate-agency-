@@ -74,6 +74,7 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 @keyframes orb{to{transform:translateY(-50%) rotate(360deg)}}
 #hero .inner{position:relative;z-index:1;will-change:transform}
 #hero .tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--red);margin-bottom:28px;opacity:0}
+#hero .tag::before{content:"// "}
 body.ready #hero .tag{animation:fadeUp .7s .1s forwards}
 @keyframes fadeUp{to{opacity:1;transform:none}}
 #hero h1{font-family:var(--display);font-weight:900;font-stretch:110%;font-size:clamp(36px,7.2vw,104px);line-height:1.02;letter-spacing:-.015em;max-width:15ch}
@@ -429,6 +430,9 @@ ${showcaseCss(".sec.active")}
   #dots button{width:5px;height:5px}
   #dots button.on{height:16px}
 
+  #hero .tag::before{display:none}
+  #eye .eb,#logos .eb,#web .eb,#clients .eb,#reels .eb,#tv .eb,#collat .eb{display:none}
+
   /* Human-length scrubs: same choreography over less travel. */
   #eye{height:200vh}
   #web{height:220vh}
@@ -600,7 +604,7 @@ export const SERVICES_HTML = String.raw`
   <div class="grid-bg"></div>
   <div class="orbit"></div>
   <div class="inner" id="heroinner">
-    <div class="tag">// OUR DESIGN WORK</div>
+    <div class="tag">OUR DESIGN WORK</div>
     <h1>
       <span class="w" style="--d:.15s">Design</span>
       <span class="w" style="--d:.25s">that</span>
