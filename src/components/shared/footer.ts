@@ -156,7 +156,7 @@ export const footerHtml = () => `
 
   <div class="afbot">
     <span>© 2026 ${SITE.name}.IN — MADE TO CONVERT</span>
-    <nav class="aflegal" aria-label="Legal">
+    <nav class="aflegal" aria-label="Legal and site information">
       <a href="/privacy-policy" data-h>Privacy Policy</a>
       <a href="/terms" data-h>Terms &amp; Conditions</a>
       <a href="/sitemap" data-h>Sitemap</a>

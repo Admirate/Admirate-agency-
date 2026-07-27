@@ -11,6 +11,34 @@ const baseUrl = `http://127.0.0.1:${port}`;
 let server;
 let output = "";
 
+const expectedPublicPaths = [
+  "/",
+  "/services",
+  "/blogs",
+  "/start-project",
+  "/services/identity",
+  "/services/design",
+  "/services/social-media",
+  "/services/digital",
+  "/services/video-production",
+  "/services/brand-collaterals",
+  "/blogs/why-your-website-is-slow",
+  "/blogs/what-a-logo-actually-costs",
+  "/blogs/packaging-gets-three-seconds",
+  "/blogs/what-social-media-management-actually-is",
+  "/blogs/when-to-rebrand",
+  "/blogs/what-a-brand-film-costs",
+  "/blogs/your-logo-has-half-a-second",
+  "/blogs/the-homepage-scavenger-hunt",
+  "/blogs/where-the-eye-actually-goes",
+  "/blogs/reels-that-route",
+  "/blogs/consistency-is-the-strategy",
+  "/blogs/the-brief-is-the-work",
+  "/privacy-policy",
+  "/terms",
+  "/sitemap",
+];
+
 async function waitForServer() {
   for (let attempt = 0; attempt < 80; attempt += 1) {
     if (server.exitCode !== null) {
@@ -80,35 +108,7 @@ test("HTML sitemap renders every public destination with canonical metadata", as
   );
   assert.match(html, /ADMIRATE \/ SITE DIRECTORY/);
 
-  const expectedPaths = [
-    "/",
-    "/services",
-    "/blogs",
-    "/start-project",
-    "/services/identity",
-    "/services/design",
-    "/services/social-media",
-    "/services/digital",
-    "/services/video-production",
-    "/services/brand-collaterals",
-    "/blogs/why-your-website-is-slow",
-    "/blogs/what-a-logo-actually-costs",
-    "/blogs/packaging-gets-three-seconds",
-    "/blogs/what-social-media-management-actually-is",
-    "/blogs/when-to-rebrand",
-    "/blogs/what-a-brand-film-costs",
-    "/blogs/your-logo-has-half-a-second",
-    "/blogs/the-homepage-scavenger-hunt",
-    "/blogs/where-the-eye-actually-goes",
-    "/blogs/reels-that-route",
-    "/blogs/consistency-is-the-strategy",
-    "/blogs/the-brief-is-the-work",
-    "/privacy-policy",
-    "/terms",
-    "/sitemap",
-  ];
-
-  for (const path of expectedPaths) {
+  for (const path of expectedPublicPaths) {
     const escapedPath = path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     assert.match(html, new RegExp(`href="${escapedPath}"`), `missing ${path}`);
   }
@@ -117,10 +117,30 @@ test("HTML sitemap renders every public destination with canonical metadata", as
   assert.doesNotMatch(html, /href="\/api/);
 });
 
+test("sitemap client bundles omit full article and policy bodies", async () => {
+  const html = await (await fetch(`${baseUrl}/sitemap`)).text();
+  const scriptUrls = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(
+    (match) => new URL(match[1], baseUrl),
+  );
+  const scripts = await Promise.all(
+    scriptUrls.map(async (url) => (await fetch(url)).text()),
+  );
+  const clientCode = scripts.join("\n");
+
+  assert.doesNotMatch(
+    clientCode,
+    /Your website looks fine\. It looks fine because/,
+  );
+  assert.doesNotMatch(
+    clientCode,
+    /Under the DPDP Act we are the Data Fiduciary/,
+  );
+});
+
 test("full and compact public footers link to the HTML sitemap", async () => {
   const sitemapHtml = await (await fetch(`${baseUrl}/sitemap`)).text();
   const fullFooter = sitemapHtml.match(
-    /<nav class="aflegal" aria-label="Legal">([\s\S]*?)<\/nav>/,
+    /<nav class="aflegal" aria-label="Legal and site information">([\s\S]*?)<\/nav>/,
   );
   assert.ok(fullFooter, "full footer legal navigation is missing");
   assert.match(fullFooter[1], /href="\/sitemap"[^>]*>Sitemap<\/a>/);
@@ -138,7 +158,21 @@ test("crawler files advertise the XML feed and include only public content", asy
   const sitemapXml = await sitemapResponse.text();
 
   assert.equal(sitemapResponse.status, 200);
-  assert.match(sitemapXml, /<loc>https:\/\/admirate\.in\/sitemap<\/loc>/);
+  const xmlPaths = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => new URL(match[1]).pathname,
+  );
+  const sitemapHtml = await (await fetch(`${baseUrl}/sitemap`)).text();
+  const directoryMarkup = sitemapHtml.match(
+    /<div class="map-wrap map-groups">([\s\S]*?)<\/div>\s*<\/div>\s*<div class="afoot">/,
+  );
+  assert.ok(directoryMarkup, "sitemap directory markup is missing");
+  const htmlPaths = [...directoryMarkup[1].matchAll(/href="([^"]+)"/g)].map(
+    (match) => match[1],
+  );
+
+  assert.deepEqual(htmlPaths, expectedPublicPaths);
+  assert.equal(new Set(xmlPaths).size, xmlPaths.length, "duplicate XML URLs");
+  assert.deepEqual([...xmlPaths].sort(), [...htmlPaths].sort());
   assert.doesNotMatch(sitemapXml, /\/dashboard/);
   assert.doesNotMatch(sitemapXml, /\/api\//);
 
