@@ -84,8 +84,15 @@ else{
 }
 
 /* ---------- chips ---------- */
-const SVC=['Branding','Logo design','Websites','Packaging','Social media','Video production','Print ads','Brand collaterals','Booking systems','Chatbots','Campaigns','Reels & shorts'];
-const BUD=['UNDER ₹50K','₹50K–2L','₹2–5L','₹5L+','NOT SURE YET'];
+/* The first three are the packages sold on /pricing, and they lead because
+   that is where most of this traffic now arrives from. The rest are the
+   one-off pieces of work that do not belong to a package. */
+const SVC=['Digital retainer','Website build','Website care','Branding','Logo design','Packaging','Social media','Video production','Print ads','Brand collaterals','Booking systems','Campaigns','Reels & shorts'];
+/* Bracketed around the published rate card rather than round numbers. In
+   rupees the products run ₹18K–66K a month for care, ₹1.02L–2.46L a month for
+   a retainer, and ₹1.38L–3.59L once for a build — so the old "₹5L+" band
+   caught nothing we sell and "under ₹50K" caught only the entry care plan. */
+const BUD=['UNDER ₹50K','₹50K–1.5L','₹1.5L–3L','₹3L–5L','₹5L+','NOT SURE YET'];
 const TIME=['ASAP','THIS MONTH','THIS QUARTER','FLEXIBLE'];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function fillChips(id,arr){
@@ -111,16 +118,72 @@ const SERVICE_CHIPS={
   'identity':['Branding','Logo design'],
   'design':['Campaigns','Print ads'],
   'social media':['Social media'],
-  'digital':['Websites'],
+  'digital':['Website build'],
   'video production':['Video production'],
   'brand collaterals':['Brand collaterals'],
 };
+
+/* ---------- arriving from /pricing ----------
+   Every tier card links here as ?service=…&plan=<slug>&cycle=<id>. Until now
+   only `service` was read and the other two were dropped on the floor — so
+   someone who had already picked Growth on an annual cycle arrived at a blank
+   form and had to say it again, and we never learned which card they clicked.
+
+   `plan` alone is ambiguous: "launch" and "growth" are slugs in two different
+   families. `service` is what disambiguates them, so the pair is resolved
+   together. */
+const PLAN_NAMES={launch:'Launch',growth:'Growth',scale:'Scale',enterprise:'Enterprise',care:'Care',manage:'Manage',grow:'Grow'};
+const CYCLE_NAMES={monthly:'monthly',quarterly:'quarterly',biannual:'every 6 months',annual:'annually'};
+/* Which package a ?service= value means, for the sentence and the chip. */
+const PACKAGE_BY_SERVICE={'social media':'Digital retainer','digital':'Website build'};
+/* Slugs that only exist in the care family, whatever `service` claims. */
+const CARE_SLUGS=['care','manage','grow'];
+
 try{
-  const want=new URLSearchParams(location.search).get('service');
-  const wanted=want?SERVICE_CHIPS[want.trim().toLowerCase()]:null;
-  if(wanted){
-    const box=document.getElementById('svc');
+  const q=new URLSearchParams(location.search);
+  const want=q.get('service');
+  const planSlug=(q.get('plan')||'').trim().toLowerCase();
+  const cycle=(q.get('cycle')||'').trim().toLowerCase();
+  const box=document.getElementById('svc');
+
+  /* A care slug wins over `service`. /pricing sends "Digital" for both the
+     build and the care plans, so mapping it blindly ticked "Website build" on
+     a care enquiry — the visitor would have arrived asking for a site they
+     already have. */
+  const isCare=CARE_SLUGS.indexOf(planSlug)>-1;
+  const wanted=(!isCare&&want)?SERVICE_CHIPS[want.trim().toLowerCase()]:null;
+  if(wanted&&box){
     [...box.children].forEach(c=>{ if(wanted.includes(c.dataset.v)) c.classList.add('on'); });
+  }
+
+  const planName=PLAN_NAMES[planSlug];
+  if(planName&&box){
+    const pkg=isCare
+      ? 'Website care'
+      : PACKAGE_BY_SERVICE[(want||'').trim().toLowerCase()];
+
+    if(pkg){
+      [...box.children].forEach(c=>{ if(c.dataset.v===pkg) c.classList.add('on'); });
+    }
+
+    /* Say it back, so the choice made on the pricing page is visibly carried
+       rather than silently assumed. */
+    const cycleName=CYCLE_NAMES[cycle];
+    const line=pkg
+      ? `${planName} — ${pkg}${cycleName?`, billed ${cycleName}`:''}`
+      : `${planName}${cycleName?`, billed ${cycleName}`:''}`;
+
+    const note=document.getElementById('fplan');
+    if(note){
+      note.textContent=`Enquiring about: ${line}`;
+      note.hidden=false;
+    }
+
+    /* Seed the brief so the tier reaches us even if they never touch the box.
+       Appended rather than assigned, in case the field was restored by the
+       browser from a previous attempt. */
+    const brief=document.getElementById('f-brief');
+    if(brief&&!brief.value.trim()) brief.value=`I'm interested in ${line}.\n\n`;
   }
 }catch(e){/* malformed query string — leave every chip unselected */}
 
@@ -132,23 +195,66 @@ const status=document.getElementById('fstatus');
 const F=id=>document.getElementById(id);
 const picked=id=>[...document.getElementById(id).querySelectorAll('.chip.on')].map(c=>c.dataset.v);
 
+const FIELDS=['f-name','f-email','f-phone','f-co','f-brief'];
+
 const _onSubmit=async e=>{
   e.preventDefault();
-  ['f-name','f-email','f-brief'].forEach(id=>F(id).classList.remove('err'));
+  FIELDS.forEach(id=>{ F(id).classList.remove('err'); F(id).removeAttribute('aria-invalid'); });
+  document.getElementById('svc').classList.remove('err');
   status.className='fstatus'; status.textContent='';
 
   const name=F('f-name').value.trim();
   const email=F('f-email').value.trim();
+  const phone=F('f-phone').value.trim();
+  const company=F('f-co').value.trim();
   const brief=F('f-brief').value.trim();
-  const bad=[];
-  /* Mirrors the zod schema on /api/contact so the user never round-trips to fail. */
-  if(name.length<2) bad.push('f-name');
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) bad.push('f-email');
-  if(brief.length<10) bad.push('f-brief');
-  if(bad.length){
-    bad.forEach(id=>F(id).classList.add('err'));
+  const services=picked('svc');
+
+  /* Every rule the zod schema on /api/contact enforces, checked here first so
+     nothing round-trips only to come back as a generic failure. The upper
+     bounds matter as much as the lower ones: the server caps the brief at 2000
+     characters and the company at 120, and before this a long brief was
+     accepted by the form and rejected by the API.
+
+     Each rule carries its own message. The form has no placeholders any more,
+     so "fill the marked fields" no longer tells anyone what was wrong with
+     what they typed. */
+  const problems=[];
+  const fail=(id,msg)=>problems.push({id,msg});
+
+  if(name.length<2) fail('f-name','YOUR NAME NEEDS AT LEAST 2 CHARACTERS.');
+  else if(name.length>100) fail('f-name','YOUR NAME IS OVER 100 CHARACTERS.');
+
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) fail('f-email','THAT EMAIL DOES NOT LOOK RIGHT.');
+
+  /* Optional, but validated when filled — the server only checks its length,
+     so "asdf" would have been stored as a phone number. */
+  if(phone){
+    if(phone.length>20) fail('f-phone','THAT PHONE NUMBER IS TOO LONG.');
+    else if(!/^\+?[\d\s()-]{7,}$/.test(phone)) fail('f-phone','THAT PHONE NUMBER DOES NOT LOOK RIGHT.');
+  }
+
+  if(company.length>120) fail('f-co','COMPANY NAME IS OVER 120 CHARACTERS.');
+
+  if(brief.length<10) fail('f-brief','TELL US A LITTLE MORE — 10 CHARACTERS MINIMUM.');
+  else if(brief.length>2000) fail('f-brief','THE BRIEF IS OVER 2000 CHARACTERS. TRIM IT AND WE WILL ASK THE REST.');
+
+  /* The one addition beyond the server's rules. An enquiry naming nothing it
+     needs cannot be routed or quoted, and the chips are one tap. */
+  if(!services.length) fail('svc','PICK AT LEAST ONE THING YOU NEED.');
+
+  if(problems.length){
+    problems.forEach(({id})=>{
+      const el=F(id);
+      el.classList.add('err');
+      if(id!=='svc') el.setAttribute('aria-invalid','true');
+    });
     status.classList.add('bad');
-    status.textContent='// FILL THE MARKED FIELDS FIRST.';
+    /* The first problem, named. Listing all of them at once buries the one
+       the visitor is about to fix. */
+    status.textContent='// '+problems[0].msg;
+    const first=F(problems[0].id);
+    if(first&&first.focus) first.focus({preventScroll:false});
     return;
   }
 

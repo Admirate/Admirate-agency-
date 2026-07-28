@@ -18,6 +18,7 @@ import {
   formatPrice,
   perMonth,
   planAmount,
+  PRICING_TAG,
   resolveCurrency,
   taxOn,
   withTax,
@@ -90,7 +91,12 @@ const getPricing = unstable_cache(
     };
   },
   ["pricing-payload"],
-  { tags: ["pricing"], revalidate: 3600 },
+  /* 60s, not an hour. A write through the dashboard purges the tag and is
+     live immediately, but a price corrected straight in the Supabase table
+     editor bypasses that — and an hour of a public page showing the old
+     figure is the kind of gap nobody notices until a client quotes it back.
+     The query is four small selects, so the floor costs little. */
+  { tags: [PRICING_TAG], revalidate: 60 },
 );
 
 /* ---------------------------------------------------------------- copy ---- */
@@ -98,12 +104,7 @@ const getPricing = unstable_cache(
 const FAMILIES = [
   {
     id: "retainer" as const,
-    /* The eyebrow states how you are charged rather than counting sections.
-       Three products are not a sequence, so "01 / 02 / 03" was decorating the
-       page; the billing model is information you need before reading a figure. */
-    eyebrow: "DIGITAL RETAINER — BILLED MONTHLY",
-    title: "The month, <em>handled</em>.",
-    lead: "Planned, written, designed, published, reported. The same rhythm every month, so your presence stops depending on who remembers to post.",
+    title: "DIGITAL <em>RETAINER</em>",
     note: "Website maintenance is included at every tier.",
     bg: "#FFFFFF",
     cycles: true,
@@ -114,18 +115,14 @@ const FAMILIES = [
   },
   {
     id: "website" as const,
-    eyebrow: "WEBSITE DEVELOPMENT — ONE PAYMENT",
-    title: "Built once. Built <em>right</em>.",
-    lead: "Design, copy, structure and the integrations that turn a visit into an enquiry. There is no monthly fee on the site itself.",
+    title: "WEBSITE <em>DEVELOPMENT</em>",
     bg: "#FAFAF8",
     cycles: false,
     service: "Digital",
   },
   {
     id: "care" as const,
-    eyebrow: "WEBSITE CARE — BILLED MONTHLY",
-    title: "Kept fast, safe and <em>current</em>.",
-    lead: "Updates, backups, monitoring and the edits you actually ask for — so the site you paid for is still the site you have in two years.",
+    title: "WEBSITE <em>CARE</em>",
     bg: "#0B0B0C",
     dark: true,
     cycles: true,
@@ -196,13 +193,43 @@ function buildView(payload: Payload, active: string): PricingView {
     currencies.find((c) => c.code === active) ?? currencies[0];
 
   const families: PricingFamilyView[] = FAMILIES.map((meta) => {
-    const plans: PricingPlanView[] = payload.plans
+    const familyFeatures = payload.features.filter((f) => f.family === meta.id);
+    const ordered = payload.plans
       .filter((p) => p.family === meta.id)
-      .map((p) => {
+      .sort((a, b) => a.tier_order - b.tier_order);
+
+    /** What one tier actually has: label -> cell value, absences dropped. */
+    const heldBy = (slug: string) =>
+      new Map(
+        familyFeatures
+          .map((f) => [f.label, (f.values ?? {})[slug] ?? "—"] as const)
+          .filter(([, v]) => v !== "—" && v !== ""),
+      );
+
+    const plans: PricingPlanView[] = ordered
+      .map((p, tier): PricingPlanView | null => {
         const amount = planAmount(p.id, currency, payload.amounts);
         if (amount === null) return null;
 
         const oneTime = p.price_type === "one_time";
+
+        /* The card lists what this tier ADDS over the one below it, under an
+           "Everything in X, plus" line. Repeating all seventeen rows on all
+           three cards made them unreadable and buried the actual difference,
+           which is the only thing a visitor comparing tiers is looking for.
+           The full grid is still one click away in the comparison table.
+
+           A row carries over when it is present at the same value, and is
+           listed when it is new OR when its value moved — "Technical Support"
+           going from a tick to "Priority" is an upgrade and has to show. */
+        const mine = heldBy(p.slug);
+        const below = tier > 0 ? heldBy(ordered[tier - 1].slug) : new Map();
+
+        const includes = [...mine]
+          .filter(([label, value]) => below.get(label) !== value)
+          .map(([label, value]) =>
+            value === "✓" ? { label } : { label, note: value },
+          );
 
         return {
           id: p.id,
@@ -211,6 +238,8 @@ function buildView(payload: Payload, active: string): PricingView {
           blurb: p.blurb,
           featured: p.featured,
           oneTime,
+          includes,
+          inheritsFrom: tier > 0 ? ordered[tier - 1].name : undefined,
           /* Every currency, not just the active one, so a switch is a lookup
              rather than a fetch. */
           cells: Object.fromEntries(

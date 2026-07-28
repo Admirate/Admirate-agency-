@@ -46,7 +46,9 @@ export async function POST(request: NextRequest) {
       replyTo: "essentials@admirate.in",
       to: recipients.map((r) => r.email),
       subject: scheduledDraft.subject,
-      react: EmailTemplate({
+      /* `html`, not `react`: the template emits Outlook conditional comments
+         and VML, which JSX cannot express. */
+      html: EmailTemplate({
         subject: scheduledDraft.subject,
         body: scheduledDraft.body,
       }),

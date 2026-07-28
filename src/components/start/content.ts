@@ -108,6 +108,14 @@ body.ready #scrollhint{animation:fadeUp .7s 1.65s forwards}
 .fhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px}
 .fhead .ft{font-family:var(--display);font-weight:800;font-stretch:106%;font-size:clamp(18px,1.8vw,22px);letter-spacing:-.01em}
 .fhead .fm{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--grey)}
+/* Reads back the tier picked on /pricing. Red rule on the left rather than a
+   filled box, so it states the context without becoming a second heading. */
+.fplan{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;line-height:1.6;
+  color:#4a4a4e;border-left:2px solid var(--red);
+  padding:2px 0 2px 12px;margin:-8px 0 20px;
+}
+.fplan[hidden]{display:none}
 
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:13px}
 .fgroup{display:flex;flex-direction:column;gap:6px}
@@ -123,6 +131,10 @@ textarea.fin{resize:vertical;min-height:92px;line-height:1.55}
 .fsec{margin:4px 0 13px}
 .fsec .fl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:#5a5a5e;margin-bottom:9px}
 .chipset{display:flex;flex-wrap:wrap;gap:7px}
+/* A chip group cannot take the input border treatment, so an unanswered group
+   is marked by tinting its own chips rather than drawing a box around them. */
+.chipset.err{animation:shake .4s}
+.chipset.err .chip{border-color:var(--red)}
 .chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;border:1px solid var(--line);background:var(--white);padding:8px 12px;transition:background .18s,border-color .18s,color .18s,transform .18s,box-shadow .18s;user-select:none}
 .chip:hover{border-color:var(--red);transform:translateY(-2px);box-shadow:3px 3px 0 rgba(227,0,27,.14)}
 .chip.on{background:var(--red);border-color:var(--red);color:#fff;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
@@ -231,25 +243,30 @@ export const START_HTML = String.raw`
           <div class="fm">~ 2 MIN</div>
         </div>
 
+        <!-- Filled by init.ts when the visitor arrives from a /pricing tier
+             card. Hidden otherwise, so a direct visit sees the form it always
+             saw. -->
+        <p class="fplan" id="fplan" hidden></p>
+
         <div class="frow fx" style="--fd:.12s">
           <div class="fgroup">
             <label for="f-name">YOUR NAME <b>*</b></label>
-            <input class="fin" id="f-name" name="name" type="text" placeholder="First name is fine" autocomplete="name">
+            <input class="fin" id="f-name" name="name" type="text" autocomplete="name">
           </div>
           <div class="fgroup">
             <label for="f-co">BRAND / COMPANY</label>
-            <input class="fin" id="f-co" name="company" type="text" placeholder="What are we making famous?" autocomplete="organization">
+            <input class="fin" id="f-co" name="company" type="text" autocomplete="organization">
           </div>
         </div>
 
         <div class="frow fx" style="--fd:.19s">
           <div class="fgroup">
             <label for="f-email">EMAIL <b>*</b></label>
-            <input class="fin" id="f-email" name="email" type="email" placeholder="you@company.com" autocomplete="email">
+            <input class="fin" id="f-email" name="email" type="email" autocomplete="email">
           </div>
           <div class="fgroup">
             <label for="f-phone">PHONE / WHATSAPP</label>
-            <input class="fin" id="f-phone" name="phone" type="tel" placeholder="+91 …" autocomplete="tel">
+            <input class="fin" id="f-phone" name="phone" type="tel" autocomplete="tel">
           </div>
         </div>
 
@@ -260,7 +277,7 @@ export const START_HTML = String.raw`
 
         <div class="frow fx" style="--fd:.33s">
           <div class="fgroup">
-            <span class="fl" style="margin-bottom:3px">BUDGET</span>
+            <span class="fl" style="margin-bottom:3px">BUDGET <span style="color:var(--grey)">— MONTHLY, OR ONE-OFF FOR A BUILD</span></span>
             <div class="chipset" id="budget" data-single></div>
           </div>
           <div class="fgroup">
@@ -272,7 +289,7 @@ export const START_HTML = String.raw`
         <div class="fx" style="--fd:.4s">
           <div class="fgroup" style="margin-bottom:7px">
             <label for="f-brief">ABOUT YOUR PROJECT <b>*</b></label>
-            <textarea class="fin" id="f-brief" name="brief" rows="4" placeholder="e.g. We're a café chain opening in Hyderabad — need a logo, a website with table booking, and reels for launch month. Site refs: …"></textarea>
+            <textarea class="fin" id="f-brief" name="brief" rows="4"></textarea>
           </div>
           <div class="helper">Goals, links, deadlines — whatever you mention now, we'll have studied before the call.</div>
         </div>

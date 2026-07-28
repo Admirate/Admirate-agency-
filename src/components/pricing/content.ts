@@ -76,14 +76,29 @@ export type PricingPlanView = {
   oneTime: boolean;
   /** currency code -> cycle id -> cell. One-time plans use the "monthly" key. */
   cells: Record<string, Record<string, PriceCell>>;
+  /**
+   * What this tier adds over the one below it.
+   *
+   * Not the full inventory: every tier inherits the one beneath it, so the
+   * card states the inheritance once and then lists only the difference. A
+   * row appears when it is new to this tier or when its value moved. The
+   * comparison table carries the complete grid.
+   *
+   * `note` carries a countable value ("8", "Up to 5", "Priority"); a plain
+   * tick has none.
+   */
+  includes: { label: string; note?: string }[];
+  /** The tier below this one, named. Absent on the entry tier. */
+  inheritsFrom?: string;
 };
 
 export type PricingFamilyView = {
   id: "retainer" | "website" | "care";
-  /** States the billing model, not a position in a sequence. */
-  eyebrow: string;
+  /** Optional: the heading now names the product, so most sections carry none. */
+  eyebrow?: string;
   title: string;
-  lead: string;
+  /** Optional. Sections that need no preamble go straight to the tiers. */
+  lead?: string;
   /** Stated under the heading where a family has a blanket inclusion. */
   note?: string;
   bg: string;
@@ -263,7 +278,7 @@ body.smopen{overflow:hidden}
 .ptier .pprice{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:clamp(12px,2vh,20px)}
 .ptier .pfig{
   font-family:var(--display);font-weight:900;font-stretch:108%;
-  font-size:clamp(27px,3.4vw,45px);line-height:.96;letter-spacing:-.035em;
+  font-size:clamp(26px,3.1vw,41px);line-height:.96;letter-spacing:-.035em;
   white-space:nowrap;
   transition:opacity .2s,transform .2s;
 }
@@ -289,6 +304,38 @@ body.smopen{overflow:hidden}
 }
 .pgs.dark .ptier .ptax{color:#75757a;border-color:rgba(255,255,255,.14)}
 .ptier.feat .ptax{border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.82)}
+
+/* ---------- what the tier includes ----------
+   Listed on the card, not only in the comparison table: a visitor deciding
+   between three tiers should not have to open a table to learn what they are
+   buying. Absent rows are omitted upstream, so every line here is a yes. */
+.pincwrap{margin:20px 0 24px 0;padding:18px 0 0 0;border-top:1px solid var(--line)}
+.pgs.dark .pincwrap{border-top-color:rgba(255,255,255,.14)}
+.ptier.feat .pincwrap{border-top-color:rgba(255,255,255,.28)}
+/* States the inheritance once, so the list beneath is only the difference. */
+.pinh{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:#7a7a7e;margin-bottom:14px;
+}
+.pinh b{font-weight:400;color:var(--red)}
+.pgs.dark .pinh{color:#8a8a8e}
+.ptier.feat .pinh{color:rgba(255,255,255,.72)}
+.ptier.feat .pinh b{color:#fff}
+.pinc{list-style:none;margin:0;padding:0}
+.pinc li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:15px;line-height:1.5;color:#3a3a3e;padding:6px 0;
+}
+.pgs.dark .pinc li{color:#a4a4a8}
+.ptier.feat .pinc li{color:rgba(255,255,255,.9)}
+.pinc .pick{flex:0 0 auto;color:var(--red);font-size:13px;line-height:1.7}
+.ptier.feat .pinc .pick{color:#fff}
+.pgs.dark .ptier:not(.feat) .pinc .pick{color:var(--red)}
+/* The countable part of a row — "8", "Up to 5", "Priority" — set apart from
+   the label so the number is scannable down the column. */
+.pinc b{font-weight:600;color:var(--black);margin-left:6px}
+.pgs.dark .pinc b{color:#fff}
+.ptier.feat .pinc b{color:#fff}
 
 .ptier .pbtn{
   position:relative;display:inline-flex;align-items:center;justify-content:space-between;gap:9px;
@@ -485,6 +532,25 @@ const tierCard = (
       </div>
       <p class="pbill"><span data-bill>${esc(c.billTotal)}</span><em data-save>${esc(c.billSaving)}</em></p>
       <p class="ptax" data-tax>${esc(c.tax)}</p>
+      ${
+        plan.inheritsFrom || plan.includes.length
+          ? `<div class="pincwrap">
+        ${plan.inheritsFrom ? `<p class="pinh">Everything in <b>${esc(plan.inheritsFrom)}</b>, plus</p>` : ""}
+        ${
+          plan.includes.length
+            ? `<ul class="pinc">
+          ${plan.includes
+            .map(
+              (f) =>
+                `<li><span class="pick" aria-hidden="true">✓</span><span>${esc(f.label)}${f.note ? `<b>${esc(f.note)}</b>` : ""}</span></li>`,
+            )
+            .join("\n          ")}
+        </ul>`
+            : ""
+        }
+      </div>`
+          : ""
+      }
       <a class="pbtn" href="${esc(href)}" data-cta data-base="${esc(href.split("&cycle=")[0])}" data-h><span>Start with ${esc(plan.name)}</span> <span class="ar">→</span></a>
     </article>`;
 };
@@ -546,9 +612,9 @@ const familySection = (family: PricingFamilyView, view: PricingView) => {
 
   return `
 <section class="pgs${family.dark ? " dark" : ""}" id="fam-${family.id}" data-bg="${family.bg}" data-label="${esc(family.title)}" data-family="${family.id}">
-  <p class="pgeb up">${esc(family.eyebrow)}</p>
+  ${family.eyebrow ? `<p class="pgeb up">${esc(family.eyebrow)}</p>` : ""}
   <h2 class="pgh up" style="--d:.06s">${family.title}</h2>
-  <p class="pgp up" style="--d:.1s">${esc(family.lead)}</p>
+  ${family.lead ? `<p class="pgp up" style="--d:.1s">${esc(family.lead)}</p>` : ""}
   ${family.note ? `<p class="pgnote up" style="--d:.13s">${esc(family.note)}</p>` : ""}
   ${cycleControl}
   <div class="ptiers up" style="--d:.2s">
