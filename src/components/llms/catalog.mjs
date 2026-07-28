@@ -32,6 +32,11 @@ export function buildLlmsSections({
           "ADMIRATE's design, marketing, digital, video, and brand services.",
         ),
         resource(
+          "Pricing",
+          originUrl(origin, "/pricing"),
+          "Published rates for ADMIRATE's digital retainers, website development, and website care, shown exclusive of tax.",
+        ),
+        resource(
           "Journal",
           originUrl(origin, "/blogs"),
           "Practical writing about branding, design, websites, and marketing.",

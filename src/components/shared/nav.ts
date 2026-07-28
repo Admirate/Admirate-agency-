@@ -79,13 +79,19 @@ export const NAV_CSS = String.raw`
 .pnav .pcta:hover{background:var(--red);color:#fff;transform:translateY(-1px)}
 .pnav .pcta:hover .ar{transform:translateX(3px)}
 
+/* ---------- the four-link ladder ----------
+   A fourth link (Pricing) went in between Services and Blogs, which is roughly
+   50px the pill did not have at the bottom of the range. The steps below give
+   it up in the order that costs the least, and only when the width forces it:
+   spacing first, then the CTA's long label, then the Services caret, and last
+   the Home link — which the brand chip beside it already duplicates. */
+
 /* Tablet — drop the gaps before anything has to shrink. */
 @media (max-width:860px){
   .pnav{gap:8px;padding:6px}
   .pnav .plink{padding:8px 10px}
 }
-/* Phone — the logo chip tightens and the long half of the CTA label goes, so
-   the three links survive at a tappable size. */
+/* Phone — the logo chip tightens and the long half of the CTA label goes. */
 @media (max-width:640px){
   .pnav{gap:2px;padding:4px;top:10px}
   .pnav .pchip{padding:5px 8px}
@@ -94,21 +100,27 @@ export const NAV_CSS = String.raw`
   .pnav .pcta{padding:0 12px;font-size:12.5px;gap:5px}
   .pnav .pcta .ctalong{display:none}
 }
-@media (max-width:380px){
+@media (max-width:560px){
+  .pnav .plinks{margin-left:6px;gap:1px}
+  .pnav .plink{padding:0 6px;font-size:12px}
+}
+@media (max-width:440px){
   .pnav .pchip{padding:4px 7px}
   .pnav .plogo{height:12px}
-  .pnav .plink{padding:0 6px;font-size:12px}
+  .pnav .plink{padding:0 5px;font-size:11.5px}
   .pnav .pcta{padding:0 10px}
 }
-/* Last stop before the CTA would be pushed past the pill's edge (320px-class
-   phones). Everything gives up a couple of pixels rather than any one element
-   collapsing. */
-@media (max-width:340px){
+/* Last stop (320px-class phones). Home goes rather than letting four links
+   crush to an untappable size: the brand chip immediately to its left is
+   already a link to /, so the destination is still one tap away and nothing
+   has actually been removed from the page. */
+@media (max-width:400px){
   .pnav{gap:1px}
   .pnav .pchip{padding:3px 6px}
   .pnav .plogo{height:11px}
   .pnav .plink{padding:0 5px;font-size:11.5px}
   .pnav .pcta{padding:0 9px;font-size:12px}
+  .pnav .plink[data-home]{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .pnav,.pnav .pchip,.pnav .pcta,.pnav .pcta .ar{transition:none}
@@ -119,8 +131,14 @@ export const NAV_CSS = String.raw`
    navigating. The panel carries its own "Overview" link so /services itself is
    still reachable. Full-screen ink, so it reads as part of the site rather than
    as a dropdown bolted onto it. */
+/* No "font:inherit" here. The shorthand resets font-size, and because this
+   rule sits after .plink at equal specificity it won the cascade — so
+   "Services" rendered at the body's 16px while its three neighbours were at
+   13.5px, and every breakpoint below that silently missed it too. The button
+   already carries .plink, which supplies the font; this rule only needs to
+   strip the parts a <button> brings of its own. */
 .pnav .pmenu{
-  background:none;border:0;font:inherit;cursor:pointer;
+  background:none;border:0;font-family:inherit;cursor:pointer;
   display:inline-flex;align-items:center;gap:5px;
 }
 .pnav .pmenu .pcar{
@@ -129,6 +147,16 @@ export const NAV_CSS = String.raw`
 }
 .pnav .pmenu[aria-expanded="true"] .pcar{transform:rotate(180deg);opacity:1}
 .pnav .pmenu[aria-expanded="true"]{color:#fff}
+
+/* Has to sit after the rule above rather than up in the ladder: both are
+   (0,3,0), so at equal specificity the later one wins and a hide placed
+   earlier would simply lose. The caret is decoration — the button still reads
+   "Services" and still carries aria-expanded, so nothing is lost by dropping
+   it once the width is genuinely scarce. */
+@media (max-width:560px){
+  .pnav .pmenu .pcar{display:none}
+  .pnav .pmenu{gap:0}
+}
 
 /* Sits above the pill (z 150) and covers it; the panel's own ✕ closes it. */
 .smenu{
@@ -234,12 +262,7 @@ body.smopen{overflow:hidden}
 /* "none" is for pages that carry the nav but are not in it — the legal pages,
    which are reached from the footer. Without it they would have to claim to be
    one of the three, lighting up a link that does not lead where you are. */
-export type NavPage = "home" | "services" | "blogs" | "none";
-
-const LINKS: { id: NavPage; label: string; href: string }[] = [
-  { id: "home", label: "Home", href: "/" },
-  { id: "blogs", label: "Blogs", href: "/blogs" },
-];
+export type NavPage = "home" | "services" | "pricing" | "blogs" | "none";
 
 /**
  * The services menu.
@@ -270,12 +293,18 @@ export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
     <span class="pchip"><img class="plogo" src="${LOGO}" alt="ADMIRATE" width="213" height="46" decoding="async"></span>
   </a>
   <div class="plinks">
-    <a class="plink${active === "home" ? " on" : ""}" href="/"${
+    <!-- data-home is the hook the 400px breakpoint hides this link on. The
+         brand chip to its left goes to the same place, so at that width the
+         destination survives and only the duplicate label goes. -->
+    <a class="plink${active === "home" ? " on" : ""}" href="/" data-home${
       active === "home" ? ' aria-current="page"' : ""
     } data-h>Home</a>
     <button type="button" class="plink pmenu${
       active === "services" ? " on" : ""
     }" id="psvc" aria-expanded="false" aria-controls="smenu" aria-haspopup="dialog" data-h>Services <span class="pcar">▼</span></button>
+    <a class="plink${active === "pricing" ? " on" : ""}" href="/pricing"${
+      active === "pricing" ? ' aria-current="page"' : ""
+    } data-h>Pricing</a>
     <a class="plink${active === "blogs" ? " on" : ""}" href="/blogs"${
       active === "blogs" ? ' aria-current="page"' : ""
     } data-h>Blogs</a>
@@ -293,6 +322,7 @@ export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
   </div>
   <div class="smfoot">
     <a class="small" href="/services" data-h>Overview <span>→</span></a>
+    <a class="small" href="/pricing" data-h>Pricing <span>→</span></a>
     <span class="smnote">STRATEGIC DESIGN &amp; MARKETING</span>
   </div>
 </div>

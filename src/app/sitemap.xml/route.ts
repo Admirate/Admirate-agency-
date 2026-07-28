@@ -21,6 +21,14 @@ const sitemapEntries = (): MetadataRoute.Sitemap => [
     priority: 0.9,
   },
   {
+    url: `${SITE.url}/pricing`,
+    lastModified: PAGES_UPDATED,
+    /* Weekly, not monthly: the figures are administrator-editable without a
+       deployment, so this page can change on a day nothing else does. */
+    changeFrequency: "weekly",
+    priority: 0.9,
+  },
+  {
     url: `${SITE.url}/start-project`,
     lastModified: PAGES_UPDATED,
     changeFrequency: "monthly",

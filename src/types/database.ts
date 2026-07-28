@@ -135,6 +135,126 @@ export interface Database {
         };
         Relationships: [];
       };
+      pricing_currencies: {
+        Row: {
+          code: string;
+          symbol: string;
+          countries: string[];
+          authored: boolean;
+          rate: number | null;
+          rate_updated_at: string | null;
+          round_to: number;
+          /** Fraction, e.g. 0.18. Null means no rate is claimed — not zero. */
+          tax_rate: number | null;
+          tax_label: string | null;
+          active: boolean;
+          sort_order: number;
+        };
+        Insert: {
+          code: string;
+          symbol: string;
+          countries?: string[];
+          authored?: boolean;
+          rate?: number | null;
+          rate_updated_at?: string | null;
+          round_to?: number;
+          tax_rate?: number | null;
+          tax_label?: string | null;
+          active?: boolean;
+          sort_order?: number;
+        };
+        Update: {
+          code?: string;
+          symbol?: string;
+          countries?: string[];
+          authored?: boolean;
+          rate?: number | null;
+          rate_updated_at?: string | null;
+          round_to?: number;
+          tax_rate?: number | null;
+          tax_label?: string | null;
+          active?: boolean;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
+      pricing_plans: {
+        Row: {
+          id: string;
+          family: "retainer" | "website" | "care";
+          slug: string;
+          name: string;
+          blurb: string;
+          tier_order: number;
+          featured: boolean;
+          price_type: "recurring" | "one_time";
+        };
+        Insert: {
+          id?: string;
+          family: "retainer" | "website" | "care";
+          slug: string;
+          name: string;
+          blurb?: string;
+          tier_order?: number;
+          featured?: boolean;
+          price_type: "recurring" | "one_time";
+        };
+        Update: {
+          id?: string;
+          family?: "retainer" | "website" | "care";
+          slug?: string;
+          name?: string;
+          blurb?: string;
+          tier_order?: number;
+          featured?: boolean;
+          price_type?: "recurring" | "one_time";
+        };
+        Relationships: [];
+      };
+      pricing_amounts: {
+        Row: {
+          plan_id: string;
+          currency_code: string;
+          /** Monthly base for recurring plans; the price for one-time plans. */
+          amount: number;
+        };
+        Insert: {
+          plan_id: string;
+          currency_code: string;
+          amount: number;
+        };
+        Update: {
+          plan_id?: string;
+          currency_code?: string;
+          amount?: number;
+        };
+        Relationships: [];
+      };
+      pricing_features: {
+        Row: {
+          id: string;
+          family: "retainer" | "website" | "care";
+          label: string;
+          row_order: number;
+          /** Plan slug to cell value. "✓" and "—" are symbols; else literal. */
+          values: Record<string, string>;
+        };
+        Insert: {
+          id?: string;
+          family: "retainer" | "website" | "care";
+          label: string;
+          row_order?: number;
+          values?: Record<string, string>;
+        };
+        Update: {
+          id?: string;
+          family?: "retainer" | "website" | "care";
+          label?: string;
+          row_order?: number;
+          values?: Record<string, string>;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

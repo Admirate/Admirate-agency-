@@ -18,6 +18,7 @@ export function buildSitemapGroups({ services, posts, legalDocs }) {
       links: [
         { label: "Home", href: "/" },
         { label: "Services", href: "/services" },
+        { label: "Pricing", href: "/pricing" },
         { label: "Journal", href: "/blogs" },
         { label: "Start a Project", href: "/start-project" },
       ],

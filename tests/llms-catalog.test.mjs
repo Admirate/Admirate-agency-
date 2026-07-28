@@ -76,6 +76,7 @@ test("catalog covers public content in a stable order", () => {
     [
       "https://admirate.in",
       "https://admirate.in/services",
+      "https://admirate.in/pricing",
       "https://admirate.in/blogs",
       "https://admirate.in/start-project",
       "https://admirate.in/services/identity",

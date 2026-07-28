@@ -92,6 +92,47 @@ Derived prices round **up**, never down, and carry a visible note that they are
 converted and indicative. An exchange-rate artefact must never undercut a
 published price.
 
+### Tax presentation
+
+Prices are published **exclusive** of tax, with the applicable rate and the
+tax-inclusive total stated directly beneath the headline figure. Growth
+retainer in India reads `₹1,50,000/month`, then `+18% GST · ₹1,77,000 incl.`
+
+The exclusive figure leads because the buyers are GST- and VAT-registered
+businesses who reclaim input credit: ex-tax is the number they budget against
+and the number that appears on the quote. Leading with the inclusive figure
+would overstate the real cost to the audience the page is written for. Stating
+the inclusive total immediately beneath closes the gap between the published
+price and the invoice without demoting the commercially meaningful number.
+
+There is no inclusive/exclusive toggle. The page already carries a currency
+control and a billing-cycle control, and a third switch acting on the same
+figure is clutter for a value that cannot change within a session. The embedded
+payload carries the tax rate, so a toggle remains a small addition if the
+position changes.
+
+Tax rates are data, not constants. `tax_rate` and `tax_label` live on
+`pricing_currencies` and are editable from the dashboard alongside the amounts.
+AED is 5% VAT and INR is 18% GST. USD, GBP, and EUR carry no rate: the page
+makes no claim about foreign tax treatment it cannot stand behind, and omits
+the line entirely rather than asserting zero.
+
+### Derived cycle rounding
+
+`monthly × months × (1 − discount)` does not produce whole units for the
+quarterly cycle — `4250 × 3 × 0.95 = 12,112.50`, and all nine quarterly figures
+land on a half unit. The six-month and annual figures are clean integers.
+
+Cycle totals therefore round **up** to the whole currency unit, by the same
+principle that governs derived currencies: a rounding artefact must never
+undercut a published price. Tax amounts round up on the same rule.
+
+Open: whether the printed rate card publishes 12,113, 12,112, or 12,110 for
+quarterly Launch. The card's cycle figures are not reproduced in this document,
+so the tests assert the formula and its rounding rather than the card. One
+check against the source document will settle it; `ROUND_CYCLE_TO` in
+`src/lib/pricing.ts` is the single place to change if the card disagrees.
+
 ## Data Model
 
 Four new tables. All carry row-level security permitting public `SELECT`;
@@ -109,6 +150,8 @@ writes go through the service-role client behind `requireAdmin()`, matching
 | `rate` | `numeric` | Units per 1 AED. Ignored when `authored` is true |
 | `rate_updated_at` | `timestamptz` | Last successful refresh |
 | `round_to` | `integer` | Rounding increment. Applies only when `authored` is false |
+| `tax_rate` | `numeric` | Fraction, e.g. `0.18`. Null when no rate is claimed |
+| `tax_label` | `text` | `GST`, `VAT`. Null alongside a null `tax_rate` |
 | `active` | `boolean` | Hidden from the switcher when false |
 | `sort_order` | `integer` | Order in the switcher |
 
@@ -179,13 +222,18 @@ administrator to suit the Indian market.
 
 ### Currency rows
 
-| Code | Symbol | Countries | Authored | `round_to` |
-| --- | --- | --- | --- | --- |
-| `AED` | `AED` | `AE`, `SA`, `QA`, `KW`, `OM`, `BH` | yes | 50 |
-| `INR` | `₹` | `IN` | yes | 500 |
-| `USD` | `$` | `US`, `CA`, `AU`, `SG`, `NZ` | no | 10 |
-| `GBP` | `£` | `GB`, `IE` | no | 10 |
-| `EUR` | `€` | `DE`, `FR`, `NL`, `ES`, `IT`, `BE`, `PT`, `AT` | no | 10 |
+| Code | Symbol | Countries | Authored | `round_to` | Tax |
+| --- | --- | --- | --- | --- | --- |
+| `AED` | `AED` | `AE`, `SA`, `QA`, `KW`, `OM`, `BH` | yes | 50 | 5% VAT |
+| `INR` | `₹` | `IN` | yes | 500 | 18% GST |
+| `USD` | `$` | `US`, `CA`, `AU`, `SG`, `NZ` | no | 10 | — |
+| `GBP` | `£` | `GB`, `IE` | no | 10 | — |
+| `EUR` | `€` | `DE`, `FR`, `NL`, `ES`, `IT`, `BE`, `PT`, `AT` | no | 10 | — |
+
+The AED row's 5% VAT is the UAE rate and applies to the Gulf countries routed
+to that currency only insofar as ADMIRATE invoices them in dirhams; the rate is
+editable per currency, not per country, which is the granularity the page
+supports.
 
 Countries absent from every list fall back to `USD`. The `round_to` values for
 AED and INR are recorded for completeness but are never applied, because both
@@ -391,9 +439,11 @@ have existing tests that will need their expected counts and entries updated.
 
 Automated tests will verify that:
 
-- every published AED cycle figure in the source rate card is reproduced
-  exactly by `cycleAmount()` from the monthly base — all twenty-four of them;
+- `cycleAmount()` derives every cycle figure from the monthly base under the
+  documented discount schedule and rounding rule, for all nine plans;
 - `perMonth()` and the saving calculation agree with the cycle total;
+- `taxOn()` and `withTax()` round up and agree — 18% of ₹1,50,000 is ₹27,000
+  and the inclusive total is ₹1,77,000;
 - `resolveCurrency()` honours the documented precedence, including the invalid
   cookie and unknown country cases;
 - `convert()` rounds up and never down, at the boundary values;
@@ -420,8 +470,6 @@ implementation.
   inclusions, differing only in currency and amount.
 - Localisation of page copy. The page is English in every market.
 - Automatic currency conversion for INR. Indian prices are stored values.
-- VAT, GST, or other tax presentation. Prices are shown exclusive of tax, and
-  the page states this.
 - A public pricing API for third-party consumption.
 - Country-specific URLs such as `/ae/pricing`, or `hreflang` alternates.
 - Changes to existing service page copy, the start-project form's fields, or
@@ -431,8 +479,15 @@ implementation.
 
 The seeded INR figures are straight conversions from AED at ₹24.00 per dirham.
 They were seeded on explicit instruction and are not the output of an Indian
-market pricing exercise. They should be reviewed by the business and adjusted
-through the dashboard before the page is promoted in the Indian market.
+market pricing exercise. **Confirmed on 2026-07-28:** this is intentional — the
+Indian prices are the AED rate card converted, and no separate Indian pricing
+exercise has been carried out. Recorded here so the decision is traceable and
+so that a later reader does not mistake the figures for researched local
+pricing. They remain administrator-editable and should be revisited by the
+business before the page is promoted in the Indian market.
+
+The quarterly rounding rule is the second open item — see Derived cycle
+rounding above. It needs one check against the printed rate card.
 
 ## Implementation Note
 

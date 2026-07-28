@@ -14,6 +14,7 @@ let output = "";
 const expectedPublicPaths = [
   "/",
   "/services",
+  "/pricing",
   "/blogs",
   "/start-project",
   "/services/identity",
@@ -178,7 +179,7 @@ test("crawler files advertise the XML feed and include only public content", asy
   );
   const sitemapHtml = await (await fetch(`${baseUrl}/sitemap`)).text();
   const directoryMarkup = sitemapHtml.match(
-    /<div class="map-wrap map-groups">([\s\S]*?)<\/div>\s*<\/div>\s*<div class="afoot">/,
+    /<div class="map-wrap map-groups">([\s\S]*?)<\/div>\s*<\/div>\s*<footer class="afoot">/,
   );
   assert.ok(directoryMarkup, "sitemap directory markup is missing");
   const htmlPaths = [...directoryMarkup[1].matchAll(/href="([^"]+)"/g)].map(
@@ -222,6 +223,7 @@ test("llms.txt publishes the complete public site guide as Markdown", async () =
   const expectedInternalUrls = [
     "https://admirate.in",
     "https://admirate.in/services",
+    "https://admirate.in/pricing",
     "https://admirate.in/blogs",
     "https://admirate.in/start-project",
     "https://admirate.in/services/identity",

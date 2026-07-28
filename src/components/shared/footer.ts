@@ -108,8 +108,13 @@ const col = (heading: string, rows: string) =>
  * a crawler expects; the first attempt varied one slot per host to avoid the
  * self-link, and on /services that produced two "Home" entries side by side.
  */
+/* A <footer>, not a <div>. This is the site footer on the homepage, /services,
+   both legal pages and the sitemap; as a div it was invisible to anything
+   navigating by landmark, while the compact rails on every other page were
+   already real <footer> elements. The class is unchanged, so the stylesheet
+   and the clock are untouched. */
 export const footerHtml = () => `
-<div class="afoot">
+<footer class="afoot">
   <div class="afblob" aria-hidden="true"></div>
 
   <div class="aftop">
@@ -163,7 +168,7 @@ export const footerHtml = () => `
     </nav>
     <span>${SITE.city} <b class="afclock" id="afclock">--:--:--</b></span>
   </div>
-</div>`;
+</footer>`;
 
 /**
  * Runs the clock.

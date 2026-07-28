@@ -56,6 +56,7 @@ test("catalog contains every public page and no private route", () => {
   assert.deepEqual(paths, [
     "/",
     "/services",
+    "/pricing",
     "/blogs",
     "/start-project",
     "/services/identity",
