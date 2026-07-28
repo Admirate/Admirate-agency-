@@ -3,12 +3,6 @@
 /**
  * DIGITAL page engine.
  *
- * RACE is the one set-piece: two load bars run on demand, counting elapsed
- * time. Deliberately no conversion or bounce percentages — the repo holds no
- * such data, and an invented "you lose N% of visitors" is a claim on a public
- * page the studio would have to defend. Elapsed seconds are the honest
- * version, and they make the point without inventing anything.
- *
  * The journey diagram draws itself from CSS off the section's `.in` class.
  *
  * THE WORK is the shared client showcase (shared/showcase.ts) — it owns its
@@ -17,7 +11,7 @@
 import { initShowcase } from "@/components/shared/showcase";
 
 export default function initDigital() {
-let _dead=false,_rafId=0,_raceRaf=0;
+let _dead=false,_rafId=0;
 const _win=[],_els=[],_timers=[],_obs=[];
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -100,42 +94,6 @@ if(reduced){
   if(secs[0]) secs[0].classList.add('in');
 }
 
-/* ---------- SET PIECE: the race ---------- */
-const go=document.getElementById('rgo');
-const bf=document.getElementById('rbf'),bs=document.getElementById('rbs');
-const mf=document.getElementById('rmsf'),ms=document.getElementById('rmss');
-const nf=document.getElementById('rnf'),ns=document.getElementById('rns');
-
-if(go && bf && bs){
-  const FAST=900,SLOW=5200,TOTAL=SLOW;
-  const paint=(el,ms2,dur)=>{ el.style.width=clamp(ms2/dur,0,1)*100+'%'; };
-  const run=()=>{
-    if(_dead) return;
-    go.disabled=true;
-    if(nf) nf.textContent='';
-    if(ns) ns.textContent='';
-    const t0=performance.now();
-    (function step(now){
-      if(_dead) return;
-      const e=(now||performance.now())-t0;
-      paint(bf,Math.min(e,FAST),FAST);
-      paint(bs,Math.min(e,SLOW),SLOW);
-      if(mf) mf.textContent=(Math.min(e,FAST)/1e3).toFixed(1)+'s';
-      if(ms) ms.textContent=(Math.min(e,SLOW)/1e3).toFixed(1)+'s';
-      if(nf && e>=FAST && !nf.textContent) nf.textContent='// READABLE. THE VISITOR IS ALREADY READING.';
-      if(ns && e<SLOW && !ns.textContent) ns.textContent='// STILL BLANK.';
-      if(e<TOTAL){
-        _raceRaf=requestAnimationFrame(step);
-      }else{
-        if(ns) ns.textContent='// ARRIVED — LONG AFTER THE DECISION WAS MADE.';
-        go.disabled=false;
-        go.innerHTML='Run it again <span>→</span>';
-      }
-    })();
-  };
-  on(go,'click',run);
-}
-
 measure();
 
 function loop(){
@@ -152,7 +110,6 @@ const stopShowcase=initShowcase();
 return function cleanup(){
   _dead=true;
   cancelAnimationFrame(_rafId);
-  cancelAnimationFrame(_raceRaf);
   stopShowcase();
   _timers.forEach(clearTimeout);
   _obs.forEach(o=>{ try{ o.disconnect(); }catch(e){} });

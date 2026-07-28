@@ -2,10 +2,6 @@
  * DIGITAL — websites, argued as journeys rather than pages.
  *
  * Set-pieces unique to this page:
- *   RACE     two loading bars run side by side on a button press. It is the
- *            one claim on this page a paragraph cannot make, so it is played
- *            rather than stated — and labelled illustrative, because it is
- *            not a measurement of anyone's site
  *   JOURNEY  a five-node path from visit to CRM, drawn in as the section
  *            arrives, with the integrations that carry each step beneath it
  *   BUILT    the four things a build is held to, as a plain pillar row
@@ -80,25 +76,7 @@ body.smopen{overflow:hidden}
 #hbrw .s5{top:52%;left:52%;height:20%;right:7%;background:#EDEDEA;animation-delay:1.12s}
 #hbrw .s6{top:80%;height:8%;right:62%;background:var(--red);border-radius:999px;animation-delay:1.3s}
 
-/* ============ 2 — RACE ============ */
-#race .rwrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:center;margin-top:clamp(28px,4.6vh,50px)}
-.lane{margin-bottom:26px}
-.lane .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
-.lane .nm{font-family:var(--display);font-weight:800;font-stretch:104%;text-transform:uppercase;font-size:clamp(14px,1.6vw,19px);color:#fff}
-.lane .ms{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--red)}
-.lane .bar{height:10px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden}
-.lane .bar i{display:block;height:100%;width:0;background:var(--red);border-radius:999px}
-.lane.slow .bar i{background:#55555a}
-.lane .note{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#7a7a7e;margin-top:8px;min-height:1.3em}
-#rgo{
-  display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 24px;border-radius:999px;
-  background:var(--red);color:#fff;border:none;font-family:var(--body);font-weight:600;font-size:14px;cursor:pointer;
-  transition:background .25s,transform .25s;margin-top:6px;
-}
-#rgo:hover{background:#c40017;transform:translateY(-2px)}
-#rgo:disabled{opacity:.45;transform:none;cursor:default}
-
-/* ============ 3 — THE JOURNEY ============ */
+/* ============ 2 — THE JOURNEY ============ */
 #journey .jsub{margin-top:14px}
 #jflow{width:100%;max-width:960px;height:auto;overflow:visible;margin-top:clamp(34px,5vh,58px)}
 #jflow .jpath{fill:none;stroke:var(--line);stroke-width:2}
@@ -108,8 +86,18 @@ body.smopen{overflow:hidden}
 #jflow .jnode.hit{stroke:var(--red)}
 #jflow .jnum{font-family:var(--mono);font-size:7px;fill:var(--red)}
 #jflow .jtxt{font-family:var(--mono);font-size:8px;letter-spacing:.1em;fill:#4a4a4e}
-#journey .jgrid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(30px,5vh,52px)}
-.jcard{background:#fff;padding:clamp(18px,2.2vw,26px);display:flex;flex-direction:column;gap:10px;min-height:150px;transition:background .35s}
+/* The separators are drawn by the cards, not by a coloured bed showing through
+   a 1px gap. There are five cards and the column count is fluid, so at most
+   widths the last row is part-empty — and with the old device those empty
+   tracks rendered as a solid grey block beside the final card. Cards own their
+   own right and bottom rules, so an empty track is simply white. */
+#journey .jgrid2{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));
+  gap:0;background:#fff;
+  border-top:1px solid var(--line);border-left:1px solid var(--line);
+  margin-top:clamp(30px,5vh,52px);
+}
+.jcard{background:#fff;padding:clamp(18px,2.2vw,26px);display:flex;flex-direction:column;gap:10px;min-height:150px;transition:background .35s;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .jcard .jn{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--red)}
 .jcard h3{font-family:var(--display);font-weight:800;font-stretch:104%;text-transform:uppercase;font-size:clamp(14px,1.4vw,17px);letter-spacing:-.005em}
 .jcard p{font-size:13px;line-height:1.6;color:#5a5a5e}
@@ -158,7 +146,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 @media (max-width:768px){
   #dgrail{display:none}
   #dhero{grid-template-columns:1fr;gap:32px;min-height:auto;padding-top:clamp(96px,15vh,130px)}
-  #race .rwrap{grid-template-columns:1fr;gap:26px}
 }
 @media (max-width:480px){ #dhero h1{font-size:clamp(36px,12vw,54px)} }
 @media (max-height:600px){
@@ -255,31 +242,7 @@ export const DIGITAL_HTML = String.raw`
   </div>
 </section>
 
-<!-- 2 — RACE -->
-<section class="dgs dark" id="race" data-bg="#0B0B0C" data-label="The race">
-  <h2 class="dgh up" style="--d:.08s">Nobody complains. They just <em>leave</em>.</h2>
-  <div class="rwrap">
-    <div>
-      <p class="dgp up" style="--d:.14s">Speed is the first step of the journey. Run the two side by side.</p>
-      <button type="button" id="rgo" class="up" style="--d:.22s" data-h>Run the race <span>→</span></button>
-      <p class="dgp up" style="--d:.28s;font-size:12.5px;color:#6a6a6e">Illustrative, not a measurement of any particular site.</p>
-    </div>
-    <div class="up" style="--d:.18s">
-      <div class="lane fast">
-        <div class="top"><span class="nm">Built for speed</span><span class="ms" id="rmsf">0.0s</span></div>
-        <div class="bar"><i id="rbf"></i></div>
-        <div class="note" id="rnf"></div>
-      </div>
-      <div class="lane slow">
-        <div class="top"><span class="nm">Everything left in</span><span class="ms" id="rmss">0.0s</span></div>
-        <div class="bar"><i id="rbs"></i></div>
-        <div class="note" id="rns"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 3 — THE JOURNEY -->
+<!-- 2 — THE JOURNEY -->
 <section class="dgs" id="journey" data-bg="#FFFFFF" data-label="The journey">
   <h2 class="dgh up" style="--d:.08s">The site is the door. The <em>journey</em> is the point.</h2>
   <p class="dgp jsub up" style="--d:.14s">A visitor should glide from curiosity to conversation without ever hitting friction — every path ends in a booking, a chat or a lead, never a dead end.</p>
