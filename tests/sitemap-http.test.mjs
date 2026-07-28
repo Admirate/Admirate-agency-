@@ -194,3 +194,67 @@ test("crawler files advertise the XML feed and include only public content", asy
   const robots = await (await fetch(`${baseUrl}/robots.txt`)).text();
   assert.match(robots, /Sitemap: https:\/\/admirate\.in\/sitemap\.xml/);
 });
+
+test("llms.txt publishes the complete public site guide as Markdown", async () => {
+  const response = await fetch(`${baseUrl}/llms.txt`);
+  const body = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.equal(
+    response.headers.get("content-type"),
+    "text/markdown; charset=utf-8",
+  );
+  assert.match(body, /^# ADMIRATE\n\n> Strategic design/);
+  assert.deepEqual(
+    [...body.matchAll(/^## (.+)$/gm)].map((match) => match[1]),
+    [
+      "Primary pages",
+      "Services",
+      "Journal",
+      "Contact and profiles",
+      "Legal and site",
+    ],
+  );
+
+  const hrefs = [...body.matchAll(/^- \[[^\]]+\]\(([^)]+)\):/gm)].map(
+    (match) => match[1],
+  );
+  const expectedInternalUrls = [
+    "https://admirate.in",
+    "https://admirate.in/services",
+    "https://admirate.in/blogs",
+    "https://admirate.in/start-project",
+    "https://admirate.in/services/identity",
+    "https://admirate.in/services/design",
+    "https://admirate.in/services/social-media",
+    "https://admirate.in/services/digital",
+    "https://admirate.in/services/video-production",
+    "https://admirate.in/services/brand-collaterals",
+    "https://admirate.in/blogs/why-your-website-is-slow",
+    "https://admirate.in/blogs/what-a-logo-actually-costs",
+    "https://admirate.in/blogs/packaging-gets-three-seconds",
+    "https://admirate.in/blogs/what-social-media-management-actually-is",
+    "https://admirate.in/blogs/when-to-rebrand",
+    "https://admirate.in/blogs/what-a-brand-film-costs",
+    "https://admirate.in/blogs/your-logo-has-half-a-second",
+    "https://admirate.in/blogs/the-homepage-scavenger-hunt",
+    "https://admirate.in/blogs/where-the-eye-actually-goes",
+    "https://admirate.in/blogs/reels-that-route",
+    "https://admirate.in/blogs/consistency-is-the-strategy",
+    "https://admirate.in/blogs/the-brief-is-the-work",
+    "https://admirate.in/privacy-policy",
+    "https://admirate.in/terms",
+    "https://admirate.in/sitemap",
+  ];
+
+  assert.deepEqual(
+    hrefs.filter((href) => href.startsWith("https://admirate.in")),
+    expectedInternalUrls,
+  );
+  assert.ok(hrefs.includes("mailto:essentials@admirate.in"));
+  assert.ok(hrefs.includes("https://www.instagram.com/admirate.in"));
+  assert.ok(
+    hrefs.includes("https://www.linkedin.com/company/admirateindia"),
+  );
+  assert.doesNotMatch(body, /\/dashboard|\/api\//);
+});
