@@ -14,4 +14,4 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
  * on it is accepted; an address on any other domain is rejected at send.
  */
 export const MAIL_FROM = "ADMIRATE <info@admirate.in>";
-export const MAIL_REPLY_TO = "essentials@admirate.in";
+export const MAIL_REPLY_TO = "start@admirate.in";
