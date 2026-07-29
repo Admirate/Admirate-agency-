@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import {
+  parseDelimited,
+  parseRecipientRows,
+  type SheetParseResult,
+} from "@/lib/recipient-sheet";
 
 type Recipient = {
   id: string;
@@ -11,12 +16,22 @@ type Recipient = {
   created_at: string;
 };
 
+type Preview = SheetParseResult & { fileName: string };
+
+const SHEET_EXT = /\.(xlsx|xlsm|xltx|csv|txt|tsv)$/i;
+
 const RecipientsPage = () => {
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [loading, setLoading] = useState(true);
   const [newEmail, setNewEmail] = useState("");
   const [newName, setNewName] = useState("");
   const [adding, setAdding] = useState(false);
+
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [parsing, setParsing] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchRecipients();
@@ -63,6 +78,74 @@ const RecipientsPage = () => {
       toast.error("Network error");
     } finally {
       setAdding(false);
+    }
+  };
+
+  /**
+   * Reads the sheet in the browser rather than uploading it.
+   *
+   * The .xlsx reader is imported here, not at the top of the file, so it is
+   * fetched the first time someone picks a file instead of riding in the
+   * dashboard bundle for everyone who never uses the import.
+   */
+  const handleFile = async (file: File) => {
+    if (!SHEET_EXT.test(file.name)) {
+      toast.error("Upload an .xlsx or .csv file");
+      return;
+    }
+
+    setParsing(true);
+    setPreview(null);
+    try {
+      const isText = /\.(csv|txt|tsv)$/i.test(file.name);
+      const parsed = isText
+        ? parseRecipientRows(parseDelimited(await file.text()))
+        : parseRecipientRows(
+            // The subpath is required: the package publishes no root export,
+            // only ./browser, ./node and ./web-worker.
+            await (await import("read-excel-file/browser")).default(file)
+          );
+
+      if (parsed.recipients.length === 0) {
+        toast.error(
+          parsed.skipped[0]?.reason ?? "No email addresses found in that file"
+        );
+        return;
+      }
+      setPreview({ ...parsed, fileName: file.name });
+    } catch (err) {
+      console.error("Sheet parse error:", err);
+      toast.error("Could not read that file");
+    } finally {
+      setParsing(false);
+      // Clears the input so re-picking the same file fires onChange again.
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  };
+
+  const handleImport = async () => {
+    if (!preview) return;
+
+    setImporting(true);
+    try {
+      const res = await fetch("/api/email/recipients/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipients: preview.recipients }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success(data.message || "Imported");
+        setPreview(null);
+        fetchRecipients();
+      } else {
+        toast.error(data.error || "Import failed");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -148,6 +231,129 @@ const RecipientsPage = () => {
           </button>
         </div>
       </form>
+
+      {/* Spreadsheet import. The dropzone is a <label> wrapping a hidden file
+          input, so the keyboard reaches it and the click target is the whole
+          panel rather than a small button. */}
+      <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 mb-6">
+        <h2 className="text-sm font-medium text-neutral-300 mb-1">
+          Import from a spreadsheet
+        </h2>
+        <p className="text-xs text-neutral-500 mb-3">
+          Excel (.xlsx) or CSV. Name and email columns are detected
+          automatically — a header row helps but is not required.
+        </p>
+
+        {!preview ? (
+          <label
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) handleFile(f);
+            }}
+            className={`flex flex-col items-center justify-center gap-1 px-4 py-8 rounded-lg border border-dashed cursor-pointer transition-colors ${
+              dragging
+                ? "border-red-500 bg-red-500/5"
+                : "border-neutral-700 hover:border-neutral-600 bg-neutral-800/40"
+            }`}
+          >
+            <input
+              ref={fileInput}
+              type="file"
+              accept=".xlsx,.xlsm,.xltx,.csv,.txt,.tsv"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+              }}
+            />
+            <span className="text-sm text-neutral-300">
+              {parsing ? "Reading file..." : "Drop a file here, or click to choose"}
+            </span>
+            <span className="text-xs text-neutral-500">
+              .xlsx or .csv — up to 5,000 rows
+            </span>
+          </label>
+        ) : (
+          <div className="rounded-lg border border-neutral-700 bg-neutral-800/40 p-4">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
+              <span className="text-sm text-white font-medium truncate">
+                {preview.fileName}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">
+                {preview.recipients.length} ready
+              </span>
+              {preview.duplicatesInFile > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-neutral-700 text-neutral-300">
+                  {preview.duplicatesInFile} repeated in file
+                </span>
+              )}
+              {preview.skipped.length > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400">
+                  {preview.skipped.length} unusable
+                </span>
+              )}
+            </div>
+
+            {/* A sample, so a mis-detected column is obvious before anything is
+                written to the list. */}
+            <ul className="text-xs text-neutral-400 space-y-1 mb-3">
+              {preview.recipients.slice(0, 4).map((r) => (
+                <li key={r.email} className="truncate">
+                  <span className="text-neutral-200">{r.name}</span>
+                  <span className="text-neutral-600"> — </span>
+                  {r.email}
+                </li>
+              ))}
+              {preview.recipients.length > 4 && (
+                <li className="text-neutral-600">
+                  and {preview.recipients.length - 4} more
+                </li>
+              )}
+            </ul>
+
+            {preview.skipped.length > 0 && (
+              <p className="text-xs text-yellow-500/80 mb-3">
+                Skipping row{preview.skipped.length > 1 ? "s" : ""}{" "}
+                {preview.skipped
+                  .slice(0, 5)
+                  .map((s) => s.row)
+                  .join(", ")}
+                {preview.skipped.length > 5 && "…"} — not valid email addresses.
+              </p>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleImport}
+                disabled={importing}
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                {importing
+                  ? "Importing..."
+                  : `Import ${preview.recipients.length}`}
+              </button>
+              <button
+                onClick={() => setPreview(null)}
+                disabled={importing}
+                className="px-5 py-2.5 bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 text-neutral-300 text-sm font-medium rounded-lg transition-colors border border-neutral-700"
+              >
+                Cancel
+              </button>
+            </div>
+            <p className="text-xs text-neutral-600 mt-3">
+              Addresses already on the list are skipped, and anyone deactivated
+              stays deactivated.
+            </p>
+          </div>
+        )}
+      </div>
 
       {loading ? (
         <div className="text-neutral-400">Loading...</div>
