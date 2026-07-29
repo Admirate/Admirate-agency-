@@ -20,6 +20,12 @@ export const clientLogo = (path: string) =>
 export const creative = (path: string) =>
   `${CDN_HOST}${STORAGE_PATH}/creatives%20new/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
 
+/* Campaign artwork for the emailer. Its own bucket, not a folder under
+   "website assets" — the two are unrelated and the email art is replaced per
+   campaign without touching anything the site renders. */
+export const emailerAsset = (path: string) =>
+  `${CDN_HOST}${STORAGE_PATH}/emailer/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
+
 /**
  * The four construction stages of ADMIRATE's own mark, numbered 1-4.
  *

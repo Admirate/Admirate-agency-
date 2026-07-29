@@ -1,26 +1,32 @@
-import { asset } from "@/lib/cdn";
+import { emailerAsset } from "@/lib/cdn";
 import { SITE } from "@/lib/seo";
 
 /**
- * The ADMIRATE campaign email, built from the AdmirateEmailer artwork.
+ * The ADMIRATE campaign email: the creative as flat artwork, with two calls to
+ * action beneath it.
  *
- * Returns an HTML string rather than JSX. Email that survives Outlook needs
- * VML and MSO conditional comments — a `<v:roundrect>` for every button, a
- * `<v:rect>` behind every background image — and those live inside
- * `<!--[if mso]>` comments, which JSX cannot emit. The send routes therefore
- * pass this to Resend's `html:` option instead of `react:`.
+ * Returns an HTML string rather than JSX. Email that survives Outlook needs VML
+ * and MSO conditional comments — a `<v:roundrect>` for every button — and those
+ * live inside `<!--[if mso]>` comments, which JSX cannot emit. The send routes
+ * therefore pass this to Resend's `html:` option instead of `react:`.
  *
- * WHAT VARIES: `body` fills the centred copy block. `subject` becomes the
- * subject line and the inbox preview text. Everything else — the mark, the
- * gold ribbons, the skyline, the three calls to action — is the artwork, and
- * the headline/tagline props exist so a later campaign can change the words
- * without a new template.
+ * WHAT VARIES: `subject` becomes the subject line. `body` becomes the preheader
+ * — the grey snippet the inbox shows next to the subject — and nothing else;
+ * there is no copy block in a flat-image layout for it to fill. Everything the
+ * recipient sees in the message body is the artwork plus the two buttons.
  *
- * FONTS: the artwork is set in Articulat CF, an Adobe Font. It cannot be
- * licensed into an email and was not packaged with the file, so every client
- * substitutes. The stack below is the closest widely-available geometric
- * grotesque; Helvetica Neue carries the same open letterforms on Apple Mail
- * and iOS, Arial everywhere else.
+ * WHY TWO IMAGES: the creative is 825x2560, which renders 1862px tall at the
+ * 600px email width. Outlook on Windows renders through Word, which truncates
+ * any image past 1728px — a single <img> would be visibly cut off. The artwork
+ * is therefore sliced at y=1815 of the source, inside the 44px band of pure
+ * white between the skyline photo and the closing paragraph. Stacked in
+ * adjacent zero-leading rows the halves reassemble seamlessly, and because the
+ * join lands in white, a hairline gap in any client stays invisible.
+ *
+ * ALT TEXT IS THE EMAIL. Gmail and Outlook block remote images on first open
+ * from an unknown sender. With the message carried entirely by artwork, these
+ * alt strings are the whole of what those recipients read, so they carry the
+ * full argument rather than naming the file.
  */
 
 /** Artwork red. The site token is #E3001B; the emailer art is this brighter red. */
@@ -28,19 +34,26 @@ const RED = "#ED1C24";
 const INK = "#1a1a1a";
 const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 
+/** Display width of the email body. The strips are 825px native — 1.4x for retina. */
+const W = 600;
+
 /**
- * The five artwork exports, in the "emailer" folder of the website assets
- * bucket. Until these are uploaded the email renders with alt text in their
- * place — the copy and the buttons are live text and do not depend on them.
+ * The two artwork halves, in the "emailer" bucket. Heights are the rendered
+ * sizes at 600px wide, stated on the tags because Outlook will not infer them
+ * and collapses the row without.
  */
-const IMG = {
-  mark: asset("emailer/admirate-mark.png"),
-  masthead: asset("emailer/masthead-pattern.png"),
-  wave: asset("emailer/gold-wave-top.png"),
-  skyline: asset("emailer/dubai-skyline.jpg"),
-  ribbon: asset("emailer/gold-ribbon-lower.png"),
-  grid: asset("emailer/grid-pattern.png"),
-};
+const STRIP = [
+  {
+    src: emailerAsset("campaign-top.jpg"),
+    height: 1320,
+    alt: "ADMIRATE is now accepting new clients. There are 10,000+ real estate offices in Dubai and 11 new ones open every day — every one is your competition. Visibility alone doesn't grow a business. The journey does.",
+  },
+  {
+    src: emailerAsset("campaign-bottom.jpg"),
+    height: 542,
+    alt: "For real estate and service businesses, growth isn't driven by a website alone. It's clear messaging, meaningful design across every touchpoint, a consistent social media presence, and a customer journey that turns attention into enquiries. That's what we build. Plans starting from AED 3,613.",
+  },
+];
 
 const esc = (value: string) =>
   String(value ?? "")
@@ -49,40 +62,61 @@ const esc = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-/** Dashboard copy arrives as plain text; blank lines become paragraph breaks. */
-const richText = (value: string) =>
-  esc(value)
-    .split(/\n{2,}/)
-    .map((para) => para.replace(/\n/g, "<br />"))
-    .join('</p><p style="margin:18px 0 0 0;">');
+/**
+ * Dashboard copy arrives as plain text over many lines. The preheader is a
+ * single run of text, and clients cut it around 100-150 characters, so it is
+ * flattened and trimmed rather than shown whole.
+ */
+const preheader = (value: string) => {
+  const flat = String(value ?? "").replace(/\s+/g, " ").trim();
+  return esc(flat.length > 140 ? `${flat.slice(0, 139).trimEnd()}…` : flat);
+};
+
+/**
+ * A call to action. VML draws the rounded rectangle for Outlook, which supports
+ * neither border-radius nor padded anchors; every other client gets the padded
+ * anchor beneath it, hidden from Outlook by `mso-hide`.
+ */
+const button = ({
+  href,
+  label,
+  filled,
+}: {
+  href: string;
+  label: string;
+  filled: boolean;
+}) => `
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:52px;v-text-anchor:middle;width:260px;" arcsize="50%" ${
+            filled
+              ? `stroke="f" fillcolor="${RED}"`
+              : `strokecolor="${RED}" strokeweight="1.5pt" fillcolor="#ffffff"`
+          }>
+            <w:anchorlock/>
+            <center style="color:${filled ? "#ffffff" : INK};font-family:${FONT};font-size:19px;font-weight:700;">${esc(label)}</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-- -->
+          <a href="${href}" class="cta" style="display:inline-block;min-width:184px;text-align:center;background-color:${
+            filled ? RED : "#ffffff"
+          };color:${filled ? "#ffffff" : INK};font-family:${FONT};font-size:19px;line-height:19px;font-weight:700;text-decoration:none;padding:${
+            filled ? "17px 38px" : "15.5px 36.5px"
+          };border:1.5px solid ${RED};border-radius:30px;mso-hide:all;">${esc(label)}</a>
+          <!--<![endif]-->`;
 
 export type EmailTemplateProps = {
   subject: string;
+  /** Fills the inbox preview text. Does not appear in the message body. */
   body: string;
-  /** Small line above the headline. Defaults to the artwork. */
-  eyebrow?: string;
-  /** The red headline. Defaults to the artwork. */
-  headline?: string;
-  /** The two-line promise under the gold wave. Defaults to the artwork. */
-  promise?: string;
-  promiseAccent?: string;
-  /** The red line under the copy block. Defaults to the artwork. */
-  signoff?: string;
-  /** Where the primary button goes. */
-  ctaHref?: string;
-  ctaLabel?: string;
+  knowMoreHref?: string;
+  pricingHref?: string;
 };
 
 export function EmailTemplate({
   subject,
   body,
-  eyebrow = "We are now accepting",
-  headline = "NEW CLIENTS",
-  promise = "Visibility alone doesn’t grow a business.",
-  promiseAccent = "The journey does.",
-  signoff = "That’s what we build.",
-  ctaHref = `${SITE.url}/pricing`,
-  ctaLabel = "Explore Plans & Pricing",
+  knowMoreHref = SITE.url,
+  pricingHref = `${SITE.url}/pricing`,
 }: EmailTemplateProps): string {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -116,133 +150,54 @@ export function EmailTemplate({
     .wrap{width:100% !important;max-width:100% !important}
     .fluid{width:100% !important;height:auto !important}
     .px{padding-left:24px !important;padding-right:24px !important}
-    .h1{font-size:28px !important;line-height:32px !important}
-    .h2{font-size:19px !important;line-height:26px !important}
-    .copy{font-size:15px !important;line-height:24px !important}
-    .cta-text{font-size:19px !important;padding-left:36px !important;padding-right:36px !important}
+    .cta{font-size:18px !important;min-width:0 !important;width:78% !important}
   }
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:#ffffff;">
 
+<!-- Preheader. The dashboard's body text, and the only place it appears: it is
+     what the inbox prints beside the subject. The zero-width joiners stop
+     Gmail pulling the footer in behind it to pad the line. -->
 <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;font-family:sans-serif;">
-  ${esc(subject)}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  ${preheader(body)}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
 </div>
 
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#ffffff;">
 <tr><td align="center" style="padding:0;">
-<!--[if mso]><table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" width="600"><tr><td><![endif]-->
-<table role="presentation" class="wrap" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;background-color:#ffffff;">
+<!--[if mso]><table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" width="${W}"><tr><td><![endif]-->
+<table role="presentation" class="wrap" cellpadding="0" cellspacing="0" border="0" width="${W}" style="width:${W}px;max-width:${W}px;background-color:#ffffff;">
 
-  <!-- 1 — MASTHEAD. The gold line-art is a cell background so the mark and
-       headline stay live text on top of it; Outlook ignores CSS backgrounds
-       on a td, which is what the VML rect repeats it for. -->
-  <tr>
-    <td align="center" background="${IMG.masthead}" bgcolor="#ffffff" style="background-color:#ffffff;background-image:url('${IMG.masthead}');background-repeat:no-repeat;background-position:top center;background-size:600px auto;padding:0;">
-      <!--[if gte mso 9]>
-      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:390px;">
-        <v:fill type="frame" src="${IMG.masthead}" color="#ffffff" />
-        <v:textbox inset="0,0,0,0"><div>
-      <![endif]-->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr><td align="center" class="px" style="padding:62px 40px 0 40px;">
-          <img src="${IMG.mark}" width="126" height="126" alt="${esc(SITE.name)}" style="display:block;width:126px;height:126px;border:0;outline:none;margin:0 auto;" />
-        </td></tr>
-        <tr><td align="center" class="px" style="padding:104px 40px 0 40px;font-family:${FONT};font-size:20px;line-height:28px;color:${INK};font-weight:400;">
-          ${esc(eyebrow)}
-        </td></tr>
-        <tr><td align="center" class="px h1" style="padding:6px 40px 46px 40px;font-family:${FONT};font-size:33px;line-height:38px;color:${RED};font-weight:700;letter-spacing:0.4px;">
-          ${esc(headline)}
-        </td></tr>
-      </table>
-      <!--[if gte mso 9]></div></v:textbox></v:rect><![endif]-->
-    </td>
-  </tr>
+  <!-- 1 — THE ARTWORK, in two halves. Zero font-size and line-height on the
+       cells: a td inherits the body's leading and would otherwise print a few
+       pixels of white under each image, which would show as a gap at the join
+       and a hairline above the buttons. -->
+${STRIP.map(
+  (s) => `  <tr><td style="padding:0;font-size:0;line-height:0;">
+    <a href="${knowMoreHref}" style="display:block;text-decoration:none;">
+      <img src="${s.src}" width="${W}" height="${s.height}" alt="${esc(s.alt)}" class="fluid" style="display:block;width:100%;max-width:${W}px;height:auto;border:0;outline:none;font-family:${FONT};font-size:16px;line-height:24px;color:${INK};text-align:center;" />
+    </a>
+  </td></tr>`
+).join("\n")}
 
-  <!-- Gold wave. Its own row rather than an overlay: overlapping image and
-       text is unreliable in Outlook, and the artwork does not require it. -->
-  <tr><td style="padding:0;font-size:0;line-height:0;">
-    <img src="${IMG.wave}" width="600" height="118" alt="" class="fluid" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;" />
+  <!-- 2 — CALLS TO ACTION. Stacked rather than side by side: two cells in a row
+       need a media query to stack on a phone, and Gmail's app strips <style>
+       from some messages, which would leave them squeezed at 50% width. -->
+  <tr><td align="center" style="padding:38px 30px 0 30px;">${button({
+    href: knowMoreHref,
+    label: "Know More",
+    filled: true,
+  })}
   </td></tr>
 
-  <!-- 2 — THE PROMISE -->
-  <tr><td align="center" class="px" style="padding:52px 46px 12px 46px;font-family:${FONT};font-size:19px;line-height:27px;color:${INK};font-weight:400;">
-    ${esc(promise)}
-  </td></tr>
-  <tr><td align="center" class="px h2" style="padding:0 46px 44px 46px;font-family:${FONT};font-size:23px;line-height:31px;color:${RED};font-weight:700;">
-    ${esc(promiseAccent)}
-  </td></tr>
-
-  <!-- 3 — SKYLINE. Pre-cropped to the layout's square frame: the source photo
-       is 16:9 and no email client can crop, so the hosted file must be the
-       crop. -->
-  <tr><td style="padding:0;font-size:0;line-height:0;">
-    <img src="${IMG.skyline}" width="600" height="598" alt="The Dubai skyline, with the Burj Khalifa at its centre" class="fluid" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;" />
+  <tr><td align="center" style="padding:14px 30px 42px 30px;">${button({
+    href: pricingHref,
+    label: "Pricing",
+    filled: false,
+  })}
   </td></tr>
 
-  <!-- 4 — THE MESSAGE. Live text, not a flattened image: it is the argument of
-       the email and has to survive images-off and reach a screen reader. This
-       is the block the dashboard's body fills. -->
-  <tr><td align="center" class="px copy" style="padding:44px 62px 0 62px;font-family:${FONT};font-size:16.5px;line-height:26px;color:${INK};font-weight:400;">
-    <p style="margin:0;">${richText(body)}</p>
-  </td></tr>
-  <tr><td align="center" class="px h2" style="padding:38px 46px 0 46px;font-family:${FONT};font-size:25px;line-height:32px;color:${RED};font-weight:700;">
-    ${esc(signoff)}
-  </td></tr>
-
-  <!-- Lower gold ribbon. Left-anchored in the artwork, so the export is the
-       full 600px width with its own transparency — floats do not survive
-       Outlook. -->
-  <tr><td style="padding:22px 0 0 0;font-size:0;line-height:0;">
-    <img src="${IMG.ribbon}" width="600" height="150" alt="" class="fluid" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;" />
-  </td></tr>
-
-  <!-- 5 — CALLS TO ACTION, over the tiled grid. -->
-  <tr>
-    <td align="center" background="${IMG.grid}" bgcolor="#ffffff" style="background-color:#ffffff;background-image:url('${IMG.grid}');background-repeat:repeat;background-position:top center;padding:0;">
-      <!--[if gte mso 9]>
-      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:330px;">
-        <v:fill type="tile" src="${IMG.grid}" color="#ffffff" />
-        <v:textbox inset="0,0,0,0"><div>
-      <![endif]-->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-
-        <!-- Bulletproof: VML draws the rounded rectangle for Outlook, which
-             supports neither border-radius nor padded anchors. Every other
-             client gets the padded anchor beneath it. -->
-        <tr><td align="center" style="padding:34px 30px 0 30px;">
-          <!--[if mso]>
-          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${ctaHref}" style="height:58px;v-text-anchor:middle;width:424px;" arcsize="50%" stroke="f" fillcolor="${RED}">
-            <w:anchorlock/>
-            <center style="color:#ffffff;font-family:${FONT};font-size:26px;font-weight:400;">${esc(ctaLabel)}</center>
-          </v:roundrect>
-          <![endif]-->
-          <!--[if !mso]><!-- -->
-          <a href="${ctaHref}" class="cta-text" style="display:inline-block;background-color:${RED};color:#ffffff;font-family:${FONT};font-size:26px;line-height:26px;font-weight:400;text-decoration:none;padding:19px 68px;border-radius:32px;mso-hide:all;">${esc(ctaLabel)}</a>
-          <!--<![endif]-->
-        </td></tr>
-
-        <tr><td align="center" style="padding:62px 30px 0 30px;">
-          <a href="${SITE.url}/services" style="font-family:${FONT};font-size:18px;line-height:24px;color:${INK};font-weight:400;text-decoration:none;">Know More &rsaquo;</a>
-        </td></tr>
-
-        <tr><td align="center" style="padding:26px 30px 46px 30px;">
-          <!--[if mso]>
-          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${SITE.url}/start-project" style="height:46px;v-text-anchor:middle;width:152px;" arcsize="50%" strokecolor="${RED}" strokeweight="1.5pt" fillcolor="#ffffff">
-            <w:anchorlock/>
-            <center style="color:${INK};font-family:${FONT};font-size:18px;font-weight:400;">Contact</center>
-          </v:roundrect>
-          <![endif]-->
-          <!--[if !mso]><!-- -->
-          <a href="${SITE.url}/start-project" style="display:inline-block;background-color:#ffffff;color:${INK};font-family:${FONT};font-size:18px;line-height:18px;font-weight:400;text-decoration:none;padding:13px 38px;border:1.5px solid ${RED};border-radius:24px;mso-hide:all;">Contact</a>
-          <!--<![endif]-->
-        </td></tr>
-      </table>
-      <!--[if gte mso 9]></div></v:textbox></v:rect><![endif]-->
-    </td>
-  </tr>
-
-  <!-- 6 — LEGAL. Not in the artwork. It is here because a commercial bulk send
+  <!-- 3 — LEGAL. Not in the artwork. It is here because a commercial bulk send
        without a postal address and an unsubscribe path breaches CAN-SPAM and
        most ESP terms, and both Gmail and Outlook weigh its absence when
        deciding the spam folder. Styled to stay quiet. -->
