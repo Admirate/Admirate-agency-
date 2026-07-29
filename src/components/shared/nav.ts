@@ -91,7 +91,12 @@ export const NAV_CSS = String.raw`
   .pnav{gap:8px;padding:6px}
   .pnav .plink{padding:8px 10px}
 }
-/* Phone — the logo chip tightens and the long half of the CTA label goes. */
+/* Phone — the logo chip tightens and the long half of the CTA label goes.
+   Blogs goes here too, and it is the first whole link to go rather than the
+   last: it is the least-trafficked destination in the pill, and unlike Home it
+   has no neighbour duplicating it, so the footer is where it lands. That buys
+   back roughly 50px at the exact width the four-link ladder below was fighting
+   for single pixels. */
 @media (max-width:640px){
   .pnav{gap:2px;padding:4px;top:10px}
   .pnav .pchip{padding:5px 8px}
@@ -99,6 +104,7 @@ export const NAV_CSS = String.raw`
   .pnav .plink{padding:0 7px;font-size:12.5px}
   .pnav .pcta{padding:0 12px;font-size:12.5px;gap:5px}
   .pnav .pcta .ctalong{display:none}
+  .pnav .plink[data-blogs]{display:none}
 }
 @media (max-width:560px){
   .pnav .plinks{margin-left:6px;gap:1px}
@@ -305,7 +311,10 @@ export const navHtml = (active: NavPage, ctaHref = "/start-project") => `
     <a class="plink${active === "pricing" ? " on" : ""}" href="/pricing"${
       active === "pricing" ? ' aria-current="page"' : ""
     } data-h>Pricing</a>
-    <a class="plink${active === "blogs" ? " on" : ""}" href="/blogs"${
+    <!-- data-blogs is the hook the 640px breakpoint hides this link on. Below
+         that width the footer carries Blogs instead — the full footer has its
+         own link and the compact rails get one from LEGAL_HTML. -->
+    <a class="plink${active === "blogs" ? " on" : ""}" href="/blogs" data-blogs${
       active === "blogs" ? ' aria-current="page"' : ""
     } data-h>Blogs</a>
   </div>

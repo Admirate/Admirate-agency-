@@ -453,6 +453,66 @@ a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{
   .pmatrix [data-col]{display:none}
   .pmatrix [data-col].show{display:table-cell}
 }
+
+/* ---------- mobile type scale ----------
+   The page was set for the desktop layout and never re-set for the phone. Most
+   of it is fixed px, and every clamp() bottoms out at its minimum by ~800px, so
+   a phone gets the smallest type the page can produce — mono labels at 9-11px
+   with .18-.24em tracking, which is where it stops being readable.
+
+   Sizes are raised here rather than at each declaration so the desktop layout
+   is untouched: several of those figures are load-bearing against the widths
+   they were chosen for, and the three-column card in particular breaks if the
+   price grows. Below 980px .ptiers is already a single 560px column, so the
+   constraint the price comment describes does not apply at these widths.
+
+   Nothing here changes a line-height: they are all unitless, so raising the
+   font-size carries the leading with it. */
+@media (max-width:768px){
+  /* Section furniture. */
+  .pgh{font-size:30px}
+  .pgp{font-size:16.5px}
+  .pgeb{font-size:12.5px;letter-spacing:.2em}
+  .pgnote{font-size:12.5px}
+
+  /* Currency control and billing chips — the two things a visitor touches
+     before reading a single price. */
+  .pccy label{font-size:12px;letter-spacing:.18em}
+  .pccy select{font-size:17px}
+  .pccy .psel::after{font-size:15px}
+  .pcyc .pclab{font-size:12px;letter-spacing:.18em}
+  .pchip{font-size:15px}
+  .pchip .psave{font-size:11.5px}
+
+  /* The tier card. */
+  .ptier h3{font-size:21px}
+  .pbadge{font-size:11px;letter-spacing:.14em}
+  .ptier .pblurb{font-size:15px}
+  .ptier .pfig{font-size:32px}
+  .ptier .pper{font-size:12.5px}
+  .ptier .pbill{font-size:14px}
+  .ptier .ptax{font-size:12px}
+  .pinh{font-size:13px}
+  .pinc li{font-size:16.5px}
+  .pinc .pick{font-size:14.5px}
+  .ptier .pbtn{font-size:15.5px}
+
+  /* Comparison table. It shows one plan column at a time at this width, so the
+     rows have the room to carry larger type. */
+  .pmore{font-size:12.5px;letter-spacing:.15em}
+  .pmore .pcar{font-size:10.5px}
+  .pmatrix table{font-size:15px}
+  .pmatrix thead th{font-size:11.5px;letter-spacing:.14em}
+  .pmatrix .yes{font-size:16.5px}
+
+  /* FAQ and close. */
+  .pfaq summary{font-size:17px}
+  .pfaq summary::after{font-size:21px}
+  .pfaq p{font-size:16px}
+  #pclose .csub{font-size:12.5px;letter-spacing:.16em}
+  .pgbtn{font-size:16px}
+  #pclose footer{font-size:12px;letter-spacing:.14em}
+}
 @media (max-width:560px){
   /* The hand-placed break balances two long lines on a wide screen; on a phone
      it forces a fourth line and the stack goes ragged. Let it wrap. */
