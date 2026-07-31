@@ -2,26 +2,41 @@ import { emailerAsset } from "@/lib/cdn";
 import { SITE } from "@/lib/seo";
 
 /**
- * The ADMIRATE campaign email: the creative as flat artwork, with two calls to
- * action beneath it.
+ * The ADMIRATE campaign email: the creative as four linked slices of flat
+ * artwork, with a legal footer beneath it.
  *
- * Returns an HTML string rather than JSX. Email that survives Outlook needs VML
- * and MSO conditional comments — a `<v:roundrect>` for every button — and those
- * live inside `<!--[if mso]>` comments, which JSX cannot emit. The send routes
- * therefore pass this to Resend's `html:` option instead of `react:`.
+ * Returns an HTML string rather than JSX, because the Outlook fallbacks live
+ * inside `<!--[if mso]>` conditional comments, which JSX cannot emit. The send
+ * routes pass this to Resend's `html:` option instead of `react:`.
  *
  * WHAT VARIES: `subject` becomes the subject line. `body` becomes the preheader
  * — the grey snippet the inbox shows next to the subject — and nothing else;
- * there is no copy block in a flat-image layout for it to fill. Everything the
- * recipient sees in the message body is the artwork plus the two buttons.
+ * there is no copy block in a flat-image layout for it to fill.
  *
- * WHY TWO IMAGES: the creative is 825x2560, which renders 1862px tall at the
- * 600px email width. Outlook on Windows renders through Word, which truncates
- * any image past 1728px — a single <img> would be visibly cut off. The artwork
- * is therefore sliced at y=1815 of the source, inside the 44px band of pure
- * white between the skyline photo and the closing paragraph. Stacked in
- * adjacent zero-leading rows the halves reassemble seamlessly, and because the
- * join lands in white, a hairline gap in any client stays invisible.
+ * WHY FLAT ARTWORK RATHER THAN LIVE TEXT. An earlier revision set every word as
+ * real HTML text over the artwork. It was sharper, it survived blocked images,
+ * and in the Gmail Android app's dark mode it fell apart: that client forces a
+ * colour inversion which rewrites text but cannot touch a background image, so
+ * the black copy over the skyline turned white on a white photograph and
+ * disappeared, and the plain white cells between the artwork bands turned
+ * near-black and cut the creative into stripes. It is not fixable from here —
+ * the Gmail app ignores `color-scheme`, `prefers-color-scheme` and
+ * `!important`. Images are the one thing its dark mode leaves alone, so for a
+ * design whose copy sits on top of photography they are what holds the
+ * composition in both schemes.
+ *
+ * The softness that argued against images is answered with resolution instead:
+ * `emailer/build-slices.js` cuts these at 1200px and they are displayed at 600,
+ * where the previous artwork was 825px native at 600. Sharper, and at 352KB for
+ * the set, no heavier.
+ *
+ * WHY FOUR SLICES. Each is wrapped in a single anchor, so the creative is cut
+ * where its calls to action change destination — the story leads to the site,
+ * the pricing block to /pricing, and the two closing controls to their own
+ * targets. The boundaries sit on rows that are pure white across the full
+ * width, so a hairline gap in any client falls on white and cannot be seen.
+ * No slice exceeds 1728px displayed: Outlook on Windows renders through Word,
+ * which truncates any image taller than that.
  *
  * ALT TEXT IS THE EMAIL. Gmail and Outlook block remote images on first open
  * from an unknown sender. With the message carried entirely by artwork, these
@@ -29,29 +44,45 @@ import { SITE } from "@/lib/seo";
  * full argument rather than naming the file.
  */
 
-/** Artwork red. The site token is #E3001B; the emailer art is this brighter red. */
-const RED = "#ED1C24";
 const INK = "#1a1a1a";
 const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 
-/** Display width of the email body. The strips are 825px native — 1.4x for retina. */
+/** Display width of the email body. The slices are 1200px native — 2x. */
 const W = 600;
 
-/**
- * The two artwork halves, in the "emailer" bucket. Heights are the rendered
- * sizes at 600px wide, stated on the tags because Outlook will not infer them
- * and collapses the row without.
- */
-const STRIP = [
+type Slice = {
+  file: string;
+  /** Display height. Stated on the tag because Outlook will not infer it. */
+  height: number;
+  /** Which of the template's destinations the whole slice links to. */
+  to: "knowMore" | "pricing" | "contact";
+  alt: string;
+};
+
+const SLICES: Slice[] = [
   {
-    src: emailerAsset("campaign-top.jpg"),
-    height: 1320,
-    alt: "ADMIRATE is now accepting new clients. There are 10,000+ real estate offices in Dubai and 11 new ones open every day — every one is your competition. Visibility alone doesn't grow a business. The journey does.",
+    file: "creative-1-story.jpg",
+    height: 1484,
+    to: "knowMore",
+    alt: "ADMIRATE is now accepting new clients. There are 10,000+ real estate offices in Dubai and 11 new ones open every day — every one is your competition. Visibility alone doesn't grow a business. The journey does. For real estate and service businesses, growth isn't driven by a website alone. It's clear messaging, meaningful design across every touchpoint, a consistent social media presence, and a customer journey that turns attention into enquiries.",
   },
   {
-    src: emailerAsset("campaign-bottom.jpg"),
-    height: 542,
-    alt: "For real estate and service businesses, growth isn't driven by a website alone. It's clear messaging, meaningful design across every touchpoint, a consistent social media presence, and a customer journey that turns attention into enquiries. That's what we build. Plans starting from AED 3,613.",
+    file: "creative-2-pricing.jpg",
+    height: 491,
+    to: "pricing",
+    alt: "That's what we build. Plans starting from AED 3,613 — explore plans and pricing.",
+  },
+  {
+    file: "creative-3-knowmore.png",
+    height: 36,
+    to: "knowMore",
+    alt: "Know more",
+  },
+  {
+    file: "creative-4-contact.png",
+    height: 116,
+    to: "contact",
+    alt: "Contact ADMIRATE",
   },
 ];
 
@@ -72,44 +103,13 @@ const preheader = (value: string) => {
   return esc(flat.length > 140 ? `${flat.slice(0, 139).trimEnd()}…` : flat);
 };
 
-/**
- * A call to action. VML draws the rounded rectangle for Outlook, which supports
- * neither border-radius nor padded anchors; every other client gets the padded
- * anchor beneath it, hidden from Outlook by `mso-hide`.
- */
-const button = ({
-  href,
-  label,
-  filled,
-}: {
-  href: string;
-  label: string;
-  filled: boolean;
-}) => `
-          <!--[if mso]>
-          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:52px;v-text-anchor:middle;width:260px;" arcsize="50%" ${
-            filled
-              ? `stroke="f" fillcolor="${RED}"`
-              : `strokecolor="${RED}" strokeweight="1.5pt" fillcolor="#ffffff"`
-          }>
-            <w:anchorlock/>
-            <center style="color:${filled ? "#ffffff" : INK};font-family:${FONT};font-size:19px;font-weight:700;">${esc(label)}</center>
-          </v:roundrect>
-          <![endif]-->
-          <!--[if !mso]><!-- -->
-          <a href="${href}" class="cta" style="display:inline-block;min-width:184px;text-align:center;background-color:${
-            filled ? RED : "#ffffff"
-          };color:${filled ? "#ffffff" : INK};font-family:${FONT};font-size:19px;line-height:19px;font-weight:700;text-decoration:none;padding:${
-            filled ? "17px 38px" : "15.5px 36.5px"
-          };border:1.5px solid ${RED};border-radius:30px;mso-hide:all;">${esc(label)}</a>
-          <!--<![endif]-->`;
-
 export type EmailTemplateProps = {
   subject: string;
   /** Fills the inbox preview text. Does not appear in the message body. */
   body: string;
   knowMoreHref?: string;
   pricingHref?: string;
+  contactHref?: string;
 };
 
 export function EmailTemplate({
@@ -117,7 +117,22 @@ export function EmailTemplate({
   body,
   knowMoreHref = SITE.url,
   pricingHref = `${SITE.url}/pricing`,
+  contactHref = `${SITE.url}/start-project`,
 }: EmailTemplateProps): string {
+  const href = { knowMore: knowMoreHref, pricing: pricingHref, contact: contactHref };
+
+  /* Zero font-size and line-height on the cells: a td inherits the body's
+     leading and would otherwise print a few pixels of white under each image,
+     which shows as a gap at every join. */
+  const rows = SLICES.map((s) => {
+    const src = emailerAsset(s.file);
+    return `  <tr><td style="padding:0;font-size:0;line-height:0;">
+    <a href="${href[s.to]}" style="display:block;text-decoration:none;">
+      <img src="${src}" width="${W}" height="${s.height}" alt="${esc(s.alt)}" class="fluid" style="display:block;width:100%;max-width:${W}px;height:auto;border:0;outline:none;font-family:${FONT};font-size:16px;line-height:24px;color:${INK};text-align:center;" />
+    </a>
+  </td></tr>`;
+  }).join("\n");
+
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 <head>
@@ -143,14 +158,15 @@ export function EmailTemplate({
   /* Stops iOS turning addresses and numbers into blue underlines the design
      never had. */
   a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;font-size:inherit !important;font-family:inherit !important;font-weight:inherit !important;line-height:inherit !important}
-  /* The artwork is red and gold on white. Forced dark mode inverts the canvas
-     and the gold then sits on black behind a white halo, so it is pinned. */
+  /* Honoured by Apple Mail and Outlook.com, which then leave the creative
+     alone. The Gmail app honours none of it and inverts regardless — which is
+     why the creative is artwork rather than text, and why only the footer
+     below can change colour. */
   :root{color-scheme:light;supported-color-schemes:light}
   @media screen and (max-width:600px){
     .wrap{width:100% !important;max-width:100% !important}
     .fluid{width:100% !important;height:auto !important}
     .px{padding-left:24px !important;padding-right:24px !important}
-    .cta{font-size:18px !important;min-width:0 !important;width:78% !important}
   }
 </style>
 </head>
@@ -168,40 +184,15 @@ export function EmailTemplate({
 <!--[if mso]><table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" width="${W}"><tr><td><![endif]-->
 <table role="presentation" class="wrap" cellpadding="0" cellspacing="0" border="0" width="${W}" style="width:${W}px;max-width:${W}px;background-color:#ffffff;">
 
-  <!-- 1 — THE ARTWORK, in two halves. Zero font-size and line-height on the
-       cells: a td inherits the body's leading and would otherwise print a few
-       pixels of white under each image, which would show as a gap at the join
-       and a hairline above the buttons. -->
-${STRIP.map(
-  (s) => `  <tr><td style="padding:0;font-size:0;line-height:0;">
-    <a href="${knowMoreHref}" style="display:block;text-decoration:none;">
-      <img src="${s.src}" width="${W}" height="${s.height}" alt="${esc(s.alt)}" class="fluid" style="display:block;width:100%;max-width:${W}px;height:auto;border:0;outline:none;font-family:${FONT};font-size:16px;line-height:24px;color:${INK};text-align:center;" />
-    </a>
-  </td></tr>`
-).join("\n")}
+  <!-- 1 — THE CREATIVE, in four linked slices. -->
+${rows}
 
-  <!-- 2 — CALLS TO ACTION. Stacked rather than side by side: two cells in a row
-       need a media query to stack on a phone, and Gmail's app strips <style>
-       from some messages, which would leave them squeezed at 50% width. -->
-  <tr><td align="center" style="padding:38px 30px 0 30px;">${button({
-    href: knowMoreHref,
-    label: "Know More",
-    filled: true,
-  })}
-  </td></tr>
-
-  <tr><td align="center" style="padding:14px 30px 42px 30px;">${button({
-    href: pricingHref,
-    label: "Pricing",
-    filled: false,
-  })}
-  </td></tr>
-
-  <!-- 3 — LEGAL. Not in the artwork. It is here because a commercial bulk send
+  <!-- 2 — LEGAL. Not in the artwork. It is here because a commercial bulk send
        without a postal address and an unsubscribe path breaches CAN-SPAM and
        most ESP terms, and both Gmail and Outlook weigh its absence when
-       deciding the spam folder. Styled to stay quiet. -->
-  <tr><td align="center" class="px" style="padding:0 40px 40px 40px;font-family:${FONT};font-size:11px;line-height:18px;color:#9a9a9e;">
+       deciding the spam folder. Styled to stay quiet, and the only part of the
+       message the Gmail app's dark mode can recolour. -->
+  <tr><td align="center" class="px" style="padding:34px 40px 40px 40px;font-family:${FONT};font-size:11px;line-height:18px;color:#9a9a9e;">
     ${esc(SITE.name)} &mdash; ${esc(SITE.tagline)}<br />
     ${esc(SITE.area)}, ${esc(SITE.city)}, ${esc(SITE.region)}, ${esc(SITE.country)}<br />
     <a href="${SITE.url}" style="color:#9a9a9e;text-decoration:underline;">admirate.in</a>

@@ -43,8 +43,40 @@ const cell = (v: unknown): string => {
   return String(v).trim();
 };
 
+/**
+ * Whether a cell reads as a column label rather than prose.
+ *
+ * The header tests below end in a loose "contains the word email" rule, which
+ * on its own is satisfied just as well by a title row ("50 Solid Dubai Real
+ * Estate Business Emails") or a note ("No personal email format has been
+ * guessed.") as by a real header — and a sheet that opens with either then has
+ * its first column read as the addresses. A label is short, is a few words at
+ * most, and does not end sentences; prose fails at least one of those.
+ */
+const isLabelLike = (v: string) =>
+  v.length <= 40 && v.split(/\s+/).length <= 4 && !/[.!?]/.test(v);
+
 const looksLikeEmailHeader = (v: string) =>
-  /^(e[-\s]?mail|email[-\s]?address|mail)$/i.test(v) || /e[-\s]?mail/i.test(v);
+  isLabelLike(v) &&
+  (/^(e[-\s]?mail|email[-\s]?address|mail)$/i.test(v) || /e[-\s]?mail/i.test(v));
+
+/** Whether a column actually carries addresses from `from` downwards. */
+const columnHasEmails = (rows: unknown[][], col: number, from: number) => {
+  for (let r = from; r < rows.length; r++) {
+    if (isEmail(cell(rows[r]?.[col]))) return true;
+  }
+  return false;
+};
+
+/**
+ * How far down to look for the header row.
+ *
+ * Hand-built sheets open with a title, a line of provenance and a blank row
+ * before the header; ten is well clear of that without scanning a whole file.
+ * Past it the value-driven fallback still imports the sheet correctly, just
+ * without reading the column names.
+ */
+const HEADER_SCAN_ROWS = 10;
 
 /**
  * Ranked rather than a yes/no match, because a sheet routinely offers more than
@@ -70,29 +102,45 @@ const nameHeaderScore = (v: string): number => {
  * addresses — a column of values containing "@" is unambiguous in a way that
  * position is not — and the name is then the first other column with text in
  * it, which is where it sits in every export worth supporting.
+ *
+ * The header is looked for over the first several rows rather than only the
+ * first. A sheet someone assembled by hand, as opposed to one a CRM exported,
+ * routinely opens with a title and a line about where the addresses came from,
+ * and the header sits below them. Reading only row 0 there finds no header —
+ * or worse, mistakes the title for one.
+ *
+ * A header also has to be corroborated by the data beneath it: a column called
+ * "Email Status" holding "verified" and "bounced" names the concept without
+ * carrying an address, and taking it on the strength of its label alone rejects
+ * every row in the file. Where the label and the values disagree the values
+ * win, because they are what actually gets sent to.
  */
 export function pickColumns(rows: unknown[][]): {
   nameIdx: number;
   emailIdx: number;
   headerRows: number;
 } {
-  const first = (rows[0] ?? []).map(cell);
+  const limit = Math.min(rows.length, HEADER_SCAN_ROWS);
+  for (let h = 0; h < limit; h++) {
+    const cells = (rows[h] ?? []).map(cell);
 
-  const headerEmail = first.findIndex(
-    (c) => c !== "" && !isEmail(c) && looksLikeEmailHeader(c)
-  );
-  if (headerEmail !== -1) {
+    const headerEmail = cells.findIndex(
+      (c) => c !== "" && !isEmail(c) && looksLikeEmailHeader(c)
+    );
+    if (headerEmail === -1) continue;
+    if (!columnHasEmails(rows, headerEmail, h + 1)) continue;
+
     let headerName = -1;
     let bestScore = 0;
-    first.forEach((c, i) => {
-      if (i === headerEmail || c === "") return;
+    cells.forEach((c, i) => {
+      if (i === headerEmail || c === "" || !isLabelLike(c)) return;
       const score = nameHeaderScore(c);
       if (score > bestScore) {
         bestScore = score;
         headerName = i;
       }
     });
-    return { nameIdx: headerName, emailIdx: headerEmail, headerRows: 1 };
+    return { nameIdx: headerName, emailIdx: headerEmail, headerRows: h + 1 };
   }
 
   // No usable header. Score every column by how many of its cells are addresses
@@ -125,7 +173,21 @@ export function pickColumns(rows: unknown[][]): {
     }
   }
 
-  return { nameIdx, emailIdx, headerRows: 0 };
+  // Anything above the first real address is a title, a note or an unrecognised
+  // header. Treated as data it would be reported back as a row of broken
+  // addresses, which reads as the file being wrong rather than as a preamble
+  // the importer simply had no use for.
+  let headerRows = 0;
+  if (emailIdx !== -1) {
+    while (
+      headerRows < rows.length &&
+      !isEmail(cell(rows[headerRows]?.[emailIdx]))
+    ) {
+      headerRows++;
+    }
+  }
+
+  return { nameIdx, emailIdx, headerRows };
 }
 
 /**

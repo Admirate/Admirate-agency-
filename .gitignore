@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Recipient lists uploaded to the emailer. Real contact data, and nothing
+# in the app reads it from disk — it is imported through the dashboard.
+/excel
+
+# Emailer artwork build inputs. `emailer/build-bands.js` and
+# `build-slices.js` regenerate these from Figma, and they total several
+# megabytes; only the four creative-* slices the email actually references
+# are committed.
+/emailer/artwork-2x.png
+/emailer/background-full.png
+/emailer/src
