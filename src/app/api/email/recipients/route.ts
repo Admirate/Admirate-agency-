@@ -77,31 +77,44 @@ export async function PATCH(request: NextRequest) {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { id, active } = await request.json();
+    const { id, ids, active } = await request.json();
 
-    if (!id || typeof active !== "boolean") {
+    const targets: string[] = Array.isArray(ids) ? ids : id ? [id] : [];
+
+    if (targets.length === 0 || targets.some((v) => typeof v !== "string")) {
       return NextResponse.json(
-        { error: "ID and active status are required" },
+        { error: "An id or a list of ids is required" },
+        { status: 400 }
+      );
+    }
+
+    if (typeof active !== "boolean") {
+      return NextResponse.json(
+        { error: "active must be true or false" },
         { status: 400 }
       );
     }
 
     const supabase = await createClient();
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("email_recipients")
       .update({ active })
-      .eq("id", id);
+      .in("id", targets)
+      .select("id");
 
     if (error) {
-      console.error("Update recipient error:", error);
+      console.error("Update recipients error:", error);
       return NextResponse.json(
-        { error: "Failed to update recipient" },
+        { error: "Failed to update recipients" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ message: "Updated successfully" });
+    return NextResponse.json({
+      message: "Updated successfully",
+      updated: data?.length ?? 0,
+    });
   } catch (error) {
     console.error("Recipients PATCH error:", error);
     return NextResponse.json(
@@ -111,36 +124,76 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
+/**
+ * Deletes one recipient, a named set, or the entire list.
+ *
+ * `all` is an explicit flag rather than a client-supplied array of every id.
+ * Emptying the table should say so: it lets the server recognise the intent,
+ * and it means a truncated or half-built id list cannot silently delete a
+ * subset nobody chose. The single-`id` shape is unchanged because the row
+ * actions still use it.
+ */
 export async function DELETE(request: NextRequest) {
   try {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { id } = await request.json();
+    const { id, ids, all } = await request.json();
+    const supabase = await createClient();
 
-    if (!id) {
+    if (all === true) {
+      // Supabase requires a filter on delete. `not id is null` matches every
+      // row without naming one.
+      const { data, error } = await supabase
+        .from("email_recipients")
+        .delete()
+        .not("id", "is", null)
+        .select("id");
+
+      if (error) {
+        console.error("Delete all recipients error:", error);
+        return NextResponse.json(
+          { error: "Failed to delete recipients" },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        message: `Deleted ${data?.length ?? 0} recipients`,
+        deleted: data?.length ?? 0,
+      });
+    }
+
+    const targets: string[] = Array.isArray(ids) ? ids : id ? [id] : [];
+
+    if (targets.length === 0 || targets.some((v) => typeof v !== "string")) {
       return NextResponse.json(
-        { error: "ID is required" },
+        { error: "An id, a list of ids, or all:true is required" },
         { status: 400 }
       );
     }
 
-    const supabase = await createClient();
-
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("email_recipients")
       .delete()
-      .eq("id", id);
+      .in("id", targets)
+      .select("id");
 
     if (error) {
-      console.error("Delete recipient error:", error);
+      console.error("Delete recipients error:", error);
       return NextResponse.json(
-        { error: "Failed to delete recipient" },
+        { error: "Failed to delete recipients" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ message: "Deleted successfully" });
+    return NextResponse.json({
+      message:
+        data?.length === 1
+          ? "Deleted successfully"
+          : `Deleted ${data?.length ?? 0}`,
+      deleted: data?.length ?? 0,
+    });
   } catch (error) {
     console.error("Recipients DELETE error:", error);
     return NextResponse.json(
