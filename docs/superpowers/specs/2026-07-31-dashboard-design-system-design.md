@@ -177,7 +177,7 @@ The API bulk paths get no automated test — the suite has no HTTP-route harness
 
 - Pagination or virtualised scrolling. Fifty rows do not need it; revisit past a few hundred.
 - Undo for deletion. Rejected during design as riskier than a confirm dialog.
-- Any change to the login page.
+- ~~Any change to the login page.~~ Brought into scope during execution: leaving it on the old red made the first screen anyone sees the only off-brand one, and it contradicted the plan's own no-#FF0D0D gate.
 - The five pre-existing unrelated test failures in `tests/` (sitemap, client-grid, llms, footers, crawler). They fail on `main` without any change from this work and are tracked separately.
 
 ## Risks
