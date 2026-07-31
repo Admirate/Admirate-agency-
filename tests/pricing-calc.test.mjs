@@ -32,13 +32,12 @@ try {
   // The RED run reaches the explicit function assertions below.
 }
 
-/** The nine authored monthly bases, AED then INR, from the seed. */
+/** The authored monthly bases, AED then INR, from the seed. */
 const AED_MONTHLY = {
   "retainer/launch": 4250,
   "retainer/growth": 6250,
   "retainer/scale": 10250,
   "care/care": 750,
-  "care/manage": 1450,
   "care/grow": 2750,
 };
 

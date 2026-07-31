@@ -132,12 +132,12 @@ const SERVICE_CHIPS={
    `plan` alone is ambiguous: "launch" and "growth" are slugs in two different
    families. `service` is what disambiguates them, so the pair is resolved
    together. */
-const PLAN_NAMES={launch:'Launch',growth:'Growth',scale:'Scale',enterprise:'Enterprise',care:'Care',manage:'Manage',grow:'Grow'};
+const PLAN_NAMES={launch:'Launch',growth:'Growth',scale:'Scale',enterprise:'Enterprise',care:'Care',grow:'Grow'};
 const CYCLE_NAMES={monthly:'monthly',quarterly:'quarterly',biannual:'every 6 months',annual:'annually'};
 /* Which package a ?service= value means, for the sentence and the chip. */
 const PACKAGE_BY_SERVICE={'social media':'Digital retainer','digital':'Website build'};
 /* Slugs that only exist in the care family, whatever `service` claims. */
-const CARE_SLUGS=['care','manage','grow'];
+const CARE_SLUGS=['care','grow'];
 
 try{
   const q=new URLSearchParams(location.search);
