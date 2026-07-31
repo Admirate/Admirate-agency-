@@ -2,6 +2,22 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  Input,
+  PageHeader,
+  SkeletonRows,
+} from "@/components/dashboard/ui";
+
+const MailIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
 
 type Draft = {
   id: string;
@@ -157,42 +173,42 @@ const EmailerPage = () => {
     }
   };
 
-  const statusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      draft: "bg-amber-100 text-amber-700",
-      scheduled: "bg-blue-100 text-blue-700",
-      sent: "bg-green-100 text-green-700",
-    };
-    return styles[status] || "bg-gray-100 text-gray-500";
-  };
+  /**
+   * The palette has one accent, so the three states cannot each have their own
+   * colour. Only "sent" is marked — it is the irreversible one, and the word
+   * itself distinguishes draft from scheduled well enough.
+   */
+  const statusTone = (status: string) => (status === "sent" ? "active" : "neutral");
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Email Composer</h1>
+      <PageHeader
+        title="Email Composer"
+        description="Compose, save and send the campaign."
+      />
 
-      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
+      <Card className="p-6 mb-8">
         <div className="space-y-4">
           <div>
             <label
               htmlFor="subject"
-              className="block text-sm font-medium text-gray-700 mb-1.5"
+              className="block text-sm font-medium text-ink mb-1.5"
             >
               Subject
             </label>
-            <input
+            <Input
               id="subject"
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF0D0D]/30 focus:border-[#FF0D0D]/50"
-              placeholder="Email subject line..."
+              placeholder="Email subject line…"
             />
           </div>
 
           <div>
             <label
               htmlFor="body"
-              className="block text-sm font-medium text-gray-700 mb-1.5"
+              className="block text-sm font-medium text-ink mb-1.5"
             >
               Body
             </label>
@@ -201,80 +217,67 @@ const EmailerPage = () => {
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={10}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF0D0D]/30 focus:border-[#FF0D0D]/50 resize-y"
-              placeholder="Write your email content here... (supports plain text, newlines will be preserved)"
+              className="w-full px-4 py-2.5 bg-white border border-line rounded-lg text-sm text-ink placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand/25 focus:border-brand/50 resize-y transition-colors"
+              placeholder="Write your email content here… (supports plain text, newlines will be preserved)"
             />
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button
-              onClick={handleSendNow}
-              disabled={sending}
-              className="px-5 py-2.5 bg-[#FF0D0D] hover:bg-[#e00b0b] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
-            >
-              {sending ? "Sending..." : "Send Now"}
-            </button>
-            <button
-              onClick={handleSchedule}
-              disabled={saving}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
-            >
+            <Button onClick={handleSendNow} loading={sending}>
+              {sending ? "Sending…" : "Send Now"}
+            </Button>
+            <Button variant="ghost" onClick={handleSchedule} disabled={saving}>
               Schedule (10 AM IST)
-            </button>
-            <button
-              onClick={handleSaveDraft}
-              disabled={saving}
-              className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 text-sm font-medium rounded-lg transition-colors border border-gray-200"
-            >
-              {saving ? "Saving..." : editingId ? "Update Draft" : "Save Draft"}
-            </button>
+            </Button>
+            <Button variant="ghost" onClick={handleSaveDraft} loading={saving}>
+              {saving ? "Saving…" : editingId ? "Update Draft" : "Save Draft"}
+            </Button>
             {editingId && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setEditingId(null);
                   setSubject("");
                   setBody("");
                 }}
-                className="px-5 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-500 text-sm font-medium rounded-lg transition-colors border border-gray-200"
               >
                 Cancel Edit
-              </button>
+              </Button>
             )}
           </div>
         </div>
-      </div>
+      </Card>
 
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Drafts & Sent</h2>
+      <h2 className="text-lg font-semibold text-ink mb-4">Drafts &amp; Sent</h2>
 
       {loading ? (
-        <div className="text-gray-400">Loading...</div>
+        <SkeletonRows count={3} />
       ) : drafts.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">
-          No emails yet. Compose your first email above.
-        </div>
+        <Card>
+          <EmptyState
+            icon={<MailIcon />}
+            title="No drafts yet"
+            body="Compose above and save a draft to see it here."
+          />
+        </Card>
       ) : (
         <div className="space-y-3">
           {drafts.map((draft) => (
-            <div
-              key={draft.id}
-              className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
-            >
+            <Card key={draft.id} className="p-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-gray-900 font-medium truncate">
+                    <h3 className="text-ink font-medium truncate">
                       {draft.subject}
                     </h3>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusBadge(draft.status)}`}
-                    >
+                    <Badge tone={statusTone(draft.status)}>
                       {draft.status}
-                    </span>
+                    </Badge>
                   </div>
-                  <p className="text-sm text-gray-500 line-clamp-2">
+                  <p className="text-sm text-muted line-clamp-2">
                     {draft.body}
                   </p>
-                  <p className="text-xs text-gray-400 mt-2">
+                  <p className="text-xs text-muted mt-2">
                     {new Date(draft.created_at).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
@@ -289,22 +292,24 @@ const EmailerPage = () => {
 
                 <div className="flex gap-2 shrink-0">
                   {draft.status !== "sent" && (
-                    <button
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       onClick={() => handleEdit(draft)}
-                      className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors"
                     >
                       Edit
-                    </button>
+                    </Button>
                   )}
-                  <button
+                  <Button
+                    size="sm"
+                    variant="danger"
                     onClick={() => handleDelete(draft.id)}
-                    className="text-xs px-3 py-1.5 bg-[#FF0D0D]/5 hover:bg-[#FF0D0D]/10 text-[#FF0D0D] rounded-lg transition-colors"
                   >
                     Delete
-                  </button>
+                  </Button>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}
