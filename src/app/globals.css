@@ -17,3 +17,23 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* ADMIRATE brand palette, the same values the public pages declare in their
+   own injected stylesheets. Only the dashboard consumes these utilities.
+
+   @theme is safe in this file despite the "stay minimal" note above: it emits
+   custom properties and utility class definitions only, and styles no element
+   on its own. The public pages use none of these classes, so nothing here can
+   compete with the stylesheets they inject at mount.
+
+   `paper` is unused by any current screen. It is declared so the palette lives
+   complete in one place — a partial one is an invitation to hardcode whichever
+   value is missing, which is how 54 off-brand reds accumulated. */
+@theme {
+  --color-warm: #fbf7f1;
+  --color-paper: #fafaf8;
+  --color-ink: #0b0b0c;
+  --color-muted: #8a8a8e;
+  --color-line: #e9e9e6;
+  --color-brand: #e3001b;
+}

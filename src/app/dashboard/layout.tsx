@@ -100,26 +100,28 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 lg:flex">
+    <div className="min-h-screen bg-warm lg:flex">
       <Toaster
         position="top-right"
         toastOptions={{
+          /* Hex rather than tokens: this is an inline style object handed to a
+             third-party component, not a class list. */
           style: {
-            background: "#fff",
-            color: "#111",
-            border: "1px solid #e5e7eb",
+            background: "#FFFFFF",
+            color: "#0B0B0C",
+            border: "1px solid #E9E9E6",
             borderRadius: "12px",
             fontSize: "14px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+            boxShadow: "none",
           },
         }}
       />
 
       {/* Mobile / tablet top bar — the sidebar is off-canvas below lg. */}
-      <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 h-16 px-4 bg-white border-b border-gray-200">
+      <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 h-16 px-4 bg-white border-b border-line">
         <button
           onClick={() => setNavOpen(true)}
-          className="p-2 -ml-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 -ml-2 text-muted hover:text-ink hover:bg-warm rounded-lg transition-colors"
           aria-label="Open navigation"
           aria-expanded={navOpen}
           aria-controls="dashboard-sidebar"
@@ -137,14 +139,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             height={30}
             className="rounded-lg shrink-0"
           />
-          <span className="text-sm font-bold text-gray-900 tracking-wide truncate">
+          <span className="text-sm font-bold text-ink tracking-wide truncate">
             ADMIRATE
           </span>
         </Link>
 
         <button
           onClick={handleLogout}
-          className="ml-auto p-2 text-gray-500 hover:text-[#FF0D0D] hover:bg-[#FF0D0D]/5 rounded-lg transition-colors"
+          className="ml-auto p-2 text-muted hover:text-brand hover:bg-brand/5 rounded-lg transition-colors"
           aria-label="Log out"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -159,18 +161,18 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {navOpen && (
         <div
           onClick={() => setNavOpen(false)}
-          className="lg:hidden fixed inset-0 z-40 bg-black/40"
+          className="lg:hidden fixed inset-0 z-40 bg-ink/40"
           aria-hidden="true"
         />
       )}
 
       <aside
         id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-[270px] max-w-[85vw] bg-white border-r border-gray-200 flex flex-col shadow-sm transition-transform duration-300 ease-out lg:translate-x-0 lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-50 w-[270px] max-w-[85vw] bg-white border-r border-line flex flex-col shadow-sm transition-transform duration-300 ease-out lg:translate-x-0 lg:shadow-none ${
           navOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="p-5 border-b border-gray-100 flex items-center justify-between gap-2">
+        <div className="p-5 border-b border-line flex items-center justify-between gap-2">
           <Link href="/dashboard" className="flex items-center gap-3 min-w-0">
             <Image
               src={asset("admirate logo.webp")}
@@ -180,10 +182,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               className="rounded-lg shrink-0"
             />
             <div className="min-w-0">
-              <h1 className="text-base font-bold text-gray-900 tracking-wide truncate">
+              <h1 className="text-base font-bold text-ink tracking-wide truncate">
                 ADMIRATE
               </h1>
-              <p className="text-gray-400 text-[11px] font-medium">
+              <p className="text-muted text-[11px] font-medium">
                 Admin Dashboard
               </p>
             </div>
@@ -191,7 +193,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
           <button
             onClick={() => setNavOpen(false)}
-            className="lg:hidden p-2 -mr-1 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
+            className="lg:hidden p-2 -mr-1 text-muted hover:text-ink hover:bg-warm rounded-lg transition-colors shrink-0"
             aria-label="Close navigation"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
@@ -217,11 +219,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 aria-current={isActive ? "page" : undefined}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? "bg-[#FF0D0D]/8 text-[#FF0D0D]"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                    ? "bg-brand/8 text-brand"
+                    : "text-muted hover:text-ink hover:bg-warm"
                 }`}
               >
-                <span className={isActive ? "text-[#FF0D0D]" : "text-gray-400"}>
+                <span className={isActive ? "text-brand" : "text-muted"}>
                   {item.icon}
                 </span>
                 {item.label}
@@ -230,10 +232,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           })}
         </nav>
 
-        <div className="p-3 border-t border-gray-100 m-3 mt-0">
+        <div className="p-3 border-t border-line m-3 mt-0">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm text-gray-500 hover:text-[#FF0D0D] hover:bg-[#FF0D0D]/5 rounded-xl transition-all duration-200"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm text-muted hover:text-brand hover:bg-brand/5 rounded-xl transition-all duration-200"
             aria-label="Log out"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
