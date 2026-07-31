@@ -53,7 +53,27 @@ state uses `tone="active"`, paused uses `tone="paused"`, and counts use
 
 ## Pre-existing failures — do not try to fix
 
-`node --test tests/*.test.mjs` has **five failures on `main` that predate this work**: sitemap-catalog, client-grid-renderer, llms-catalog, sitemap-http, services-overview-mobile-labels. They are unrelated to the dashboard and out of scope. When a task says "run the suite", the bar is *no new failures*, not a green suite. Confirm the count is still five.
+`node --test tests/*.test.mjs` has **six failures on `main` that predate this work**:
+
+```
+HTML sitemap renders every public destination with canonical metadata
+crawler files advertise the XML feed and include only public content
+full and compact public footers link to the HTML sitemap
+llms.txt publishes the complete public site guide as Markdown
+sitemap client bundles omit full article and policy bodies
+video production renders the supplied showreel in the existing player
+```
+
+They load `src/components/{landing,llms,services,sitemap}` and the repo root — none of which this plan touches. They are out of scope. When a task says "run the suite", the bar is *no new failures*, not a green suite.
+
+**Count them with this, not with `grep -c`:**
+
+```bash
+node --test tests/*.test.mjs 2>&1 | grep -E "^✖ " | grep -v "failing tests:" \
+  | sed 's/ ([0-9.]*ms)$//' | sort -u
+```
+
+A bare `grep -c "^✖ "` reads high: `node:test` prints every failure twice, once inline and once in a trailing summary, and the summary's own header line `✖ failing tests:` matches the pattern too. Compare the **names**, not a number — a count alone cannot tell you whether a new failure replaced an old one.
 
 ---
 
@@ -864,8 +884,13 @@ Expected: PASS, 16 tests.
 
 - [ ] **Step 5: Confirm no new failures across the suite**
 
-Run: `node --test tests/*.test.mjs 2>&1 | grep -cE "^✖ [a-z]"`
-Expected: `5` — the pre-existing failures, unchanged.
+Run:
+
+```bash
+node --test tests/*.test.mjs 2>&1 | grep -E "^✖ " | grep -v "failing tests:" \n  | sed 's/ ([0-9.]*ms)$//' | sort -u
+```
+
+Expected: the same **six** names listed under "Pre-existing failures" and no others. — the pre-existing failures, unchanged.
 
 - [ ] **Step 6: Commit**
 
@@ -1480,8 +1505,13 @@ Expected: no output. Any hit is a leftover from the old dark theme or the pre-to
 
 - [ ] **Step 5: Confirm no new test failures**
 
-Run: `node --test tests/*.test.mjs 2>&1 | grep -cE "^✖ [a-z]"`
-Expected: `5`.
+Run:
+
+```bash
+node --test tests/*.test.mjs 2>&1 | grep -E "^✖ " | grep -v "failing tests:" \n  | sed 's/ ([0-9.]*ms)$//' | sort -u
+```
+
+Expected: the same **six** names listed under "Pre-existing failures" and no others..
 
 - [ ] **Step 6: Manual sweep of all five pages**
 
