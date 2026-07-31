@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resend, MAIL_FROM, MAIL_REPLY_TO } from "@/lib/resend";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { EmailTemplate } from "@/components/email/template";
 
 export async function POST(request: NextRequest) {
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data: scheduledDraft, error: draftError } = await supabase
       .from("email_drafts")

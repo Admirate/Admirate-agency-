@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const contactSchema = z.object({
   name: z
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validated = contactSchema.parse(body);
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { error } = await supabase.from("contact_submissions").insert({
       name: validated.name,

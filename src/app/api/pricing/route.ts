@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/api-auth";
 import { PRICING_TAG } from "@/lib/pricing";
 
@@ -49,9 +50,15 @@ const purge = () => revalidateTag(PRICING_TAG, "max");
  * `isTableKey` plus the explicit key checks in each handler, and both run at
  * runtime. The typed client is still used for the public GET, where the row
  * shapes are what callers actually consume.
+ *
+ * It is the *admin* client. It used to widen the anon one, which meant the name
+ * promised a privilege it never carried: the four `pricing_*` tables have
+ * public read policies and no write policy, so every save came back as "new row
+ * violates row-level security policy" and editing a price had never once
+ * worked. Each caller below runs `requireAdmin()` first.
  */
 const writeClient = async () =>
-  (await createClient()) as unknown as SupabaseClient;
+  createAdminClient() as unknown as SupabaseClient;
 
 export async function GET() {
   try {

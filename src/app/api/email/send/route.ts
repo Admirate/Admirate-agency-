@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resend, MAIL_FROM, MAIL_REPLY_TO } from "@/lib/resend";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { EmailTemplate } from "@/components/email/template";
 import { requireAdmin } from "@/lib/api-auth";
 
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data: recipients, error: recipientsError } = await supabase
       .from("email_recipients")

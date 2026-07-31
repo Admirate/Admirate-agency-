@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/api-auth";
 
 export async function GET() {
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data, error } = await supabase
       .from("email_recipients")
@@ -95,7 +96,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data, error } = await supabase
       .from("email_recipients")
@@ -139,7 +140,7 @@ export async function DELETE(request: NextRequest) {
     if (denied) return denied;
 
     const { id, ids, all } = await request.json();
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     if (all === true) {
       // Supabase requires a filter on delete. `not id is null` matches every
