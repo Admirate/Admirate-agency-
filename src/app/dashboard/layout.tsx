@@ -168,7 +168,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
       <aside
         id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-[270px] max-w-[85vw] bg-white border-r border-line flex flex-col shadow-sm transition-transform duration-300 ease-out lg:translate-x-0 lg:shadow-none ${
+        // No shadow on the drawer: the ink scrim behind it already separates it
+        // from the page, and the treatment everywhere else is borders.
+        className={`fixed inset-y-0 left-0 z-50 w-[270px] max-w-[85vw] bg-white border-r border-line flex flex-col transition-transform duration-300 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

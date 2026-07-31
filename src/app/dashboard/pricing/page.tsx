@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { PageHeader } from "@/components/dashboard/ui";
 
 /**
  * Pricing administration.
@@ -74,7 +75,7 @@ const derive = (monthly: number, months: number, discountPct: number) =>
   Math.ceil(Number(((monthly * months * (100 - discountPct)) / 100).toFixed(6)));
 
 const field =
-  "w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF0D0D]/30 focus:border-[#FF0D0D]/50";
+  "w-full px-3 py-2 bg-warm border border-line rounded-lg text-ink placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50";
 
 const PricingPage = () => {
   const [currencies, setCurrencies] = useState<Currency[]>([]);
@@ -204,7 +205,7 @@ const PricingPage = () => {
     }
   };
 
-  if (loading) return <div className="text-gray-400">Loading...</div>;
+  if (loading) return <div className="text-muted">Loading...</div>;
 
   /* Every plan that has no figure in an authored currency. Such a plan is
      dropped from that currency's rendering rather than shown at zero, so the
@@ -218,24 +219,21 @@ const PricingPage = () => {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Pricing</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Changes go live without a deployment. Only the monthly base is
-          editable — longer cycles are derived from it.
-        </p>
-      </div>
+      <PageHeader
+        title="Pricing"
+        description="Changes go live without a deployment. Only the monthly base is editable — longer cycles are derived from it."
+      />
 
       {gaps.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-amber-900">
+        <div className="bg-brand/5 border border-brand/25 rounded-xl p-4">
+          <h2 className="text-sm font-semibold text-brand">
             {gaps.length} missing {gaps.length === 1 ? "price" : "prices"}
           </h2>
-          <p className="text-xs text-amber-800 mt-1">
+          <p className="text-xs text-brand mt-1">
             These plans are hidden from the live page in that currency rather
             than shown at zero.
           </p>
-          <ul className="text-xs text-amber-800 mt-2 space-y-0.5">
+          <ul className="text-xs text-brand mt-2 space-y-0.5">
             {gaps.map((g) => (
               <li key={g}>· {g}</li>
             ))}
@@ -255,13 +253,13 @@ const PricingPage = () => {
         return (
           <section
             key={family}
-            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
+            className="bg-white border border-line rounded-xl p-6"
           >
             <div className="flex items-baseline justify-between gap-3 mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-ink">
                 {FAMILY_LABELS[family]}
               </h2>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-muted">
                 {oneTime ? "one-time price" : "monthly base"}
               </span>
             </div>
@@ -269,7 +267,7 @@ const PricingPage = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[560px]">
                 <thead>
-                  <tr className="text-left text-xs text-gray-500 uppercase tracking-wide">
+                  <tr className="text-left text-xs text-muted uppercase tracking-wide">
                     <th className="pb-2 pr-4 font-medium">Plan</th>
                     {authored.map((c) => (
                       <th key={c.code} className="pb-2 pr-4 font-medium">
@@ -280,7 +278,7 @@ const PricingPage = () => {
                       CYCLES.map((cy) => (
                         <th
                           key={cy.id}
-                          className="pb-2 pr-4 font-medium text-gray-400"
+                          className="pb-2 pr-4 font-medium text-muted"
                         >
                           {cy.label} −{cy.discountPct}%
                         </th>
@@ -292,17 +290,17 @@ const PricingPage = () => {
                     const base = amountFor(plan.id, authored[0]?.code ?? "AED");
 
                     return (
-                      <tr key={plan.id} className="border-t border-gray-100">
+                      <tr key={plan.id} className="border-t border-line">
                         <td className="py-3 pr-4">
-                          <span className="font-medium text-gray-900">
+                          <span className="font-medium text-ink">
                             {plan.name}
                           </span>
                           {plan.featured && (
-                            <span className="ml-2 text-[10px] px-1.5 py-0.5 bg-[#FF0D0D]/10 text-[#FF0D0D] rounded">
+                            <span className="ml-2 text-[10px] px-1.5 py-0.5 bg-brand/10 text-brand rounded">
                               FEATURED
                             </span>
                           )}
-                          <span className="block text-xs text-gray-400">
+                          <span className="block text-xs text-muted">
                             {plan.slug}
                           </span>
                         </td>
@@ -323,7 +321,7 @@ const PricingPage = () => {
                                 onBlur={(e) =>
                                   saveAmount(plan.id, c.code, e.target.value)
                                 }
-                                className={`${field} w-32 ${value === null ? "border-amber-300 bg-amber-50" : ""}`}
+                                className={`${field} w-32 ${value === null ? "border-brand/25 bg-brand/5" : ""}`}
                                 placeholder="—"
                               />
                             </td>
@@ -336,7 +334,7 @@ const PricingPage = () => {
                           CYCLES.map((cy) => (
                             <td
                               key={cy.id}
-                              className="py-3 pr-4 text-gray-400 tabular-nums"
+                              className="py-3 pr-4 text-muted tabular-nums"
                             >
                               {base === null
                                 ? "—"
@@ -354,7 +352,7 @@ const PricingPage = () => {
               </table>
             </div>
             {!oneTime && (
-              <p className="text-xs text-gray-400 mt-3">
+              <p className="text-xs text-muted mt-3">
                 Derived columns shown in {authored[0]?.code ?? "AED"}, rounded
                 up to the whole unit.
               </p>
@@ -364,9 +362,9 @@ const PricingPage = () => {
       })}
 
       {/* ----------------------------------------------------- currencies -- */}
-      <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Currencies</h2>
-        <p className="text-sm text-gray-500 mb-4">
+      <section className="bg-white border border-line rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-ink mb-1">Currencies</h2>
+        <p className="text-sm text-muted mb-4">
           Tax is added on top of every price shown on the site. Leave both tax
           fields empty to state no rate at all — that is not the same as zero,
           and the line is omitted entirely.
@@ -376,18 +374,18 @@ const PricingPage = () => {
           {currencies.map((c) => (
             <div
               key={c.code}
-              className="flex flex-wrap items-end gap-3 p-3 border border-gray-100 rounded-lg"
+              className="flex flex-wrap items-end gap-3 p-3 border border-line rounded-lg"
             >
               <div className="w-20">
-                <span className="block text-xs text-gray-500 mb-1">Code</span>
-                <span className="font-medium text-gray-900">{c.code}</span>
-                <span className="block text-xs text-gray-400">
+                <span className="block text-xs text-muted mb-1">Code</span>
+                <span className="font-medium text-ink">{c.code}</span>
+                <span className="block text-xs text-muted">
                   {c.authored ? "authored" : "derived"}
                 </span>
               </div>
 
               <label className="block">
-                <span className="block text-xs text-gray-500 mb-1">
+                <span className="block text-xs text-muted mb-1">
                   Tax rate (%)
                 </span>
                 <input
@@ -420,7 +418,7 @@ const PricingPage = () => {
               </label>
 
               <label className="block">
-                <span className="block text-xs text-gray-500 mb-1">
+                <span className="block text-xs text-muted mb-1">
                   Tax label
                 </span>
                 <input
@@ -439,15 +437,15 @@ const PricingPage = () => {
               </label>
 
               <div className="min-w-[190px]">
-                <span className="block text-xs text-gray-500 mb-1">Rate</span>
+                <span className="block text-xs text-muted mb-1">Rate</span>
                 {c.authored ? (
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-muted">
                     not converted — prices are set above
                   </span>
                 ) : (
-                  <span className="text-sm text-gray-700 tabular-nums">
+                  <span className="text-sm text-ink tabular-nums">
                     {c.rate ?? "—"} / AED
-                    <span className="block text-xs text-gray-400">
+                    <span className="block text-xs text-muted">
                       {c.rate_updated_at
                         ? `refreshed ${new Date(c.rate_updated_at).toLocaleString()}`
                         : "never refreshed — seed value in use"}
@@ -456,7 +454,7 @@ const PricingPage = () => {
                 )}
               </div>
 
-              <label className="flex items-center gap-2 ml-auto text-sm text-gray-600">
+              <label className="flex items-center gap-2 ml-auto text-sm text-muted">
                 <input
                   type="checkbox"
                   defaultChecked={c.active}
@@ -464,7 +462,7 @@ const PricingPage = () => {
                   onChange={(e) =>
                     saveCurrency(c.code, { active: e.target.checked })
                   }
-                  className="accent-[#FF0D0D]"
+                  className="accent-[#E3001B]"
                 />
                 Shown on site
               </label>
@@ -473,7 +471,7 @@ const PricingPage = () => {
         </div>
 
         {derived.length > 0 && (
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-muted mt-4">
             Derived rates refresh daily from European Central Bank reference
             rates. A failed refresh leaves the previous rate in place rather
             than clearing it.
@@ -496,15 +494,15 @@ const PricingPage = () => {
         return (
           <section
             key={`feat-${family}`}
-            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
+            className="bg-white border border-line rounded-xl p-6"
           >
             <div className="flex items-baseline justify-between gap-3 mb-1">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-ink">
                 {FAMILY_LABELS[family]} — comparison rows
               </h2>
-              <span className="text-xs text-gray-400">{rows.length} rows</span>
+              <span className="text-xs text-muted">{rows.length} rows</span>
             </div>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-muted mb-4">
               Use ✓ for included and — for not included. Anything else is shown
               as written.
             </p>
@@ -512,7 +510,7 @@ const PricingPage = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[560px]">
                 <thead>
-                  <tr className="text-left text-xs text-gray-500 uppercase tracking-wide">
+                  <tr className="text-left text-xs text-muted uppercase tracking-wide">
                     <th className="pb-2 pr-4 font-medium">Feature</th>
                     {slugs.map((s) => (
                       <th key={s} className="pb-2 pr-4 font-medium">
@@ -523,8 +521,8 @@ const PricingPage = () => {
                 </thead>
                 <tbody>
                   {rows.map((row) => (
-                    <tr key={row.id} className="border-t border-gray-100">
-                      <td className="py-2 pr-4 text-gray-900">{row.label}</td>
+                    <tr key={row.id} className="border-t border-line">
+                      <td className="py-2 pr-4 text-ink">{row.label}</td>
                       {slugs.map((slug) => (
                         <td key={slug} className="py-2 pr-4">
                           <input
