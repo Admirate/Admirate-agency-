@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resend, MAIL_FROM, MAIL_REPLY_TO } from "@/lib/resend";
+import { sendCampaign } from "@/lib/resend";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { EmailTemplate } from "@/components/email/template";
@@ -33,9 +33,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error: sendError } = await resend.emails.send({
-      from: MAIL_FROM,
-      replyTo: MAIL_REPLY_TO,
+    const { error: sendError } = await sendCampaign({
       to: recipients.map((r) => r.email),
       subject,
       /* `html`, not `react`: the template emits Outlook conditional comments
@@ -44,9 +42,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (sendError) {
-      console.error("Resend error:", sendError);
+      /* The provider's own words, not "Failed to send email": the composer
+         shows this error verbatim, and a bare failure string sent the last
+         outage to the server logs to find out what went wrong. */
       return NextResponse.json(
-        { error: "Failed to send email" },
+        { error: `Failed to send email: ${sendError}` },
         { status: 500 }
       );
     }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resend, MAIL_FROM, MAIL_REPLY_TO } from "@/lib/resend";
+import { sendCampaign } from "@/lib/resend";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { EmailTemplate } from "@/components/email/template";
@@ -42,9 +42,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error: sendError } = await resend.emails.send({
-      from: MAIL_FROM,
-      replyTo: MAIL_REPLY_TO,
+    const { error: sendError } = await sendCampaign({
       to: recipients.map((r) => r.email),
       subject: scheduledDraft.subject,
       /* `html`, not `react`: the template emits Outlook conditional comments
@@ -56,9 +54,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (sendError) {
-      console.error("Cron email send error:", sendError);
       return NextResponse.json(
-        { error: "Failed to send scheduled email" },
+        { error: `Failed to send scheduled email: ${sendError}` },
         { status: 500 }
       );
     }
