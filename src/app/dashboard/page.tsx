@@ -40,6 +40,11 @@ type Submission = {
   services: string[] | null;
   budget: string | null;
   timeline: string | null;
+  // Added with the step-by-step wizard. Null on every row that predates it,
+  // and on anything arriving through the plain contact path.
+  industry: string | null;
+  plan: string | null;
+  billing_cycle: string | null;
   created_at: string;
 };
 
@@ -186,9 +191,11 @@ const SubmissionsPage = () => {
                     {submission.message}
                   </p>
 
-                  {submission.company && (
+                  {(submission.company || submission.industry) && (
                     <p className="text-xs text-muted mt-2">
                       {submission.company}
+                      {submission.company && submission.industry && " • "}
+                      {submission.industry}
                     </p>
                   )}
 
@@ -205,8 +212,20 @@ const SubmissionsPage = () => {
                     </div>
                   )}
 
-                  {(submission.budget || submission.timeline) && (
-                    <div className="flex gap-4 mt-2 text-xs text-muted">
+                  {(submission.budget ||
+                    submission.timeline ||
+                    submission.plan) && (
+                    <div className="flex flex-wrap gap-4 mt-2 text-xs text-muted">
+                      {submission.plan && (
+                        <span>
+                          Plan:{" "}
+                          <b className="font-medium text-ink">
+                            {submission.plan}
+                          </b>
+                          {submission.billing_cycle &&
+                            ` (${submission.billing_cycle})`}
+                        </span>
+                      )}
                       {submission.budget && (
                         <span>
                           Budget:{" "}

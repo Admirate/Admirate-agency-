@@ -28,6 +28,11 @@ const contactSchema = z.object({
   services: z.array(z.string().max(60)).max(20).optional(),
   budget: z.string().max(40).optional().or(z.literal("")),
   timeline: z.string().max(40).optional().or(z.literal("")),
+  // Collected only by the /start-project wizard. Optional for the same reason
+  // the fields above are: the plain contact path never sends them.
+  industry: z.string().max(60).optional().or(z.literal("")),
+  plan: z.string().max(60).optional().or(z.literal("")),
+  billing_cycle: z.string().max(20).optional().or(z.literal("")),
 });
 
 export async function POST(request: NextRequest) {
@@ -46,6 +51,9 @@ export async function POST(request: NextRequest) {
       services: validated.services ?? [],
       budget: validated.budget || null,
       timeline: validated.timeline || null,
+      industry: validated.industry || null,
+      plan: validated.plan || null,
+      billing_cycle: validated.billing_cycle || null,
     });
 
     if (error) {

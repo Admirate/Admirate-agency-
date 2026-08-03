@@ -21,6 +21,9 @@ export interface Database {
           services: string[];
           budget: string | null;
           timeline: string | null;
+          industry: string | null;
+          plan: string | null;
+          billing_cycle: string | null;
           created_at: string;
         };
         Insert: {
@@ -34,6 +37,9 @@ export interface Database {
           services?: string[];
           budget?: string | null;
           timeline?: string | null;
+          industry?: string | null;
+          plan?: string | null;
+          billing_cycle?: string | null;
           created_at?: string;
         };
         Update: {
@@ -47,6 +53,9 @@ export interface Database {
           services?: string[];
           budget?: string | null;
           timeline?: string | null;
+          industry?: string | null;
+          plan?: string | null;
+          billing_cycle?: string | null;
           created_at?: string;
         };
         Relationships: [];
