@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/api-auth";
 import { isEmail, nameFromEmail } from "@/lib/recipient-sheet";
+import { toIndustryId } from "@/lib/industries";
 
 /**
  * Bulk recipient import, behind the spreadsheet upload on the recipients page.
@@ -26,7 +27,7 @@ const MAX_ROWS = 5000;
 const LOOKUP_CHUNK = 200;
 const INSERT_CHUNK = 500;
 
-type Incoming = { name?: unknown; email?: unknown };
+type Incoming = { name?: unknown; email?: unknown; industry?: unknown };
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,7 +55,10 @@ export async function POST(request: NextRequest) {
 
     // Re-validate and re-deduplicate server-side. The client did both, but the
     // client is not the authority on either.
-    const byEmail = new Map<string, { email: string; name: string }>();
+    const byEmail = new Map<
+      string,
+      { email: string; name: string; industry: string | null }
+    >();
     let invalid = 0;
 
     for (const row of rows) {
@@ -71,7 +75,10 @@ export async function POST(request: NextRequest) {
           ? row.name.trim().slice(0, 200)
           : nameFromEmail(email);
 
-      byEmail.set(email, { email, name });
+      // Re-resolved rather than trusted. The browser ran the same function over
+      // the same cell, but the browser is not the authority on what reaches the
+      // column — and toIndustryId is idempotent, so re-running it is free.
+      byEmail.set(email, { email, name, industry: toIndustryId(row?.industry) });
     }
 
     const candidates = [...byEmail.values()];
