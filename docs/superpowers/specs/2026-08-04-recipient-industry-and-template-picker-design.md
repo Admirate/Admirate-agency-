@@ -156,7 +156,9 @@ The long comment block explaining why the creative is flat artwork rather than l
 
 `src/components/email/template.ts` remains as a one-line re-export of `campaign-dubai`'s render function under the name `EmailTemplate`, so nothing importing it breaks mid-change. The send routes stop using it. It can be deleted once nothing does.
 
-**Thumbnails.** `public/email-templates/<id>.jpg`, 600px wide, produced by scaling the first slice of each creative — `emailer/build-slices.js` already cuts those, so the existing template's thumbnail is a resize of `creative-1-story.jpg` rather than new artwork. A template whose thumbnail file is missing renders a neutral placeholder card; a broken image must not stop the picker working.
+**Thumbnails.** No new image files. A template's `thumbnail` is its own first slice, already hosted in the `emailer` bucket, passed through Next's image optimizer with the existing `optimized()` helper from `src/lib/cdn.ts` — `optimized(emailerAsset("creative-1-story.jpg"), 384)`. The Supabase host is already in `next.config.ts` `remotePatterns`, and 384 is one of Next's default `imageSizes`, so this needs no configuration.
+
+The slices are tall strips, so the card crops with `object-cover object-top` in a fixed-height box: the top of the creative is what identifies it. A thumbnail that fails to load leaves the card's neutral background and the name and description, which is enough to pick from — a broken image must not stop the picker working.
 
 ### Preview
 
