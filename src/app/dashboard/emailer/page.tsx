@@ -11,6 +11,9 @@ import {
   PageHeader,
   SkeletonRows,
 } from "@/components/dashboard/ui";
+import { TEMPLATES, DEFAULT_TEMPLATE_ID } from "@/components/email/templates";
+import { INDUSTRIES, industryLabel } from "@/lib/industries";
+import { describeAudience } from "@/lib/campaign-audience";
 
 const MailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -24,9 +27,14 @@ type Draft = {
   subject: string;
   body: string;
   status: "draft" | "sent" | "scheduled";
+  template_id: string | null;
+  industries: string[];
   sent_at: string | null;
   created_at: string;
 };
+
+/** Only the fields the audience counter needs. */
+type AudienceRow = { active: boolean; industry: string | null };
 
 const EmailerPage = () => {
   const [subject, setSubject] = useState("");
@@ -36,9 +44,13 @@ const EmailerPage = () => {
   const [sending, setSending] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [templateId, setTemplateId] = useState(DEFAULT_TEMPLATE_ID);
+  const [audience, setAudience] = useState<string[]>([]);
+  const [rows, setRows] = useState<AudienceRow[]>([]);
 
   useEffect(() => {
     fetchDrafts();
+    fetchAudienceRows();
   }, []);
 
   const fetchDrafts = async () => {
@@ -50,6 +62,23 @@ const EmailerPage = () => {
       toast.error("Failed to load drafts");
     } finally {
       setLoading(false);
+    }
+  };
+
+  /**
+   * The recipient list, for the counts on the audience chips only.
+   *
+   * Counted in the browser from the list the recipients page already serves,
+   * rather than adding a counts endpoint: the whole list is a few KB, it is one
+   * request, and the numbers cannot drift from what that page shows.
+   */
+  const fetchAudienceRows = async () => {
+    try {
+      const res = await fetch("/api/email/recipients");
+      const data = await res.json();
+      if (res.ok) setRows(data);
+    } catch {
+      // A failed count leaves the chips reading 0. It must not block composing.
     }
   };
 
@@ -65,7 +94,13 @@ const EmailerPage = () => {
         const res = await fetch("/api/email/drafts", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingId, subject, body }),
+          body: JSON.stringify({
+            id: editingId,
+            subject,
+            body,
+            templateId,
+            industries: audience,
+          }),
         });
         if (res.ok) {
           toast.success("Draft updated");
@@ -75,13 +110,21 @@ const EmailerPage = () => {
         const res = await fetch("/api/email/drafts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subject, body, status: "draft" }),
+          body: JSON.stringify({
+            subject,
+            body,
+            status: "draft",
+            templateId,
+            industries: audience,
+          }),
         });
         if (res.ok) toast.success("Draft saved");
       }
 
       setSubject("");
       setBody("");
+      setTemplateId(DEFAULT_TEMPLATE_ID);
+      setAudience([]);
       fetchDrafts();
     } catch {
       toast.error("Failed to save draft");
@@ -101,13 +144,21 @@ const EmailerPage = () => {
       const res = await fetch("/api/email/drafts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, body, status: "scheduled" }),
+        body: JSON.stringify({
+          subject,
+          body,
+          status: "scheduled",
+          templateId,
+          industries: audience,
+        }),
       });
 
       if (res.ok) {
         toast.success("Email scheduled for 10 AM IST");
         setSubject("");
         setBody("");
+        setTemplateId(DEFAULT_TEMPLATE_ID);
+        setAudience([]);
         fetchDrafts();
       }
     } catch {
@@ -128,7 +179,13 @@ const EmailerPage = () => {
       const res = await fetch("/api/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, body, draftId: editingId }),
+        body: JSON.stringify({
+          subject,
+          body,
+          draftId: editingId,
+          templateId,
+          industries: audience,
+        }),
       });
 
       const data = await res.json();
@@ -137,6 +194,8 @@ const EmailerPage = () => {
         toast.success(data.message);
         setSubject("");
         setBody("");
+        setTemplateId(DEFAULT_TEMPLATE_ID);
+        setAudience([]);
         setEditingId(null);
         fetchDrafts();
       } else {
@@ -152,6 +211,8 @@ const EmailerPage = () => {
   const handleEdit = (draft: Draft) => {
     setSubject(draft.subject);
     setBody(draft.body);
+    setTemplateId(draft.template_id ?? DEFAULT_TEMPLATE_ID);
+    setAudience(draft.industries ?? []);
     setEditingId(draft.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -180,6 +241,20 @@ const EmailerPage = () => {
    */
   const statusTone = (status: string) => (status === "sent" ? "active" : "neutral");
 
+  const activeRows = rows.filter((r) => r.active);
+  const countFor = (id: string) =>
+    activeRows.filter((r) => r.industry === id).length;
+  const reach =
+    audience.length === 0
+      ? activeRows.length
+      : activeRows.filter((r) => r.industry && audience.includes(r.industry))
+          .length;
+
+  const toggleIndustry = (id: string) =>
+    setAudience((prev) =>
+      prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+    );
+
   return (
     <div>
       <PageHeader
@@ -189,6 +264,66 @@ const EmailerPage = () => {
 
       <Card className="p-6 mb-8">
         <div className="space-y-4">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="block text-sm font-medium text-ink">Template</span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() =>
+                  window.open(
+                    // The body is truncated because it only ever becomes the
+                    // preheader, which is cut at 140 characters anyway, and a
+                    // long draft would otherwise build a URL a proxy refuses.
+                    `/api/email/preview?template=${encodeURIComponent(templateId)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.slice(0, 200))}`,
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
+              >
+                Preview
+              </Button>
+            </div>
+
+            {/* Cards rather than a select. These are flat artwork creatives —
+                the names distinguish them for whoever wrote them and for nobody
+                else, and picking the wrong one is a send you cannot recall. */}
+            <div className="flex gap-3 overflow-x-auto pb-1">
+              {TEMPLATES.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setTemplateId(t.id)}
+                  aria-pressed={templateId === t.id}
+                  className={`shrink-0 w-56 text-left rounded-lg border overflow-hidden bg-white transition-colors ${
+                    templateId === t.id
+                      ? "border-brand ring-2 ring-brand/25"
+                      : "border-line hover:border-brand/40"
+                  }`}
+                >
+                  {/* object-top: the slices are tall strips, and the top of the
+                      creative is the part that identifies it. */}
+                  <span className="block h-28 bg-warm overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={t.thumbnail}
+                      alt=""
+                      className="w-full h-28 object-cover object-top"
+                    />
+                  </span>
+                  <span className="block px-3 py-2">
+                    <span className="block text-sm font-medium text-ink truncate">
+                      {t.name}
+                    </span>
+                    <span className="block text-xs text-muted line-clamp-2">
+                      {t.description}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="subject"
@@ -222,9 +357,56 @@ const EmailerPage = () => {
             />
           </div>
 
+          <div>
+            <span className="block text-sm font-medium text-ink mb-2">
+              Audience
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {/* "Everyone" is not one more industry — it is the absence of a
+                  filter, which is why picking it clears the rest rather than
+                  joining them. */}
+              <button
+                type="button"
+                onClick={() => setAudience([])}
+                aria-pressed={audience.length === 0}
+                className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
+                  audience.length === 0
+                    ? "bg-brand text-white border-transparent"
+                    : "bg-white text-ink border-line hover:bg-warm"
+                }`}
+              >
+                Everyone · {activeRows.length}
+              </button>
+
+              {INDUSTRIES.map((i) => {
+                const on = audience.includes(i.id);
+                return (
+                  <button
+                    key={i.id}
+                    type="button"
+                    onClick={() => toggleIndustry(i.id)}
+                    aria-pressed={on}
+                    className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
+                      on
+                        ? "bg-brand text-white border-transparent"
+                        : "bg-white text-ink border-line hover:bg-warm"
+                    }`}
+                  >
+                    {i.label} · {countFor(i.id)}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted mt-2">
+              {audience.length === 0
+                ? "Sending to every active recipient."
+                : `Sending to ${describeAudience(audience)}.`}
+            </p>
+          </div>
+
           <div className="flex flex-wrap gap-3">
-            <Button onClick={handleSendNow} loading={sending}>
-              {sending ? "Sending…" : "Send Now"}
+            <Button onClick={handleSendNow} loading={sending} disabled={reach === 0}>
+              {sending ? "Sending…" : `Send to ${reach}`}
             </Button>
             <Button variant="ghost" onClick={handleSchedule} disabled={saving}>
               Schedule (10 AM IST)
@@ -239,6 +421,8 @@ const EmailerPage = () => {
                   setEditingId(null);
                   setSubject("");
                   setBody("");
+                  setTemplateId(DEFAULT_TEMPLATE_ID);
+                  setAudience([]);
                 }}
               >
                 Cancel Edit
@@ -276,6 +460,14 @@ const EmailerPage = () => {
                   </div>
                   <p className="text-sm text-muted line-clamp-2">
                     {draft.body}
+                  </p>
+                  <p className="text-xs text-muted mt-1">
+                    {(TEMPLATES.find((t) => t.id === draft.template_id) ??
+                      TEMPLATES[0]).name}
+                    {" · "}
+                    {draft.industries?.length
+                      ? draft.industries.map(industryLabel).join(", ")
+                      : "Everyone"}
                   </p>
                   <p className="text-xs text-muted mt-2">
                     {new Date(draft.created_at).toLocaleDateString("en-IN", {
