@@ -8,23 +8,47 @@
 
 export type RecipientStatus = "all" | "active" | "paused";
 
-type Filterable = { name: string; email: string; active: boolean };
+type Filterable = {
+  name: string;
+  email: string;
+  active: boolean;
+  industry?: string | null;
+};
+
+/** The two filter values that are not an industry id. */
+export const INDUSTRY_ANY = "all";
+export const INDUSTRY_NONE = "unassigned";
 
 /**
  * Name and email are searched together against one query, rather than offering
  * a field selector. Someone looking for a recipient knows one of the two and
  * should not have to say which.
+ *
+ * Industry is deliberately *not* part of that query and has its own control.
+ * Folding it in would make the "Showing 14 of 77" counter ambiguous about which
+ * control produced the 14.
  */
 export function filterRecipients<T extends Filterable>(
   rows: T[],
-  opts: { query?: string; status?: RecipientStatus } = {}
+  opts: { query?: string; status?: RecipientStatus; industry?: string } = {}
 ): T[] {
   const q = (opts.query ?? "").trim().toLowerCase();
   const status = opts.status ?? "all";
+  const industry = opts.industry ?? INDUSTRY_ANY;
 
   return rows.filter((r) => {
     if (status === "active" && !r.active) return false;
     if (status === "paused" && r.active) return false;
+
+    if (industry !== INDUSTRY_ANY && industry !== "") {
+      // A row predating the column has no key at all, which reads the same as
+      // an explicit null: nobody has said what they do.
+      const has = r.industry ?? null;
+      if (industry === INDUSTRY_NONE) {
+        if (has !== null) return false;
+      } else if (has !== industry) return false;
+    }
+
     if (q === "") return true;
     return r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q);
   });

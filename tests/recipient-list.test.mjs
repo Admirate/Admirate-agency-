@@ -130,3 +130,48 @@ test("allSelected is false for an empty id list", () => {
 test("clearSelection returns an empty set", () => {
   assert.equal(clearSelection().size, 0);
 });
+
+const INDUSTRY_ROWS = [
+  { id: "a", name: "Emaar", email: "a@emaar.com", active: true, industry: "real-estate-developer" },
+  { id: "b", name: "Betterhomes", email: "b@bh.ae", active: true, industry: "real-estate-brokerage" },
+  { id: "c", name: "Nobody", email: "c@nobody.ae", active: true, industry: null },
+  { id: "d", name: "Paused Co", email: "d@paused.ae", active: false, industry: "technology" },
+];
+
+test("filterRecipients ignores industry when it is not asked for", () => {
+  assert.equal(filterRecipients(INDUSTRY_ROWS, {}).length, 4);
+  assert.equal(filterRecipients(INDUSTRY_ROWS, { industry: "all" }).length, 4);
+  assert.equal(filterRecipients(INDUSTRY_ROWS, { industry: "" }).length, 4);
+});
+
+test("filterRecipients matches an industry id exactly", () => {
+  const rows = filterRecipients(INDUSTRY_ROWS, { industry: "real-estate-brokerage" });
+  assert.deepEqual(rows.map((r) => r.id), ["b"]);
+});
+
+test("filterRecipients selects the unassigned rows", () => {
+  const rows = filterRecipients(INDUSTRY_ROWS, { industry: "unassigned" });
+  assert.deepEqual(rows.map((r) => r.id), ["c"]);
+});
+
+test("industry combines with status and query rather than replacing them", () => {
+  assert.equal(
+    filterRecipients(INDUSTRY_ROWS, { industry: "technology", status: "active" }).length,
+    0
+  );
+  assert.deepEqual(
+    filterRecipients(INDUSTRY_ROWS, { industry: "technology", status: "paused" }).map((r) => r.id),
+    ["d"]
+  );
+  assert.deepEqual(
+    filterRecipients(INDUSTRY_ROWS, { industry: "real-estate-developer", query: "emaar" }).map((r) => r.id),
+    ["a"]
+  );
+});
+
+test("rows with no industry field at all are treated as unassigned", () => {
+  const legacy = [{ id: "x", name: "Old", email: "x@old.ae", active: true }];
+  assert.equal(filterRecipients(legacy, { industry: "unassigned" }).length, 1);
+  assert.equal(filterRecipients(legacy, { industry: "technology" }).length, 0);
+  assert.equal(filterRecipients(legacy, {}).length, 1);
+});
