@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendCampaign } from "@/lib/resend";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { EmailTemplate } from "@/components/email/template";
+import { getTemplate } from "@/components/email/templates";
+import { cleanAudience, describeAudience } from "@/lib/campaign-audience";
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,14 +30,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: recipients, error: recipientsError } = await supabase
+    // Read from the row, not from a request: this runs hours after the composer
+    // closed, and the row is the only record of what was chosen.
+    const audience = cleanAudience(scheduledDraft.industries);
+    const template = getTemplate(scheduledDraft.template_id);
+
+    let query = supabase
       .from("email_recipients")
       .select("email, name")
       .eq("active", true);
 
+    if (audience.length > 0) query = query.in("industry", audience);
+
+    const { data: recipients, error: recipientsError } = await query;
+
     if (recipientsError || !recipients || recipients.length === 0) {
+      /* 200, not 500: the cron is not broken, there is simply nobody to send
+         to. A 500 here would page someone about an empty segment. The draft is
+         deliberately left `scheduled` so it goes out once somebody is
+         assigned. */
       return NextResponse.json(
-        { message: "No active recipients" },
+        {
+          message:
+            audience.length > 0
+              ? `No active recipients in ${describeAudience(audience)}`
+              : "No active recipients",
+        },
         { status: 200 }
       );
     }
@@ -47,7 +65,7 @@ export async function POST(request: NextRequest) {
       subject: scheduledDraft.subject,
       /* `html`, not `react`: the template emits Outlook conditional comments
          and VML, which JSX cannot express. */
-      html: EmailTemplate({
+      html: template.render({
         subject: scheduledDraft.subject,
         body: scheduledDraft.body,
       }),

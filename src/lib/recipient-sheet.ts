@@ -16,7 +16,14 @@
  * (where the file is parsed) and be tested without a file at all.
  */
 
-export type ParsedRecipient = { name: string; email: string };
+import { toIndustryId } from "@/lib/industries";
+
+export type ParsedRecipient = {
+  name: string;
+  email: string;
+  /** An id from src/lib/industries.ts, or null when the sheet did not say. */
+  industry: string | null;
+};
 
 export type SheetParseResult = {
   recipients: ParsedRecipient[];
@@ -24,6 +31,8 @@ export type SheetParseResult = {
   skipped: { row: number; value: string; reason: string }[];
   /** Repeats inside the uploaded file itself, already collapsed. */
   duplicatesInFile: number;
+  /** How many of `recipients` came out with an industry, for the preview. */
+  withIndustry: number;
 };
 
 /**
@@ -95,6 +104,28 @@ const nameHeaderScore = (v: string): number => {
 };
 
 /**
+ * Ranked like `nameHeaderScore`, and for the same reason: a sheet can offer
+ * "Category" and "Industry" at once, and the specific claim should win over the
+ * leftmost one. "Business Type" outranks bare "Type" because the bare word is
+ * the one that turns up over columns holding "Buy"/"Rent".
+ */
+const industryHeaderScore = (v: string): number => {
+  if (/^(industry|sector|vertical)$/i.test(v)) return 100;
+  if (/^(business|company)[-\s]?type$/i.test(v)) return 90;
+  if (/^(category|segment|type)$/i.test(v)) return 60;
+  if (/industry|sector|vertical/i.test(v)) return 50;
+  return 0;
+};
+
+/** Whether a column's values actually resolve to industries from `from` down. */
+const columnHasIndustries = (rows: unknown[][], col: number, from: number) => {
+  for (let r = from; r < rows.length; r++) {
+    if (toIndustryId(cell(rows[r]?.[col])) !== null) return true;
+  }
+  return false;
+};
+
+/**
  * Finds the name and email columns.
  *
  * Header first, because a header is an explicit statement of intent. When there
@@ -118,6 +149,7 @@ const nameHeaderScore = (v: string): number => {
 export function pickColumns(rows: unknown[][]): {
   nameIdx: number;
   emailIdx: number;
+  industryIdx: number;
   headerRows: number;
 } {
   const limit = Math.min(rows.length, HEADER_SCAN_ROWS);
@@ -140,7 +172,27 @@ export function pickColumns(rows: unknown[][]): {
         headerName = i;
       }
     });
-    return { nameIdx: headerName, emailIdx: headerEmail, headerRows: h + 1 };
+    let headerIndustry = -1;
+    let bestIndustry = 0;
+    cells.forEach((c, i) => {
+      if (i === headerEmail || i === headerName || c === "" || !isLabelLike(c))
+        return;
+      const score = industryHeaderScore(c);
+      // The label is a claim; the values are the evidence. A column called
+      // "Type" holding "Buy" and "Rent" names nothing we can send to, and
+      // taking it on the strength of its header would mark every row
+      // Unassigned while looking as though it had worked.
+      if (score > bestIndustry && columnHasIndustries(rows, i, h + 1)) {
+        bestIndustry = score;
+        headerIndustry = i;
+      }
+    });
+    return {
+      nameIdx: headerName,
+      emailIdx: headerEmail,
+      industryIdx: headerIndustry,
+      headerRows: h + 1,
+    };
   }
 
   // No usable header. Score every column by how many of its cells are addresses
@@ -187,7 +239,9 @@ export function pickColumns(rows: unknown[][]): {
     }
   }
 
-  return { nameIdx, emailIdx, headerRows };
+  // Without a header there is no way to tell an industry column from a city or
+  // a note, and guessing would assign segments nobody chose.
+  return { nameIdx, emailIdx, industryIdx: -1, headerRows };
 }
 
 /**
@@ -254,15 +308,16 @@ export function parseRecipientRows(input: unknown): SheetParseResult {
   const recipients: ParsedRecipient[] = [];
   const seen = new Set<string>();
   let duplicatesInFile = 0;
+  let withIndustry = 0;
 
   const grid = toGrid(input).filter(
     (r) => Array.isArray(r) && r.some((c) => cell(c) !== "")
   );
   if (grid.length === 0) {
-    return { recipients, skipped, duplicatesInFile };
+    return { recipients, skipped, duplicatesInFile, withIndustry };
   }
 
-  const { nameIdx, emailIdx, headerRows } = pickColumns(grid);
+  const { nameIdx, emailIdx, industryIdx, headerRows } = pickColumns(grid);
 
   if (emailIdx === -1) {
     return {
@@ -271,6 +326,7 @@ export function parseRecipientRows(input: unknown): SheetParseResult {
         { row: 0, value: "", reason: "No column of email addresses found" },
       ],
       duplicatesInFile,
+      withIndustry: 0,
     };
   }
 
@@ -294,10 +350,18 @@ export function parseRecipientRows(input: unknown): SheetParseResult {
     seen.add(email);
 
     const rawName = nameIdx === -1 ? "" : cell(row[nameIdx]);
-    recipients.push({ name: rawName || nameFromEmail(email), email });
+    const industry =
+      industryIdx === -1 ? null : toIndustryId(cell(row[industryIdx]));
+    if (industry !== null) withIndustry++;
+
+    recipients.push({
+      name: rawName || nameFromEmail(email),
+      email,
+      industry,
+    });
   }
 
-  return { recipients, skipped, duplicatesInFile };
+  return { recipients, skipped, duplicatesInFile, withIndustry };
 }
 
 /**

@@ -1,3 +1,8 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
 *.jpg filter=lfs diff=lfs merge=lfs -text
+
+# The email snapshot is compared byte for byte against a freshly rendered
+# template, which always emits LF. Left to core.autocrlf it would come out of a
+# fresh clone with CRLF and fail on every line.
+tests/fixtures/*.snapshot.html -text

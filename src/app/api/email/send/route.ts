@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendCampaign } from "@/lib/resend";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { EmailTemplate } from "@/components/email/template";
+import { getTemplate } from "@/components/email/templates";
+import { cleanAudience, describeAudience } from "@/lib/campaign-audience";
 import { requireAdmin } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
@@ -10,7 +10,8 @@ export async function POST(request: NextRequest) {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { subject, body, draftId } = await request.json();
+    const { subject, body, draftId, templateId, industries } =
+      await request.json();
 
     if (!subject || !body) {
       return NextResponse.json(
@@ -19,16 +20,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const audience = cleanAudience(industries);
+    const template = getTemplate(
+      typeof templateId === "string" ? templateId : null
+    );
+
     const supabase = createAdminClient();
 
-    const { data: recipients, error: recipientsError } = await supabase
+    let query = supabase
       .from("email_recipients")
       .select("email, name")
       .eq("active", true);
 
+    // An empty audience is not a filter of nothing — it means everyone, which
+    // is what this route did before segmentation existed and is still the
+    // default the composer sends when no chip is picked.
+    if (audience.length > 0) query = query.in("industry", audience);
+
+    const { data: recipients, error: recipientsError } = await query;
+
     if (recipientsError || !recipients || recipients.length === 0) {
+      /* Named rather than a bare "no recipients": with segmentation the usual
+         cause is a segment nobody has been assigned to yet, and the fix is to
+         go and assign them. A generic message sends people to look at the
+         wrong screen. */
       return NextResponse.json(
-        { error: "No active recipients found" },
+        {
+          error:
+            audience.length > 0
+              ? `No active recipients in ${describeAudience(audience)}`
+              : "No active recipients found",
+        },
         { status: 400 }
       );
     }
@@ -38,7 +60,7 @@ export async function POST(request: NextRequest) {
       subject,
       /* `html`, not `react`: the template emits Outlook conditional comments
          and VML, which JSX cannot express. */
-      html: EmailTemplate({ subject, body }),
+      html: template.render({ subject, body }),
     });
 
     if (sendError) {
@@ -54,21 +76,28 @@ export async function POST(request: NextRequest) {
     if (draftId) {
       await supabase
         .from("email_drafts")
-        .update({ status: "sent", sent_at: new Date().toISOString() })
-        .eq("id", draftId);
-    } else {
-      await supabase
-        .from("email_drafts")
-        .insert({
-          subject,
-          body,
+        .update({
           status: "sent",
           sent_at: new Date().toISOString(),
-        });
+          template_id: template.id,
+          industries: audience,
+        })
+        .eq("id", draftId);
+    } else {
+      await supabase.from("email_drafts").insert({
+        subject,
+        body,
+        status: "sent",
+        sent_at: new Date().toISOString(),
+        template_id: template.id,
+        industries: audience,
+      });
     }
 
     return NextResponse.json({
-      message: `Email sent to ${recipients.length} recipients`,
+      message: `Email sent to ${recipients.length} recipients${
+        audience.length > 0 ? ` in ${describeAudience(audience)}` : ""
+      }`,
     });
   } catch (error) {
     console.error("Email send error:", error);

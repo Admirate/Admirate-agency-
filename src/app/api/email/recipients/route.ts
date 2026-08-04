@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/api-auth";
+import { toIndustryId } from "@/lib/industries";
 
 export async function GET() {
   try {
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { email, name } = await request.json();
+    const { email, name, industry } = await request.json();
 
     if (!email || !name) {
       return NextResponse.json(
@@ -51,7 +52,10 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("email_recipients")
-      .insert({ email, name, active: true })
+      // Run through toIndustryId rather than stored as sent: the field is
+      // optional, so an unrecognised value becomes Unassigned instead of a
+      // 400 that loses an otherwise good address.
+      .insert({ email, name, active: true, industry: toIndustryId(industry) })
       .select()
       .single();
 
@@ -73,12 +77,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/**
+ * Updates a recipient's status or their industry, one row or many.
+ *
+ * The two live in one handler because they share all of their targeting. The
+ * shape is a discriminator, not a pair of optional fields: a request naming
+ * both would be ambiguous about which the caller meant to change, so exactly
+ * one has to be present.
+ */
 export async function PATCH(request: NextRequest) {
   try {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { id, ids, active } = await request.json();
+    const { id, ids, active, industry } = await request.json();
 
     const targets: string[] = Array.isArray(ids) ? ids : id ? [id] : [];
 
@@ -89,18 +101,28 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    if (typeof active !== "boolean") {
+    const settingActive = typeof active === "boolean";
+    const settingIndustry = industry !== undefined;
+
+    if (settingActive === settingIndustry) {
       return NextResponse.json(
-        { error: "active must be true or false" },
+        { error: "Send exactly one of active or industry" },
         { status: 400 }
       );
     }
+
+    const patch = settingActive
+      ? { active }
+      : // Null is a legitimate value here — it is how a row is set back to
+        // Unassigned — so an unrecognised id and a deliberate clear land in
+        // the same place, which is the right place.
+        { industry: toIndustryId(industry) };
 
     const supabase = createAdminClient();
 
     const { data, error } = await supabase
       .from("email_recipients")
-      .update({ active })
+      .update(patch)
       .in("id", targets)
       .select("id");
 

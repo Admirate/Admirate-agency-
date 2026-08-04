@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/types/database";
 import { requireAdmin } from "@/lib/api-auth";
+import { cleanAudience } from "@/lib/campaign-audience";
 
 type DraftUpdate = Database["public"]["Tables"]["email_drafts"]["Update"];
 
@@ -41,7 +42,8 @@ export async function POST(request: NextRequest) {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { subject, body, status = "draft" } = await request.json();
+    const { subject, body, status = "draft", templateId, industries } =
+      await request.json();
 
     if (!subject || !body) {
       return NextResponse.json(
@@ -54,7 +56,15 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("email_drafts")
-      .insert({ subject, body, status })
+      .insert({
+        subject,
+        body,
+        status,
+        // Null rather than a default id: the registry decides what the default
+        // is, and a draft that names no template should follow it if it moves.
+        template_id: typeof templateId === "string" && templateId ? templateId : null,
+        industries: cleanAudience(industries),
+      })
       .select()
       .single();
 
@@ -81,7 +91,8 @@ export async function PATCH(request: NextRequest) {
     const denied = await requireAdmin();
     if (denied) return denied;
 
-    const { id, subject, body, status } = await request.json();
+    const { id, subject, body, status, templateId, industries } =
+      await request.json();
 
     if (!id) {
       return NextResponse.json(
@@ -96,6 +107,15 @@ export async function PATCH(request: NextRequest) {
     if (subject) updateData.subject = subject;
     if (body) updateData.body = body;
     if (status) updateData.status = status;
+    // `undefined` means "not editing this"; null and [] are real values that
+    // must be writable, so these test for presence rather than truthiness.
+    if (templateId !== undefined) {
+      updateData.template_id =
+        typeof templateId === "string" && templateId ? templateId : null;
+    }
+    if (industries !== undefined) {
+      updateData.industries = cleanAudience(industries);
+    }
 
     const { error } = await supabase
       .from("email_drafts")

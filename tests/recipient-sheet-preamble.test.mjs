@@ -107,7 +107,7 @@ test("an ordinary single-row header still works", () => {
   const { recipients, skipped } = parseRecipientRows(grid);
   assert.equal(skipped.length, 0, JSON.stringify(skipped));
   assert.deepEqual(recipients, [
-    { name: "Priya Sharma", email: "priya@example.com" },
+    { name: "Priya Sharma", email: "priya@example.com", industry: null },
   ]);
 });
 
