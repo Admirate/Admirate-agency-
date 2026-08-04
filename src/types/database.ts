@@ -66,6 +66,8 @@ export interface Database {
           email: string;
           name: string;
           active: boolean;
+          /** An id from src/lib/industries.ts. Null means Unassigned. */
+          industry: string | null;
           created_at: string;
         };
         Insert: {
@@ -73,6 +75,7 @@ export interface Database {
           email: string;
           name: string;
           active?: boolean;
+          industry?: string | null;
           created_at?: string;
         };
         Update: {
@@ -80,6 +83,7 @@ export interface Database {
           email?: string;
           name?: string;
           active?: boolean;
+          industry?: string | null;
           created_at?: string;
         };
         Relationships: [];
@@ -90,6 +94,10 @@ export interface Database {
           subject: string;
           body: string;
           status: "draft" | "sent" | "scheduled";
+          /** A template id from src/components/email/templates. Null is the default. */
+          template_id: string | null;
+          /** Industry ids to send to. Empty means everyone active. */
+          industries: string[];
           sent_at: string | null;
           created_at: string;
         };
@@ -98,6 +106,8 @@ export interface Database {
           subject: string;
           body: string;
           status?: "draft" | "sent" | "scheduled";
+          template_id?: string | null;
+          industries?: string[];
           sent_at?: string | null;
           created_at?: string;
         };
@@ -106,6 +116,8 @@ export interface Database {
           subject?: string;
           body?: string;
           status?: "draft" | "sent" | "scheduled";
+          template_id?: string | null;
+          industries?: string[];
           sent_at?: string | null;
           created_at?: string;
         };
