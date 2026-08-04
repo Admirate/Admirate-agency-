@@ -17,6 +17,7 @@ import {
 import RecipientsTable, {
   type Recipient,
 } from "@/components/dashboard/RecipientsTable";
+import { INDUSTRIES, industryLabel } from "@/lib/industries";
 import {
   allSelected,
   clearSelection,
@@ -24,6 +25,8 @@ import {
   filterRecipients,
   selectAll,
   toggleSelection,
+  INDUSTRY_ANY,
+  INDUSTRY_NONE,
   type RecipientStatus,
 } from "@/lib/recipient-list";
 import {
@@ -55,6 +58,7 @@ const RecipientsPage = () => {
   const [loading, setLoading] = useState(true);
   const [newEmail, setNewEmail] = useState("");
   const [newName, setNewName] = useState("");
+  const [newIndustry, setNewIndustry] = useState("");
   const [adding, setAdding] = useState(false);
 
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -65,6 +69,7 @@ const RecipientsPage = () => {
 
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<RecipientStatus>("all");
+  const [industry, setIndustry] = useState<string>(INDUSTRY_ANY);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [confirm, setConfirm] = useState<null | "all" | "selected">(null);
   const [bulkBusy, setBulkBusy] = useState(false);
@@ -98,13 +103,18 @@ const RecipientsPage = () => {
       const res = await fetch("/api/email/recipients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: newEmail, name: newName }),
+        body: JSON.stringify({
+          email: newEmail,
+          name: newName,
+          industry: newIndustry || null,
+        }),
       });
 
       if (res.ok) {
         toast.success("Recipient added");
         setNewEmail("");
         setNewName("");
+        setNewIndustry("");
         fetchRecipients();
       } else {
         const data = await res.json();
@@ -206,6 +216,34 @@ const RecipientsPage = () => {
     }
   };
 
+  /**
+   * Optimistic, like handleToggle: the select has already moved under the
+   * pointer, so waiting on a round trip to redraw it would read as lag. A
+   * failure puts the previous value back rather than leaving the control
+   * showing something the database does not hold.
+   */
+  const handleSetIndustry = async (id: string, next: string | null) => {
+    const previous = recipients.find((r) => r.id === id)?.industry ?? null;
+    setRecipients((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, industry: next } : r))
+    );
+
+    try {
+      const res = await fetch("/api/email/recipients", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, industry: next }),
+      });
+      if (!res.ok) throw new Error();
+      toast.success(`Set to ${industryLabel(next)}`);
+    } catch {
+      setRecipients((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, industry: previous } : r))
+      );
+      toast.error("Failed to update industry");
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch("/api/email/recipients", {
@@ -270,9 +308,10 @@ const RecipientsPage = () => {
   };
 
   const counts = countByStatus(recipients);
-  const visible = filterRecipients(recipients, { query, status });
+  const visible = filterRecipients(recipients, { query, status, industry });
   const visibleIds = visible.map((r) => r.id);
-  const filtering = query.trim() !== "" || status !== "all";
+  const filtering =
+    query.trim() !== "" || status !== "all" || industry !== INDUSTRY_ANY;
 
   return (
     <div>
@@ -305,6 +344,19 @@ const RecipientsPage = () => {
               placeholder="email@example.com"
               aria-label="Recipient email"
             />
+            <select
+              value={newIndustry}
+              onChange={(e) => setNewIndustry(e.target.value)}
+              aria-label="Recipient industry"
+              className="px-3 py-2.5 bg-white border border-line rounded-lg text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/25 focus:border-brand/50"
+            >
+              <option value="">Industry — Unassigned</option>
+              {INDUSTRIES.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.label}
+                </option>
+              ))}
+            </select>
             <Button type="submit" loading={adding} className="whitespace-nowrap">
               {adding ? "Adding…" : "Add"}
             </Button>
@@ -373,6 +425,12 @@ const RecipientsPage = () => {
               {preview.skipped.length > 0 && (
                 <Badge>{preview.skipped.length} unusable</Badge>
               )}
+              {preview.withIndustry > 0 && (
+                <Badge>
+                  {preview.withIndustry} of {preview.recipients.length} with an
+                  industry
+                </Badge>
+              )}
             </div>
 
             {/* A sample, so a mis-detected column is obvious before anything is
@@ -383,6 +441,7 @@ const RecipientsPage = () => {
                   <span className="text-ink">{r.name}</span>
                   <span> — </span>
                   {r.email}
+                  {r.industry && <span> · {industryLabel(r.industry)}</span>}
                 </li>
               ))}
               {preview.recipients.length > 4 && (
@@ -444,6 +503,21 @@ const RecipientsPage = () => {
             <option value="all">All</option>
             <option value="active">Active</option>
             <option value="paused">Paused</option>
+          </select>
+
+          <select
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            aria-label="Filter by industry"
+            className="px-3 py-2.5 bg-white border border-line rounded-lg text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/25 focus:border-brand/50"
+          >
+            <option value={INDUSTRY_ANY}>All industries</option>
+            {INDUSTRIES.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.label}
+              </option>
+            ))}
+            <option value={INDUSTRY_NONE}>Unassigned</option>
           </select>
 
           <span className="text-xs text-muted tabular-nums">
@@ -538,6 +612,7 @@ const RecipientsPage = () => {
             }
             allChecked={allSelected(selected, visibleIds)}
             onToggleActive={handleToggle}
+            onSetIndustry={handleSetIndustry}
             onDelete={handleDelete}
           />
         )}

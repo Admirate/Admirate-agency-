@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { INDUSTRIES } from "@/lib/industries";
 import { Badge, Button } from "./ui";
 
 export type Recipient = {
@@ -8,6 +9,7 @@ export type Recipient = {
   email: string;
   name: string;
   active: boolean;
+  industry: string | null;
   created_at: string;
 };
 
@@ -24,6 +26,7 @@ const RecipientsTable = ({
   onToggleAll,
   allChecked,
   onToggleActive,
+  onSetIndustry,
   onDelete,
 }: {
   rows: Recipient[];
@@ -32,6 +35,7 @@ const RecipientsTable = ({
   onToggleAll: () => void;
   allChecked: boolean;
   onToggleActive: (id: string, active: boolean) => void;
+  onSetIndustry: (id: string, industry: string | null) => void;
   onDelete: (id: string) => void;
 }) => {
   const reduce = useReducedMotion();
@@ -55,6 +59,9 @@ const RecipientsTable = ({
             </th>
             <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Email
+            </th>
+            <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
+              Industry
             </th>
             <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Status
@@ -84,6 +91,27 @@ const RecipientsTable = ({
               </td>
               <td className="px-4 py-3 font-medium text-ink">{r.name}</td>
               <td className="px-4 py-3 text-muted">{r.email}</td>
+              {/* A select rather than a label with an edit affordance: 77
+                  existing rows have to be assigned, and that has to be 77
+                  clicks and no dialogs or it will not happen. The empty option
+                  is a real choice — it is how a row goes back to Unassigned. */}
+              <td className="px-4 py-3">
+                <select
+                  value={r.industry ?? ""}
+                  onChange={(e) => onSetIndustry(r.id, e.target.value || null)}
+                  aria-label={`Industry for ${r.name}`}
+                  className={`max-w-[13rem] px-2 py-1 bg-white border border-line rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-brand/25 focus:border-brand/50 transition-colors ${
+                    r.industry ? "text-ink" : "text-muted"
+                  }`}
+                >
+                  <option value="">Unassigned</option>
+                  {INDUSTRIES.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.label}
+                    </option>
+                  ))}
+                </select>
+              </td>
               <td className="px-4 py-3">
                 <Badge tone={r.active ? "active" : "paused"}>
                   {r.active ? "Active" : "Paused"}
