@@ -79,6 +79,44 @@ const ceilTo = (n: number, step: number) =>
   step <= 0 ? clean(n) : Math.ceil(clean(n) / step) * step;
 
 /**
+ * Dirhams per US dollar. Not a market rate — the UAE central bank has pegged
+ * the dirham at exactly this since 1997, and it is the constant the AED rate
+ * card was authored against.
+ */
+export const AED_PER_USD = 3.6725;
+
+/**
+ * Turns a USD-based rate table into the AED-based one this codebase stores.
+ *
+ * The FX job cannot simply ask its provider for AED. Frankfurter republishes
+ * European Central Bank reference rates, and the ECB publishes thirty
+ * currencies of which AED is not one — `?base=AED` answers
+ * `404 {"message":"not found"}`, which is what the scheduled function had been
+ * logging every day since it shipped. So the job asks for the USD table, which
+ * the ECB does publish, and divides through the peg above.
+ *
+ * USD is added explicitly because Frankfurter omits its own base from the rates
+ * it returns, and USD is one of the currencies this site prices in.
+ */
+export function aedRatesFromUsd(
+  usdRates: Record<string, unknown>,
+): Record<string, number> {
+  const out: Record<string, number> = {};
+
+  for (const [code, perUsd] of Object.entries({ USD: 1, ...usdRates })) {
+    /* A junk entry is dropped rather than converted. The caller guards each
+       rate before writing it, but a NaN should not be built in the first
+       place. */
+    if (typeof perUsd !== "number" || !Number.isFinite(perUsd) || perUsd <= 0) {
+      continue;
+    }
+    out[code] = clean(perUsd / AED_PER_USD);
+  }
+
+  return out;
+}
+
+/**
  * The total for one billing cycle, from the monthly base.
  *
  * The discount is applied as a whole percent over a division rather than as a
