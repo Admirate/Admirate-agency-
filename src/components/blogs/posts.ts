@@ -150,7 +150,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "This is the standard we build every site to — see [how we approach websites](/services#web) and the [client sites we have shipped](/services#clients). If yours is slow and you are not sure why, [send us the link](/start-project) and we will tell you what is eating it.",
+        c: "This is the standard we build every site to — see [how we approach websites](/services/digital) and the [client sites we have shipped](/services#clients). If yours is slow and you are not sure why, [send us the link](/start-project) and we will tell you what is eating it.",
       },
     ],
   },
@@ -228,7 +228,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "That is how we quote [identity work](/services#logos), and it is why the first thing we ask for is not a mood board but a brief — [the brief is the work](/blogs/the-brief-is-the-work). If you want a real number for a real scope, [tell us what you are building](/start-project) and we will show you what is in it.",
+        c: "That is how we quote [identity work](/services/identity), and it is why the first thing we ask for is not a mood board but a brief — [the brief is the work](/blogs/the-brief-is-the-work). If you want a real number for a real scope, [tell us what you are building](/start-project) and we will show you what is in it.",
       },
     ],
   },
@@ -306,7 +306,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "Packaging sits inside our [identity work](/services#logos) and our [brand collaterals](/services#collat), because it is genuinely both. If you have a product going to shelf, [show us the category](/start-project) — the competitors tell us more than the brief does.",
+        c: "Packaging sits inside our [identity work](/services/identity) and our [brand collaterals](/services/brand-collaterals), because it is genuinely both. If you have a product going to shelf, [show us the category](/start-project) — the competitors tell us more than the brief does.",
       },
     ],
   },
@@ -372,7 +372,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "You spent the money on attention and then failed to build the corridor. We have written about the fix — [reels that route](/blogs/reels-that-route) — and it is why the social work and the [website work](/services#web) are the same conversation for us, not two line items.",
+        c: "You spent the money on attention and then failed to build the corridor. We have written about the fix — [reels that route](/blogs/reels-that-route) — and it is why the social work and the [website work](/services/digital) are the same conversation for us, not two line items.",
       },
       {
         t: "h2",
@@ -384,7 +384,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "That is how we run [social media](/services#reels) — the creatives, the reels and the route out of them. If your account is busy but quiet, [tell us what it is meant to be doing](/start-project) and we will tell you why it is not.",
+        c: "That is how we run [social media](/services/social-media) — the creatives, the reels and the route out of them. If your account is busy but quiet, [tell us what it is meant to be doing](/start-project) and we will tell you why it is not.",
       },
     ],
   },
@@ -457,7 +457,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "The point of an identity is to be recognised in half a second and to hold that recognition everywhere — which is a system, not a picture. We do this as [identity work](/services#logos) and roll it across [every collateral](/services#collat) in one window. If you are not sure which problem you have, [describe the symptom](/start-project) — we would rather talk you out of a rebrand than sell you one that cannot work.",
+        c: "The point of an identity is to be recognised in half a second and to hold that recognition everywhere — which is a system, not a picture. We do this as [identity work](/services/identity) and roll it across [every collateral](/services/brand-collaterals) in one window. If you are not sure which problem you have, [describe the symptom](/start-project) — we would rather talk you out of a rebrand than sell you one that cannot work.",
       },
     ],
   },
@@ -530,7 +530,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "We script, shoot and cut in-house — see [video production](/services#tv) — and we treat the route out of the film as part of the film, the same way we treat [reels that route](/blogs/reels-that-route). If you have a film in mind, [tell us what it is for](/start-project) before you tell us what it should look like. That is the conversation that decides the budget.",
+        c: "We script, shoot and cut in-house — see [video production](/services/video-production) — and we treat the route out of the film as part of the film, the same way we treat [reels that route](/blogs/reels-that-route). If you have a film in mind, [tell us what it is for](/start-project) before you tell us what it should look like. That is the conversation that decides the budget.",
       },
     ],
   },
@@ -555,7 +555,7 @@ export const POSTS: Post[] = [
       { t: "h2", c: "Design for the worst case, not the best one" },
       {
         t: "p",
-        c: "The mistake is designing the logo at the size you're viewing it: full screen, on a clean white artboard, at 100% zoom. That's the one context it will almost never appear in. We work the other way around — the first test any mark has to survive is the smallest, ugliest place it will ever live.",
+        c: "The mistake is designing the logo at the size you're viewing it: full screen, on a clean white artboard, at 100% zoom. That's the one context it will almost never appear in. We work the other way around — the first test any mark has to survive is the smallest, ugliest place it will ever live. It is the first thing we check in any [identity project](/services/identity).",
       },
       {
         t: "list",
@@ -577,12 +577,12 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "What survives the glance is silhouette. A distinct outline, a confident weight, one memorable move. If someone can sketch your logo badly from memory a week later, it's working. That's the actual test — not whether it wins a design award, but whether it survives being half-remembered.",
+        c: "What survives the glance is silhouette. A distinct outline, a confident weight, one memorable move. If someone can sketch your logo badly from memory a week later, it's working. That's the actual test — not whether it wins a design award, but whether it survives being half-remembered. It is also most of what you are paying for when you [commission a mark](/blogs/what-a-logo-actually-costs).",
       },
       { t: "h2", c: "The half-second is a gift" },
       {
         t: "p",
-        c: "It sounds like a limitation. It's really a filter. Once you accept that half a second is all you get, the hundred possible directions collapse into the two or three that could actually do the job — and the work gets faster, sharper, and much easier to defend.",
+        c: "It sounds like a limitation. It's really a filter. Once you accept that half a second is all you get, the hundred possible directions collapse into the two or three that could actually do the job — and the work gets faster, sharper, and much easier to defend. And a mark that survives the glance is only worth having if everything around it [looks like it, everywhere](/blogs/consistency-is-the-strategy).",
       },
     ],
   },
@@ -602,7 +602,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "And yet most homepages answer neither. They open with a slogan that could belong to any company in any industry, then send the visitor hunting through a mega-menu for the thing they came for.",
+        c: "And yet most homepages answer neither. They open with a slogan that could belong to any company in any industry, then send the visitor hunting through a mega-menu for the thing they came for. That is assuming the page [loaded fast enough](/blogs/why-your-website-is-slow) for them to still be there.",
       },
       { t: "h2", c: "One promise above the fold" },
       {
@@ -620,7 +620,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "Pick the single action that matters most to the business. Make it visually louder than everything else. Then repeat it down the page, so the visitor never has to scroll back up to act on a decision they made at the bottom.",
+        c: "Pick the single action that matters most to the business. Make it visually louder than everything else. Louder in the way [the eye actually responds to](/blogs/where-the-eye-actually-goes) — contrast and space, not simply size. Then repeat it down the page, so the visitor never has to scroll back up to act on a decision they made at the bottom.",
       },
       { t: "h2", c: "Structure before style" },
       {
@@ -638,7 +638,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "Get that order right on a plain white page and it will beat a beautiful site that makes the visitor do the work.",
+        c: "Get that order right on a plain white page and it will beat a beautiful site that makes the visitor do the work. Getting the order right is where every [website we build](/services/digital) starts.",
       },
     ],
   },
@@ -663,7 +663,7 @@ export const POSTS: Post[] = [
       { t: "h2", c: "The layout is a route, not an arrangement" },
       {
         t: "p",
-        c: "When we lay out a creative, we're not composing a pretty rectangle. We're plotting a route: the eye lands here, travels there, rests on the action. Every element earns its position by being on that route or getting out of its way.",
+        c: "When we lay out a creative, we're not composing a pretty rectangle. We're plotting a route: the eye lands here, travels there, rests on the action. Every element earns its position by being on that route or getting out of its way. It is the same discipline behind every piece of [advertising and design](/services/design) we put out.",
       },
       {
         t: "quote",
@@ -676,12 +676,12 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "The fix is rarely 'make the button bigger.' It's to place the action at the end of the path the layout has already established — so arriving at it feels like the natural conclusion of looking, not an interruption.",
+        c: "The fix is rarely 'make the button bigger.' It's to place the action at the end of the path the layout has already established — so arriving at it feels like the natural conclusion of looking, not an interruption. On a homepage the same failure takes [a slightly different shape](/blogs/the-homepage-scavenger-hunt).",
       },
       { t: "h2", c: "Contrast is the steering wheel" },
       {
         t: "p",
-        c: "You steer attention with contrast — of size, of colour, of weight, of empty space. Emptiness is the most underrated of these. A small element with room around it will out-pull a large element crowded by neighbours. If everything is loud, the viewer picks their own path, and it won't be yours.",
+        c: "You steer attention with contrast — of size, of colour, of weight, of empty space. Emptiness is the most underrated of these. A small element with room around it will out-pull a large element crowded by neighbours. If everything is loud, the viewer picks their own path, and it won't be yours. The same physics decides whether [a logo survives its half-second](/blogs/your-logo-has-half-a-second).",
       },
     ],
   },
@@ -701,12 +701,12 @@ export const POSTS: Post[] = [
     body: [
       {
         t: "p",
-        c: "Everyone obsesses over the hook. Fair enough — no hook, no view. But we see plenty of clients with reels doing genuinely good numbers and a pipeline that hasn't moved, and the problem is almost never the opening. It's that the video ends and the viewer has nowhere to go.",
+        c: "Everyone obsesses over the hook. Fair enough — no hook, no view. But we see plenty of clients with reels doing genuinely good numbers and a pipeline that hasn't moved, and the problem is almost never the opening. It's that the video ends and the viewer has nowhere to go. (A longer [brand film](/blogs/what-a-brand-film-costs) fails the same way, with a bigger budget attached.)",
       },
       { t: "h2", c: "Every reel needs an exit" },
       {
         t: "p",
-        c: "A view is a moment of attention you have been loaned. If the video ends without telling the viewer what to do with that attention, it gets returned to the feed, and the next video takes it. The exit is the whole conversion.",
+        c: "A view is a moment of attention you have been loaned. If the video ends without telling the viewer what to do with that attention, it gets returned to the feed, and the next video takes it. The exit is the whole conversion. Building that exit is the part of [running social properly](/blogs/what-social-media-management-actually-is) nobody posts about.",
       },
       {
         t: "list",
@@ -727,7 +727,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "Route the cold ones to something free and useful. Route the warm ones to the enquiry. Views turn into leads at the point where the ask matches the temperature.",
+        c: "Route the cold ones to something free and useful. Route the warm ones to the enquiry. Views turn into leads at the point where the ask matches the temperature. That routing is most of what we do on a [social media retainer](/services/social-media).",
       },
     ],
   },
@@ -752,7 +752,7 @@ export const POSTS: Post[] = [
       { t: "h2", c: "Recognition is a balance, not an event" },
       {
         t: "p",
-        c: "Nobody recognises you from one exposure. They recognise you from the twentieth, and only if the twenty looked like each other. Every asset that looks like you is a deposit into that account. Every off-brand one-off — the festive post someone made in a rush, the deck with the wrong red, the sign that used a different typeface because it was cheaper — is a withdrawal.",
+        c: "Nobody recognises you from one exposure. They recognise you from the twentieth, and only if the twenty looked like each other. Every asset that looks like you is a deposit into that account. Every off-brand one-off — the festive post someone made in a rush, the deck with the wrong red, the sign that used a different typeface because it was cheaper — is a withdrawal. Most withdrawals are [printed things](/services/brand-collaterals) nobody checked before they went out.",
       },
       {
         t: "quote",
@@ -761,11 +761,11 @@ export const POSTS: Post[] = [
       { t: "h2", c: "The other half: looking unlike everyone else" },
       {
         t: "p",
-        c: "Consistency alone isn't enough. You can be perfectly, rigorously consistent and still be invisible, because you look like every other business in your category. Consistent and generic just means you're reliably forgettable.",
+        c: "Consistency alone isn't enough. You can be perfectly, rigorously consistent and still be invisible, because you look like every other business in your category. Consistent and generic just means you're reliably forgettable. Holding both halves at once is what a [brand identity system](/services/identity) is for.",
       },
       {
         t: "p",
-        c: "So the real target has two halves: the same as yourself, everywhere — and unmistakably not your competitors. Hit both and people know it's you before they've read your name. That's the whole game, and there is no shortcut through it.",
+        c: "So the real target has two halves: the same as yourself, everywhere — and unmistakably not your competitors. Hit both and people know it's you before they've read your name. That recognition happens in the same half-second [your logo is working in](/blogs/your-logo-has-half-a-second). That's the whole game, and there is no shortcut through it.",
       },
     ],
   },
@@ -796,7 +796,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "That last one is the most useful and the most avoided. A brief that can't be failed can't be judged, and a project that can't be judged will be revised forever on taste alone.",
+        c: "That last one is the most useful and the most avoided. A brief that can't be failed can't be judged, and a project that can't be judged will be revised forever on taste alone. It is also why a [quote is only ever as firm as the brief](/blogs/what-a-logo-actually-costs) behind it.",
       },
       {
         t: "quote",
@@ -809,12 +809,12 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        c: "Write the target down at the start and feedback changes character entirely. It stops being 'I'd have used blue' and becomes 'this doesn't get a first-time visitor to the enquiry form.' That's a note you can actually design against.",
+        c: "Write the target down at the start and feedback changes character entirely. It stops being 'I'd have used blue' and becomes 'this doesn't get a first-time visitor to the enquiry form.' That's a note you can actually design against. Every [identity project](/services/identity) we run starts by writing that target down.",
       },
       { t: "h2", c: "Spend the time up front" },
       {
         t: "p",
-        c: "A week spent getting the brief genuinely sharp will save a month of circling. It's the least glamorous part of the process and the only part that reliably determines the outcome.",
+        c: "A week spent getting the brief genuinely sharp will save a month of circling. It's the least glamorous part of the process and the only part that reliably determines the outcome. If you are ready to write one, [start here](/start-project).",
       },
     ],
   },

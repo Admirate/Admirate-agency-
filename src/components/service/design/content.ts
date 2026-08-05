@@ -15,6 +15,8 @@
  * once when scrolled to and never needs a frame of JavaScript.
  */
 
+import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
+import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
 import { creative, optimized } from "@/lib/cdn";
 import { CLIENT_CREATIVES } from "@/components/shared/creatives";
 
@@ -182,6 +184,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   .acanvas .ael{opacity:1;transform:none;animation:none}
   .acanvas .gl{display:none}
 }
+${JOURNAL_CSS}
+${HERO_KEYWORD_CSS}
 `;
 
 /** What the craft section claims to cover, as chips. */
@@ -261,7 +265,7 @@ export const DESIGN_HTML = String.raw`
 <section class="dgs" id="dhero" data-bg="#FAFAF8" data-label="Eye level">
   <div class="retic" aria-hidden="true"></div>
   <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Design</b></div>
-  <h1>${heroLine("PLACED WHERE", 0.15)}<br>${heroLine("THE EYE GOES", 0.5, true)}</h1>
+  <h1>${heroLine("PLACED WHERE", 0.15)}<br>${heroLine("THE EYE GOES", 0.5, true)}${heroKeyword("Advertising & Design in Hyderabad")}</h1>
   <p class="dgp">Purposeful, minimal, functional — design where every element exists for a reason, placed to carry the eye from first glance to action.</p>
 </section>
 
@@ -333,6 +337,8 @@ export const DESIGN_HTML = String.raw`
       <a class="dbtn red" href="/start-project?service=Design" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
+  ${journalLinks("where-the-eye-actually-goes", "the-brief-is-the-work")}
+
   <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

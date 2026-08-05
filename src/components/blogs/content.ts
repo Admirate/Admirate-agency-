@@ -5,6 +5,7 @@ import {
   type Block,
 } from "@/components/blogs/posts";
 import { blogImage, optimized } from "@/lib/cdn";
+import { AUTHOR } from "@/lib/author";
 
 /**
  * Post artwork, run through Next's image optimizer.
@@ -154,6 +155,12 @@ button{font:inherit;background:none;border:none;cursor:pointer}
 .ameta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--grey)}
 .ameta .atag{color:var(--red);border:1px solid var(--red);padding:5px 10px;border-radius:999px}
 .ameta .dot{width:3px;height:3px;border-radius:50%;background:#cfcfcb}
+.ameta .aby{color:var(--black)}
+/* Author card. Only rendered when lib/author.ts names someone. */
+.abio{margin-top:clamp(34px,5vh,56px);padding:clamp(22px,3vw,30px);background:var(--paper,#FAFAF8);border-left:2px solid var(--red)}
+.abname{font-family:var(--display);font-weight:800;font-size:clamp(16px,1.6vw,19px);letter-spacing:-.01em}
+.abrole{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--grey);margin-top:5px;text-transform:uppercase}
+.abtext{font-size:14.5px;line-height:1.65;color:#4a4a4d;margin-top:12px;max-width:60ch}
 /* Taller than the card thumb, and scrimmed far more lightly — here the artwork
    is the point, not a texture behind a label. */
 .abanner{height:clamp(200px,34vh,380px);border-radius:10px;position:relative;overflow:hidden;margin:clamp(26px,4vh,40px) 0 0;background:#151517}
@@ -354,7 +361,7 @@ export const postHtml = (p: Post) => {
       <h1>${esc(p.title)}</h1>
       <div class="ameta">
         <span class="atag">${esc(p.tag)}</span>
-        <time datetime="${esc(p.date)}">${fmtDate(p.date)}</time><span class="dot"></span><span>${readingMinutes(p)} MIN READ</span>
+        ${AUTHOR ? `<span class="aby">BY ${esc(AUTHOR.name.toUpperCase())}</span><span class="dot"></span>` : ""}<time datetime="${esc(p.date)}">${fmtDate(p.date)}</time><span class="dot"></span><span>${readingMinutes(p)} MIN READ</span>
       </div>
     </div>
     <div class="abanner ${p.v}">
@@ -368,6 +375,19 @@ export const postHtml = (p: Post) => {
   <div class="abody">
     ${p.body.map(renderBlock).join("\n    ")}
   </div>
+
+  ${
+    /* The visible half of the E-E-A-T claim. Renders only when lib/author.ts is
+       filled in, and from the same object the JSON-LD reads, so a reader always
+       sees exactly who the markup credits. */
+    AUTHOR
+      ? `<aside class="abio">
+    <div class="abname">${esc(AUTHOR.name)}</div>
+    <div class="abrole">${esc(AUTHOR.role)}</div>
+    <p class="abtext">${esc(AUTHOR.bio)}</p>
+  </aside>`
+      : ""
+  }
 
   <div class="anext">
     <a href="/blogs/${next.slug}" data-h>

@@ -7,6 +7,8 @@
  *   BUILT    the four things a build is held to, as a plain pillar row
  */
 
+import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
+import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
 import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
 
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
@@ -158,6 +160,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #hbrw .sk{opacity:1;animation:none}
   #jflow .jlive{stroke-dashoffset:0;transition:none}
 }
+${JOURNAL_CSS}
+${HERO_KEYWORD_CSS}
 `;
 
 /** The path a visitor takes, and where it ends. */
@@ -229,7 +233,7 @@ export const DIGITAL_HTML = String.raw`
 <section class="dgs" id="dhero" data-bg="#FAFAF8" data-label="Digital">
   <div>
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Digital</b></div>
-    <h1>${heroLine("SITES THAT", 0.15)}<br>${heroLine("EARN THEIR KEEP", 0.44, true)}</h1>
+    <h1>${heroLine("SITES THAT", 0.15)}<br>${heroLine("EARN THEIR KEEP", 0.44, true)}${heroKeyword("Websites & Digital in Hyderabad")}</h1>
     <p class="dgp">We don't just build websites — we build frictionless customer journeys. From the first click to the enquiry in your CRM, every step is designed to convert.</p>
   </div>
   <div class="brw" id="hbrw">
@@ -300,6 +304,8 @@ export const DIGITAL_HTML = String.raw`
       <a class="dbtn red" href="/start-project?service=Digital" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
+  ${journalLinks("why-your-website-is-slow", "the-homepage-scavenger-hunt")}
+
   <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

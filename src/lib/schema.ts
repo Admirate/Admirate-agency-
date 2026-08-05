@@ -1,4 +1,5 @@
 import { SITE, PROFILE_URLS } from "@/lib/seo";
+import { authorSchema } from "@/lib/author";
 import { SERVICE_LIST } from "@/components/service/registry";
 import { readingMinutes, wordCount, type Post } from "@/components/blogs/posts";
 
@@ -202,7 +203,10 @@ export function blogPostingSchema(post: Post) {
     timeRequired: `PT${readingMinutes(post)}M`,
     inLanguage: "en-IN",
     image: `${url}/opengraph-image`,
-    author: { "@id": ORG_ID },
+    /* A named Person once lib/author.ts is filled in, the Organization until
+       then. Both the byline on the page and this field read that one constant,
+       so the markup can never credit someone the page does not show. */
+    author: authorSchema(ORG_ID),
     publisher: { "@id": ORG_ID },
   };
 }
@@ -215,16 +219,23 @@ export function blogPostingSchema(post: Post) {
  *   1. `sameAs` for YouTube and X, if those accounts exist. The two that are
  *      published already do the main job — tying this domain to profiles
  *      Google knows — so these are additions, not a gap.
- *   2. `streetAddress` + `postalCode` — the building and PIN in Banjara Hills,
- *      exactly as they read on the Google Business Profile.
- *   3. `geo` — latitude/longitude, taken from the verified Business Profile
- *      pin rather than looked up, so the two cannot disagree.
- *   4. `openingHoursSpecification` — only if the studio takes visitors.
+ * NOT MISSING — deliberately absent, and to be left that way:
  *
- * None of these should be guessed. Structured data Google can contradict is
- * worse than structured data that is merely incomplete.
+ *   `streetAddress`, `postalCode`, `geo`, `openingHoursSpecification`. An SEO
+ *   audit will keep flagging these as an incomplete LocalBusiness. They are
+ *   incomplete because ADMIRATE has no premises: no office, no reception, no
+ *   address a client is ever sent to. Every one of those fields describes a
+ *   place customers can go, and inventing one to satisfy an audit is exactly
+ *   the mistake the note above warns about — a pin Google can contradict costs
+ *   more authority than an absent pin ever did.
  *
- * Off-site, and outside this repository's reach: a verified Google Business
- * Profile is what actually produces the map pin. The schema here supports it;
- * it cannot substitute for it.
+ *   Locality stays because it is true: the studio operates from Banjara Hills,
+ *   Hyderabad, and `areaServed` already states the reach properly. This is a
+ *   service-area business, and locality plus areaServed is the correct and
+ *   complete shape for one.
+ *
+ * If premises are ever taken, and only then: add all four, copied exactly from
+ * a verified Google Business Profile rather than typed from memory, so the two
+ * cannot disagree. A verified profile is also the thing that actually produces
+ * the map pin — the schema here supports it and cannot substitute for it.
  */

@@ -13,6 +13,8 @@
  * invented frames. Both were arguing for work the page could now simply show.
  */
 
+import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
+import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 import { video } from "@/lib/cdn";
 
@@ -207,6 +209,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   .ccard{opacity:1;transform:none}
   #craft .cline{width:100%}
 }
+${JOURNAL_CSS}
+${HERO_KEYWORD_CSS}
 `;
 
 /* The four beats of a film that works. */
@@ -289,7 +293,7 @@ export const VIDEO_HTML = String.raw`
 <section class="vs dark" id="vhero" data-bg="#0B0B0C" data-label="Video">
   <div>
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Video Production</b></div>
-    <h1>${heroLine("FILMS THAT", 0.15)}<br>${heroLine("DO A JOB", 0.42, true)}</h1>
+    <h1>${heroLine("FILMS THAT", 0.15)}<br>${heroLine("DO A JOB", 0.42, true)}${heroKeyword("Video Production in Hyderabad")}</h1>
     <p class="vp">Anything can be filmed. What gets watched is decided in the edit — the hook that stops the scroll, the pacing that holds it, the story that lands.</p>
   </div>
   <div class="apwrap">
@@ -367,6 +371,8 @@ export const VIDEO_HTML = String.raw`
       <a class="vbtn red" href="/start-project?service=Video%20Production" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
+  ${journalLinks("what-a-brand-film-costs", "reels-that-route")}
+
   <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

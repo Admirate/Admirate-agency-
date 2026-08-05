@@ -10,6 +10,8 @@
  *   SWALL  the real client posts, embedded live from Instagram
  */
 
+import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
+import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const SOCIAL_CSS = String.raw`
@@ -198,6 +200,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   /* The embed grid has no motion of its own to stop — the hover lift is the
      only thing, and the blanket transition-duration above already covers it. */
 }
+${JOURNAL_CSS}
+${HERO_KEYWORD_CSS}
 `;
 
 const REELS = [
@@ -321,7 +325,7 @@ export const SOCIAL_HTML = String.raw`
     <div class="sgrid">
       <div>
         <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Social Media</b></div>
-        <h1>${heroLine("MADE TO", 0.15)}<br>${heroLine("CONVERT", 0.4, true)}</h1>
+        <h1>${heroLine("MADE TO", 0.15)}<br>${heroLine("CONVERT", 0.4, true)}${heroKeyword("Social Media & Reels in Hyderabad")}</h1>
         <p class="smp">Reels, creatives and campaigns produced to send people somewhere — not to fill a content calendar and quietly disappear.</p>
       </div>
       <div class="pwrap">${phone("hreel", true)}</div>
@@ -377,6 +381,8 @@ export const SOCIAL_HTML = String.raw`
       <a class="sbtn red" href="/start-project?service=Social%20Media" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
+  ${journalLinks("what-social-media-management-actually-is", "reels-that-route")}
+
   <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

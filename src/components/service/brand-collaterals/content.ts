@@ -12,6 +12,8 @@
  * records none of them, and they are exactly the detail a client is held to.
  */
 
+import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
+import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 import { asset } from "@/lib/cdn";
 
@@ -218,6 +220,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #cwall .mqtrack{animation:none}
   #cwall .mq{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
+${JOURNAL_CSS}
+${HERO_KEYWORD_CSS}
 `;
 
 /* Everything the brand hands over, in order of what moves business first. */
@@ -311,7 +315,7 @@ export const COLLAT_HTML = String.raw`
 <section class="cs" id="chero" data-bg="#FBF7F1" data-label="Collaterals">
   <div>
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Brand Collaterals</b></div>
-    <h1>${heroLine("THE PHYSICAL", 0.15)}<br>${heroLine("PROOF", 0.48, true)}</h1>
+    <h1>${heroLine("THE PHYSICAL", 0.15)}<br>${heroLine("PROOF", 0.48, true)}${heroKeyword("Brand Collaterals in Hyderabad")}</h1>
     <p class="cp">Brochures, cards, packaging, signage — everything your brand hands over, carrying the same face it shows everywhere else.</p>
   </div>
   <div>
@@ -380,6 +384,8 @@ export const COLLAT_HTML = String.raw`
       <a class="cbtn red" href="/start-project?service=Brand%20Collaterals" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
+  ${journalLinks("packaging-gets-three-seconds", "consistency-is-the-strategy")}
+
   <footer><div>© 2026 ADMIRATE.IN</div><div>${NAP_HTML}</div><div>${LEGAL_HTML}</div><div>MADE TO CONVERT</div></footer>
 </section>
 `;

@@ -13,6 +13,8 @@
  * stages simply stack and are all visible.
  */
 
+import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
+import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
 import { clientLogo, optimized } from "@/lib/cdn";
 import { CLIENT_LOGOS } from "@/components/shared/clients";
 
@@ -250,6 +252,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
   #anatsvg .nz{opacity:.4 !important;transform:none !important}
   #anatsvg .mm{opacity:1 !important;transform:none !important}
 }
+${JOURNAL_CSS}
+${HERO_KEYWORD_CSS}
 `;
 
 /* The mark itself, shared by the hero construction and the philosophy scrub so
@@ -313,7 +317,7 @@ export const IDENTITY_HTML = String.raw`
   <div class="mgrid" aria-hidden="true"></div>
   <div class="mleft">
     <div class="crumb"><a href="/">Home</a><span>/</span><a href="/services">Services</a><span>/</span><b>Identity</b></div>
-    <h1>${heroLine("BUILT TO", 0.15)}<br>${heroLine("BE KNOWN", 0.42, true)}</h1>
+    <h1>${heroLine("BUILT TO", 0.15)}<br>${heroLine("BE KNOWN", 0.42, true)}${heroKeyword("Brand Identity & Logo Design in Hyderabad")}</h1>
     <p class="idp msub">Great logos don't explain themselves. They're recognised in an instant, remembered after one look, and simple enough to be understood at a glance.</p>
   </div>
   <div class="mstage">
@@ -401,6 +405,8 @@ export const IDENTITY_HTML = String.raw`
       <a class="idbtn red" href="/start-project?service=Identity" data-h>Start your project <span class="ar">→</span></a>
     </div>
   </div>
+
+  ${journalLinks("what-a-logo-actually-costs", "when-to-rebrand")}
 
   <footer>
     <div>© 2026 ADMIRATE.IN</div>
