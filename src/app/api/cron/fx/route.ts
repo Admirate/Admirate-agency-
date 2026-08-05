@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { PRICING_TAG } from "@/lib/pricing";
+import { PRICING_TAG, aedRatesFromUsd } from "@/lib/pricing";
 
 /**
  * Daily exchange-rate refresh for the derived currencies.
@@ -15,7 +15,14 @@ import { PRICING_TAG } from "@/lib/pricing";
  * Guarded by CRON_SECRET, matching /api/cron/send-email.
  */
 
-const RATES_URL = "https://api.frankfurter.dev/v1/latest?base=AED";
+/**
+ * USD, not AED, despite AED being this rate card's base currency.
+ *
+ * Frankfurter serves the ECB's thirty reference currencies, and AED is not one
+ * of them: `?base=AED` returns 404. The dirham is pegged to the dollar, so the
+ * USD table converts exactly — see `aedRatesFromUsd`.
+ */
+const RATES_URL = "https://api.frankfurter.dev/v1/latest?base=USD";
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,7 +72,7 @@ export async function POST(request: NextRequest) {
       }
 
       const body = await response.json();
-      rates = body?.rates ?? {};
+      rates = aedRatesFromUsd(body?.rates ?? {});
     } catch (error) {
       console.error("FX fetch failed:", error);
       return NextResponse.json({ message: "Rates unchanged — fetch failed" });
