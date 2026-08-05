@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { resend, MAIL_FROM } from "@/lib/resend";
+import { SITE } from "@/lib/seo";
+import {
+  renderEnquiryAck,
+  renderEnquiryAckText,
+  enquiryAckSubject,
+} from "@/components/email/enquiry-ack";
 
 const contactSchema = z.object({
   name: z
@@ -35,6 +42,49 @@ const contactSchema = z.object({
   billing_cycle: z.string().max(20).optional().or(z.literal("")),
 });
 
+type ContactSubmission = z.infer<typeof contactSchema>;
+
+/**
+ * The automatic "thank you, we'll be in touch" reply to whoever submitted.
+ *
+ * Never throws. The lead is already safe in Supabase by the time this runs, and
+ * a Resend outage — or a missing RESEND_API_KEY on a preview deploy — must not
+ * turn a captured enquiry into an error screen that makes the visitor submit it
+ * a second time. A failure here is logged and nothing more.
+ *
+ * Awaited rather than fired and forgotten: on a serverless host the function
+ * can be frozen the moment the response is returned, and a floating promise
+ * would be killed before the request to Resend ever left.
+ */
+async function sendAcknowledgement(submission: ContactSubmission) {
+  const ack = {
+    name: submission.name,
+    company: submission.company,
+    message: submission.message,
+  };
+
+  try {
+    const { error } = await resend.emails.send({
+      from: MAIL_FROM,
+      /* Replies land in the mailbox printed on the site, so the address the
+         visitor already has is the address that answers them. */
+      replyTo: SITE.email,
+      to: [submission.email],
+      subject: enquiryAckSubject(submission.company),
+      html: renderEnquiryAck(ack),
+      /* Sending both parts makes this a real multipart/alternative message.
+         HTML-only is a shape bulk senders produce and person-to-person mail
+         does not, and Gmail's Promotions classifier is one of the things that
+         reads it. */
+      text: renderEnquiryAckText(ack),
+    });
+
+    if (error) console.error("Enquiry acknowledgement failed:", error);
+  } catch (err) {
+    console.error("Enquiry acknowledgement error:", err);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -63,6 +113,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    await sendAcknowledgement(validated);
 
     return NextResponse.json(
       { message: "Thank you! We'll get back to you soon." },
