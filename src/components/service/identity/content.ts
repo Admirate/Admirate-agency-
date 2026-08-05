@@ -13,7 +13,7 @@
  * stages simply stack and are all visible.
  */
 
-import { clientLogo } from "@/lib/cdn";
+import { clientLogo, optimized } from "@/lib/cdn";
 import { CLIENT_LOGOS } from "@/components/shared/clients";
 
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
@@ -364,9 +364,14 @@ export const IDENTITY_HTML = String.raw`
   <h2 class="idh up">Brands we've <em>crafted</em>.</h2>
   <p class="idp bsub up" style="--d:.1s">Marks and identities now doing their job out in the world.</p>
   <div class="bwall up" style="--d:.18s">
+    ${/* Through the optimizer rather than straight from storage: served raw,
+          these fourteen skip Next's AVIF/WebP negotiation and arrive at full
+          size for a tile that is about 180px wide. 384 is the 2x width and one
+          of Next's configured imageSizes — an unconfigured width is rejected
+          with a 400. */ ""}
     ${CLIENT_LOGOS.map(
       (b) =>
-        `<div class="btile"><img src="${clientLogo(b.file)}" alt="${b.name}"${
+        `<div class="btile"><img src="${optimized(clientLogo(b.file), 384)}" alt="${b.name}"${
           b.inv ? ' class="inv"' : ""
         }${b.scale ? ` style="--s:${b.scale}"` : ""} loading="lazy" decoding="async"></div>`,
     ).join("\n    ")}

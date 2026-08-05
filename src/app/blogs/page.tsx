@@ -6,8 +6,10 @@ import { breadcrumbSchema, ld } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
   title: "Journal",
+  /* 112 characters previously, which left most of the snippet unused. The
+     city earns its place here: this is a page that can rank locally. */
   description:
-    "Notes from the work — what we've learned building brands, sites and campaigns that have to earn their keep.",
+    "Notes from the work: what a logo really costs, when to rebrand, what social actually delivers — from a design agency in Hyderabad.",
   path: "/blogs",
 });
 

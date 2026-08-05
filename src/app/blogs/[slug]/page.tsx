@@ -26,6 +26,9 @@ export async function generateMetadata({
     path: `/blogs/${post.slug}`,
     type: "article",
     publishedTime: post.date,
+    /* Post titles are written as full sentences and run to 59 characters. The
+       brand suffix would push almost all of them past what Google renders. */
+    brandSuffix: false,
   });
 }
 

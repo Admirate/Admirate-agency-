@@ -8,8 +8,9 @@ import { breadcrumbSchema, ld } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
   title: "Sitemap",
+  /* 117 characters previously. */
   description:
-    "Browse every public page on ADMIRATE, including services, journal articles, project enquiries, and legal information.",
+    "Every public page on ADMIRATE in one place: branding, web design, social media and video services, pricing, journal articles and legal information.",
   path: "/sitemap",
 });
 

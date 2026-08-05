@@ -5,8 +5,9 @@ import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
   title: "Advertising & Design in Hyderabad",
+  /* 160 characters previously — just past what Google renders. */
   description:
-    "Advertising and design work placed where the eye actually goes — campaign creative, print, digital and art direction built for how people really look at things.",
+    "Advertising and design placed where the eye actually goes: campaign creative, print, digital and art direction built for how people really look.",
   path: "/services/design",
 });
 

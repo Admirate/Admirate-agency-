@@ -144,6 +144,17 @@ type PageMetaArgs = {
   publishedTime?: string;
   /** Absolute or root-relative. Defaults to the route's generated OG image. */
   image?: string;
+  /**
+   * Whether the layout's `%s | ADMIRATE` template applies to this page.
+   *
+   * Pass false where the title is already at the edge of what Google renders.
+   * The suffix costs 11 characters, and on the blog it was pushing ten of
+   * twelve posts past the ~60 character display limit — the tail of every one
+   * was being cut off in results, which is a worse trade than the brand
+   * recognition the suffix buys. It stays on the marketing pages, whose titles
+   * are short enough to afford it, and stays on `og:title` everywhere.
+   */
+  brandSuffix?: boolean;
 };
 
 export function pageMeta({
@@ -153,6 +164,7 @@ export function pageMeta({
   type = "website",
   publishedTime,
   image,
+  brandSuffix = true,
 }: PageMetaArgs): Metadata {
   const url = `${SITE.url}${path}`;
   // The og:title carries the brand, because a shared card has no other context.
@@ -160,7 +172,9 @@ export function pageMeta({
   const images = image ? [{ url: image }] : undefined;
 
   return {
-    title,
+    /* `absolute` is what opts a route out of the template in next/metadata —
+       there is no way to disable it by passing a plain string. */
+    title: brandSuffix ? title : { absolute: title },
     description,
     alternates: { canonical: path },
     openGraph: {

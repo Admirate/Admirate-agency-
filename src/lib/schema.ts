@@ -55,6 +55,23 @@ export const AREA_SERVED = [
 export const ld = (data: unknown) =>
   JSON.stringify(data).replace(/</g, "\\u003c");
 
+/**
+ * The real band, not "$$".
+ *
+ * The floor is Website Care and the ceiling is the Website Enterprise build —
+ * the cheapest and dearest things on the published rate card, in the currency
+ * of the primary market. A vague token was the safe answer while /pricing said
+ * nothing; now that the page prints real figures, a generic band is a weaker
+ * claim than the site already makes out loud.
+ *
+ * Hand-kept, and the one number here that can drift: the figures live in
+ * Supabase (`pricing_amounts`, seeded in migration 0002 and editable from the
+ * dashboard). This is a static schema object rendered in the root layout, so it
+ * cannot read them without making the whole layout async for one string.
+ * Anyone changing the floor or ceiling of the INR card should change this line.
+ */
+const PRICE_RANGE = "₹18000-₹359000";
+
 export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
@@ -66,7 +83,7 @@ export const organizationSchema = {
   description: SITE.description,
   email: SITE.email,
   telephone: SITE.phone,
-  priceRange: "$$",
+  priceRange: PRICE_RANGE,
   address: ADDRESS,
   areaServed: AREA_SERVED,
   /* Emitted only once a real profile exists in SOCIALS. An empty sameAs array
@@ -176,8 +193,11 @@ export function blogPostingSchema(post: Post) {
     description: post.excerpt,
     articleSection: post.tag,
     datePublished: post.date,
-    // No edit history is tracked, so the publish date is the honest answer.
-    dateModified: post.date,
+    /* Falls back to the publish date, which for an unrevised post is the
+       honest answer. Set `updated` on a post when its copy genuinely changes
+       and this starts carrying a real freshness signal instead of asserting
+       every week that nothing on the site has ever been edited. */
+    dateModified: post.updated ?? post.date,
     wordCount: wordCount(post),
     timeRequired: `PT${readingMinutes(post)}M`,
     inLanguage: "en-IN",

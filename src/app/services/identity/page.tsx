@@ -12,8 +12,9 @@ import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
  */
 export const metadata: Metadata = pageMeta({
   title: "Brand Identity & Logo Design in Hyderabad",
+  /* 166 characters previously — Google cut it mid-clause. */
   description:
-    "Logos and brand identity built to be recognised in half a second — a full system of mark, type, colour and rules that keeps your brand looking like itself everywhere.",
+    "Logos and brand identity built to be recognised in half a second: mark, typography, colour and the rules that keep your brand looking like itself.",
   path: "/services/identity",
 });
 

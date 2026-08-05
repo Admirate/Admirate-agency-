@@ -11,6 +11,18 @@ export type Post = {
   tag: string;
   date: string; // ISO — rendered as en-IN
   /**
+   * ISO date of the last genuine revision. Omit until there is one.
+   *
+   * It exists so `dateModified` can stop being a copy of `datePublished`.
+   * Publishing the two as equal on every post tells Google the archive has
+   * never been touched, which is the opposite of the freshness signal the field
+   * is there to carry. Set this only when the copy actually changed — bumping
+   * it on a typo fix, or on every deploy, is the kind of claim Google learns to
+   * discount, and then the field is worth nothing when a post is really
+   * rewritten.
+   */
+  updated?: string;
+  /**
    * Thumbnail treatment. Still meaningful with artwork in place: it picks the
    * gradient scrim laid over the image, so the tag chip stays legible whether
    * the art underneath is a white-background vector or a dark photo.
@@ -224,7 +236,7 @@ export const POSTS: Post[] = [
     slug: "packaging-gets-three-seconds",
     title: "Your packaging gets three seconds, and forty rivals.",
     excerpt:
-      "A shelf is the most competitive piece of media your brand will ever buy. Packaging design that works is designed for the glance, the grab and the shelf beside it.",
+      "A shelf is the most competitive media your brand will ever buy. Packaging that works is designed for the glance, the grab and the rival beside it.",
     tag: "BRANDING",
     date: "2026-07-07",
     v: "v2",
@@ -380,7 +392,7 @@ export const POSTS: Post[] = [
     slug: "when-to-rebrand",
     title: "How to tell it is your brand, and not your business.",
     excerpt:
-      "A rebrand fixes a perception problem. It cannot fix a product, a price or a process problem — and knowing which one you have will save you a great deal of money.",
+      "A rebrand fixes a perception problem, not a product, price or process problem. Knowing which one you have will save you a great deal of money.",
     tag: "IDENTITY",
     date: "2026-06-30",
     v: "v1",
@@ -675,7 +687,11 @@ export const POSTS: Post[] = [
   },
   {
     slug: "reels-that-route",
-    title: "A reel that gets views isn't the same as a reel that gets leads",
+    /* Shortened from "A reel that gets views isn't the same as a reel that
+       gets leads" — 63 characters, the one post still past the ~60 Google
+       renders even with the brand suffix dropped. Same claim, keyword first.
+       `img` keeps the old wording: it is the object name in the bucket. */
+    title: "Reels that get views aren't reels that get leads.",
     excerpt:
       "Views are a vanity metric until the video routes somebody somewhere. The difference is usually the last three seconds, not the first three.",
     tag: "SOCIAL",
