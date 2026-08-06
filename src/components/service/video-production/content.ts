@@ -15,6 +15,10 @@
 
 import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
 import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
+import {
+  SERVICE_PROSE_CSS,
+  serviceProse,
+} from "@/components/shared/service-prose";
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 import { video } from "@/lib/cdn";
 
@@ -211,6 +215,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 }
 ${JOURNAL_CSS}
 ${HERO_KEYWORD_CSS}
+${SERVICE_PROSE_CSS}
 `;
 
 /* The four beats of a film that works. */
@@ -349,7 +354,15 @@ export const VIDEO_HTML = String.raw`
   <div class="bars up" style="--d:.2s" aria-hidden="true">${eqBars()}</div>
 </section>
 
-<!-- 5 — CLOSE -->
+${/* This page runs black end to end, so the prose block does too — a paper
+      section dropped into it would read as a different site. */ ""}
+${serviceProse("video-production", {
+  bg: "#0B0B0C",
+  label: "Video in full",
+  dark: true,
+})}
+
+<!-- 6 — CLOSE -->
 <section class="vs dark" id="vclose" data-bg="#0B0B0C" data-label="Close">
   <h2 class="vh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">

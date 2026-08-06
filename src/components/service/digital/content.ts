@@ -9,6 +9,10 @@
 
 import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
 import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
+import {
+  SERVICE_PROSE_CSS,
+  serviceProse,
+} from "@/components/shared/service-prose";
 import { showcaseCss, SHOWCASE_HTML } from "@/components/shared/showcase";
 
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
@@ -162,6 +166,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 }
 ${JOURNAL_CSS}
 ${HERO_KEYWORD_CSS}
+${SERVICE_PROSE_CSS}
 `;
 
 /** The path a visitor takes, and where it ends. */
@@ -282,7 +287,9 @@ export const DIGITAL_HTML = String.raw`
   ${SHOWCASE_HTML}
 </section>
 
-<!-- 6 — CLOSE -->
+${serviceProse("digital", { bg: "#FAFAF8", label: "Digital in full" })}
+
+<!-- 7 — CLOSE -->
 <section class="dgs dark" id="dclose" data-bg="#0B0B0C" data-label="Close">
   <h2 class="dgh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">

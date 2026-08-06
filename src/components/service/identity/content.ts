@@ -15,6 +15,10 @@
 
 import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
 import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
+import {
+  SERVICE_PROSE_CSS,
+  serviceProse,
+} from "@/components/shared/service-prose";
 import { clientLogo, optimized } from "@/lib/cdn";
 import { CLIENT_LOGOS } from "@/components/shared/clients";
 
@@ -254,6 +258,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 }
 ${JOURNAL_CSS}
 ${HERO_KEYWORD_CSS}
+${SERVICE_PROSE_CSS}
 `;
 
 /* The mark itself, shared by the hero construction and the philosophy scrub so
@@ -382,7 +387,9 @@ export const IDENTITY_HTML = String.raw`
   </div>
 </section>
 
-<!-- 4 — CLOSE -->
+${serviceProse("identity", { bg: "#FFFFFF", label: "Identity in full" })}
+
+<!-- 5 — CLOSE -->
 <section class="ids dark" id="close" data-bg="#0B0B0C" data-label="Close">
   <h2 class="idh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">

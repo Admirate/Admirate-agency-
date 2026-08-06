@@ -72,6 +72,15 @@ const SECURITY_HEADERS = [
       "img-src 'self' data: https://*.supabase.co https://s0.wp.com https://*.clarity.ms https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net https://www.google.com https://www.google.co.in",
       "font-src 'self' https://fonts.gstatic.com",
       "media-src 'self' https://*.supabase.co",
+      /* The one cross-origin frame on the site: the four live post embeds in
+         #swall on /services/social-media (see service/social-media/content.ts).
+         Without this the policy falls back to `default-src 'self'` for frames
+         and Chrome renders the blocked-frame placeholder in place of every
+         embed — which is what shipped, because this policy was written from
+         what the page's scripts fetch and the iframes were never checked.
+         `instagram.com` is listed alongside the `www` host because a CSP host
+         source matches exactly and Instagram serves the embed from both. */
+      "frame-src https://www.instagram.com https://instagram.com",
       /* `analytics.google.com` is listed alongside the wildcard, not covered by
          it: a CSP `*.host` matches subdomains and never the bare host, and GA4
          beacons to both. It also posts to www.google.com, and fires a Google

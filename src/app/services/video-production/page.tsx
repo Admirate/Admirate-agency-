@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import VideoClient from "@/components/service/video-production/VideoClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
   title: "Video Production in Hyderabad",
@@ -27,7 +27,11 @@ const jsonLd = [
     { name: "Services", path: "/services" },
     { name: "Video Production", path: "/services/video-production" },
   ]),
-];
+  /* The FAQ block is rendered on the page (see shared/service-prose.ts), so
+     the FAQPage entry describes something a visitor can actually read — which
+     is the condition Google attaches to the markup. */
+  faqSchema("video-production"),
+].filter(Boolean);
 
 export default function VideoProductionPage() {
   return (

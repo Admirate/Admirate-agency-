@@ -14,6 +14,10 @@
 
 import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
 import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
+import {
+  SERVICE_PROSE_CSS,
+  serviceProse,
+} from "@/components/shared/service-prose";
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 import { asset } from "@/lib/cdn";
 
@@ -222,6 +226,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 }
 ${JOURNAL_CSS}
 ${HERO_KEYWORD_CSS}
+${SERVICE_PROSE_CSS}
 `;
 
 /* Everything the brand hands over, in order of what moves business first. */
@@ -362,7 +367,9 @@ export const COLLAT_HTML = String.raw`
   </div>
 </section>
 
-<!-- 5 — CLOSE -->
+${serviceProse("brand-collaterals", { bg: "#FAFAF8", label: "Collaterals in full" })}
+
+<!-- 6 — CLOSE -->
 <section class="cs dark" id="cclose" data-bg="#0B0B0C" data-label="Close">
   <h2 class="ch up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">

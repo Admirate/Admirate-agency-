@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import IdentityClient from "@/components/service/identity/IdentityClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 /**
  * Identity is authored as its own page rather than through the shared
@@ -30,6 +30,9 @@ const serviceSchema = {
   areaServed: AREA_SERVED,
 };
 
+/* The FAQ block is rendered on the page (see shared/service-prose.ts), so the
+   FAQPage entry describes something a visitor can actually read — which is the
+   condition Google attaches to the markup. */
 const jsonLd = [
   serviceSchema,
   breadcrumbSchema([
@@ -37,7 +40,8 @@ const jsonLd = [
     { name: "Services", path: "/services" },
     { name: "Identity", path: "/services/identity" },
   ]),
-];
+  faqSchema("identity"),
+].filter(Boolean);
 
 export default function IdentityPage() {
   return (

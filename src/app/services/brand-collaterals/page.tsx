@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import CollateralsClient from "@/components/service/brand-collaterals/CollateralsClient";
 import { pageMeta, SITE } from "@/lib/seo";
-import { breadcrumbSchema, ld, AREA_SERVED } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema, ld, AREA_SERVED } from "@/lib/schema";
 
 export const metadata: Metadata = pageMeta({
   title: "Brand Collaterals in Hyderabad",
@@ -27,7 +27,11 @@ const jsonLd = [
     { name: "Services", path: "/services" },
     { name: "Brand Collaterals", path: "/services/brand-collaterals" },
   ]),
-];
+  /* The FAQ block is rendered on the page (see shared/service-prose.ts), so
+     the FAQPage entry describes something a visitor can actually read — which
+     is the condition Google attaches to the markup. */
+  faqSchema("brand-collaterals"),
+].filter(Boolean);
 
 export default function BrandCollateralsPage() {
   return (

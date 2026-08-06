@@ -1,6 +1,7 @@
 import { SITE, PROFILE_URLS } from "@/lib/seo";
 import { authorSchema } from "@/lib/author";
 import { SERVICE_LIST } from "@/components/service/registry";
+import { serviceFaq } from "@/components/shared/service-copy";
 import { readingMinutes, wordCount, type Post } from "@/components/blogs/posts";
 
 /**
@@ -165,6 +166,38 @@ export const servicesSchema = {
     },
   })),
 };
+
+/**
+ * FAQPage, built from the same objects the page renders.
+ *
+ * It reads `serviceFaq(slug)` rather than taking a hand-written list, so the
+ * markup can never claim an answer the page does not show — which is the one
+ * thing Google penalises FAQ markup for. The answers are authored with at most
+ * one inline anchor each (see shared/service-copy.ts); `acceptedAnswer.text`
+ * takes HTML, but the tags are stripped anyway because what an AI engine quotes
+ * back is the sentence, and a stray anchor in it reads as noise.
+ *
+ * Emitted only where a service actually has FAQs — an empty FAQPage is a claim
+ * that the page answers nothing.
+ */
+export function faqSchema(slug: string) {
+  const items = serviceFaq(slug);
+  if (!items.length) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${SITE.url}/services/${slug}#faq`,
+    mainEntity: items.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.a.replace(/<[^>]+>/g, ""),
+      },
+    })),
+  };
+}
 
 export function breadcrumbSchema(trail: { name: string; path: string }[]) {
   return {

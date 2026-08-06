@@ -12,6 +12,10 @@
 
 import { HERO_KEYWORD_CSS, heroKeyword } from "@/components/shared/hero-keyword";
 import { JOURNAL_CSS, journalLinks } from "@/components/shared/journal-links";
+import {
+  SERVICE_PROSE_CSS,
+  serviceProse,
+} from "@/components/shared/service-prose";
 import { NAP_HTML, LEGAL_HTML } from "@/lib/seo";
 
 export const SOCIAL_CSS = String.raw`
@@ -202,6 +206,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset
 }
 ${JOURNAL_CSS}
 ${HERO_KEYWORD_CSS}
+${SERVICE_PROSE_CSS}
 `;
 
 const REELS = [
@@ -359,7 +364,9 @@ export const SOCIAL_HTML = String.raw`
   </div>
 </section>
 
-<!-- 4 — CLOSE -->
+${serviceProse("social-media", { bg: "#FFFFFF", label: "Social in full" })}
+
+<!-- 5 — CLOSE -->
 <section class="sms dark" id="sclose" data-bg="#0B0B0C" data-label="Close">
   <h2 class="smh up" style="--d:.08s">The rest of what we do.</h2>
   <div class="nlist">
