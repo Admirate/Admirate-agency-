@@ -10,9 +10,9 @@ export const LANDING_CSS = String.raw`
   --grey:#8A8A8E;
   --line:#E9E9E6;
   --pad:clamp(24px,6vw,96px);
-  --display:'Archivo',sans-serif;
-  --body:'Inter',sans-serif;
-  --mono:'IBM Plex Mono',monospace;
+  --display:var(--font-display),'Archivo',sans-serif;
+  --body:var(--font-body),'Inter',sans-serif;
+  --mono:var(--font-mono),'IBM Plex Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:auto}
@@ -45,7 +45,10 @@ h2.light{font-family:var(--body);font-weight:500;font-size:clamp(26px,3.4vw,46px
    visitor is returning Home rather than arriving or reloading. Hiding it here
    rather than in init() is what prevents a flash of the black terminal. */
 html.no-loader #loader{display:none}
-#loader .half{position:absolute;left:0;width:100%;height:50.5%;background:var(--black);transition:transform .9s cubic-bezier(.76,0,.24,1)}
+/* .6s, was .9s. The curtain is the last thing between the visitor and the
+   page, so its duration is added to LCP in full — and at this easing the
+   reveal reads the same at two-thirds the length. */
+#loader .half{position:absolute;left:0;width:100%;height:50.5%;background:var(--black);transition:transform .6s cubic-bezier(.76,0,.24,1)}
 #loader .half.top{top:0}
 #loader .half.bot{bottom:0}
 #loader.open .half.top{transform:translateY(-101%)}
@@ -60,7 +63,10 @@ html.no-loader #loader{display:none}
 #bar{margin-top:22px;height:8px;width:100%;background:#222;opacity:0}
 #bar.show{opacity:1}
 #bar i{display:block;height:100%;width:0;background:var(--red)}
-#bar.fill i{width:100%;transition:width .6s cubic-bezier(.7,0,.3,1)}
+/* .32s, and it has to stay under BAR_WAIT in landing/init.ts — that constant
+   is how long the sequence holds before the curtain opens, so a fill slower
+   than the wait would be cut off part-way. */
+#bar.fill i{width:100%;transition:width .32s cubic-bezier(.7,0,.3,1)}
 #loader.glitch #terminal{animation:glitch .28s steps(3) 1}
 @keyframes glitch{
   0%{transform:translate(-50%,-50%)}
@@ -102,7 +108,7 @@ html.no-loader #loader{display:none}
    -50% that does the centring. */
 #hero .heroart{position:absolute;top:50%;right:clamp(20px,3.5vw,64px);transform:translateY(-50%);width:clamp(340px,calc(100vw - 940px),940px);z-index:1;pointer-events:none}
 #hero .heroart img{display:block;width:100%;height:auto;opacity:0;transform:translateY(26px)}
-body.loaded #hero .heroart img{animation:riseIn .8s 1.9s forwards cubic-bezier(.2,.8,.2,1)}
+body.loaded #hero .heroart img{animation:riseIn .7s .88s forwards cubic-bezier(.2,.8,.2,1)}
 @media (max-width:1279px){#hero .heroart{display:none}}
 
 #hero .inner{position:relative;z-index:1;max-width:1080px}
@@ -117,18 +123,32 @@ body.loaded .ch{animation:chIn .45s forwards cubic-bezier(.2,.8,.2,1)}
 #hero .mark{position:relative;display:inline-block}
 #hero .mark svg{position:absolute;left:-2%;bottom:-7px;width:104%;height:17px;overflow:visible}
 #hero .mark path{stroke:var(--red);stroke-width:5;fill:none;stroke-linecap:round;stroke-dasharray:600;stroke-dashoffset:600}
-body.loaded #hero .mark path{animation:draw .5s 1.35s forwards cubic-bezier(.5,0,.3,1)}
+body.loaded #hero .mark path{animation:draw .45s .62s forwards cubic-bezier(.5,0,.3,1)}
 @keyframes draw{to{stroke-dashoffset:0}}
 #hero .cursor{display:inline-block;width:.12em;height:.82em;background:var(--red);margin-left:.08em;vertical-align:baseline;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 #hero .rule{width:52px;height:2px;background:var(--red);margin:36px 0 0;transform:scaleX(0);transform-origin:left}
-body.loaded #hero .rule{animation:ruleIn .5s 1.55s forwards cubic-bezier(.7,0,.3,1)}
+body.loaded #hero .rule{animation:ruleIn .45s .72s forwards cubic-bezier(.7,0,.3,1)}
 @keyframes ruleIn{to{transform:scaleX(1)}}
-#hero .sub{max-width:640px;margin-top:20px;font-weight:300;font-size:clamp(19px,2.3vw,29px);color:#232326;line-height:1.5;letter-spacing:-.01em;opacity:0}
+/* No opacity:0, and no entrance of its own — deliberately, and it is the
+   one element on this page where that rule matters.
+
+   This paragraph is the hero's largest block of text, which makes it the
+   page's Largest Contentful Paint element. It was hidden until an animation
+   ran after the loader finished, so the metric Google scores this page on was
+   measuring the loader plus a queue of entrance delays rather than anything
+   about how fast the page loads. An LCP element that is animated in is an LCP
+   element you have chosen to report late.
+
+   The headline above still assembles letter by letter and the rule still
+   draws, so the hero is still choreographed; the sentence underneath is
+   simply present when the curtain lifts, which is where the eye goes second
+   anyway. If a future revision wants to fade this in, fade something else
+   instead — whatever is largest here sets the number. */
+#hero .sub{max-width:640px;margin-top:20px;font-weight:300;font-size:clamp(19px,2.3vw,29px);color:#232326;line-height:1.5;letter-spacing:-.01em}
 #hero .sub b{font-weight:700}
-body.loaded #hero .sub{animation:riseIn .6s 1.7s forwards}
 #scrollhint{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.34em;color:var(--grey);opacity:0}
-body.loaded #scrollhint{animation:riseIn .5s 2.3s forwards}
+body.loaded #scrollhint{animation:riseIn .45s 1.05s forwards}
 #scrollhint .line{width:1px;height:30px;background:#DADAD6;margin:8px auto 0;position:relative;overflow:hidden}
 #scrollhint .line i{position:absolute;left:0;top:-100%;width:100%;height:100%;background:var(--red);animation:fall 1.7s cubic-bezier(.7,0,.3,1) infinite}
 @keyframes fall{to{top:100%}}

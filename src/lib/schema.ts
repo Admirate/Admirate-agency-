@@ -1,8 +1,8 @@
 import { SITE, PROFILE_URLS } from "@/lib/seo";
 import { authorSchema } from "@/lib/author";
 import { SERVICE_LIST } from "@/components/service/registry";
-import { serviceFaq } from "@/components/shared/service-copy";
 import { readingMinutes, wordCount, type Post } from "@/components/blogs/posts";
+import { serviceFaq, type Faq } from "@/components/shared/service-copy";
 
 /**
  * JSON-LD builders.
@@ -188,7 +188,7 @@ export function faqSchema(slug: string) {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": `${SITE.url}/services/${slug}#faq`,
-    mainEntity: items.map((f) => ({
+    mainEntity: items.map((f: Faq) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: {

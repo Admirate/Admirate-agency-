@@ -68,9 +68,13 @@ const SECURITY_HEADERS = [
     value: [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${devScriptSrc} https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms`,
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      /* The Google Font hosts are gone from `style-src` and `font-src`: the
+         type is self-hosted by next/font now (see app/layout.tsx), so nothing
+         on the site fetches from either origin and allowing them would be
+         permission granted to code that no longer exists. */
+      "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https://*.supabase.co https://s0.wp.com https://*.clarity.ms https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net https://www.google.com https://www.google.co.in",
-      "font-src 'self' https://fonts.gstatic.com",
+      "font-src 'self'",
       "media-src 'self' https://*.supabase.co",
       /* The one cross-origin frame on the site: the four live post embeds in
          #swall on /services/social-media (see service/social-media/content.ts).

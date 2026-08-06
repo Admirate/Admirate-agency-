@@ -24,9 +24,9 @@ export const LEGAL_CSS = String.raw`
   --grey:#8A8A8E;
   --line:#E9E9E6;
   --pad:clamp(24px,6vw,96px);
-  --display:'Archivo',sans-serif;
-  --body:'Inter',sans-serif;
-  --mono:'IBM Plex Mono',monospace;
+  --display:var(--font-display),'Archivo',sans-serif;
+  --body:var(--font-body),'Inter',sans-serif;
+  --mono:var(--font-mono),'IBM Plex Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--body);background:var(--paper);color:var(--black);overflow-x:hidden;-webkit-font-smoothing:antialiased}

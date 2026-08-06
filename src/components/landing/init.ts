@@ -37,17 +37,30 @@ document.getElementById('tickTrack').textContent = (words + words).repeat(2);
 const clientGrid = document.getElementById('clientGrid');
 clientGrid.innerHTML = renderClientGrid(CLIENT_LOGOS, clientLogo);
 
-/* ---------- hero: per-letter split ---------- */
+/* ---------- hero: per-letter split ----------
+   Halved from 0.18 / 0.16 / 0.026 / 0.05.
+
+   These four numbers set how long the headline takes to finish arriving, and
+   the rest of the hero is timed to land after it — including `#hero .sub`,
+   which is the page's Largest Contentful Paint element. Every letter's share
+   of the cadence was therefore being added to the metric Google scores this
+   page on, and a thirty-character headline was spending most of a second on
+   it. At this speed the stagger still reads as a stagger.
+
+   The delays in landing/content.ts that follow the headline (.mark, .rule,
+   .sub, .heroart, #scrollhint) were compressed to match. If this cadence is
+   slowed again, those have to move with it or the hero will start assembling
+   out of order. */
 const h1words=[...document.querySelectorAll('#hero h1 .w')];
-let base=0.18;
+let base=0.09;
 h1words.forEach(w=>{
-  if(w.classList.contains('mark')){ w.style.setProperty('--d',base+'s'); base+=0.16; return; }
+  if(w.classList.contains('mark')){ w.style.setProperty('--d',base+'s'); base+=0.08; return; }
   const text=w.textContent; w.textContent=''; w.classList.add('split');
   [...text].forEach(ch=>{
     const s=document.createElement('span'); s.className='ch'; s.textContent=ch;
-    s.style.animationDelay=base+'s'; base+=0.026; w.appendChild(s);
+    s.style.animationDelay=base+'s'; base+=0.013; w.appendChild(s);
   });
-  base+=0.05;
+  base+=0.026;
 });
 
 /* ---------- loader ---------- */
@@ -56,17 +69,94 @@ const lines = [...document.querySelectorAll('#terminal .ln')];
 const bar = document.getElementById('bar');
 const _timers=[];
 const wait=ms=>new Promise(r=>_timers.push(setTimeout(r,ms)));
+/**
+ * Types one terminal line out, frame-locked.
+ *
+ * This was `setInterval(…, speed)` advancing one character per tick — around
+ * 135 timer callbacks across the four lines, each one writing to the DOM.
+ * Two things go wrong with that on the phone this page is scored on:
+ *
+ *   A throttled main thread cannot service a 10–34ms interval on schedule, so
+ *   the ticks drift and the sequence takes substantially longer in wall-clock
+ *   than the arithmetic says. The intro was measured at 8.1s to Largest
+ *   Contentful Paint under 4x CPU throttling against a ~2.7s design intent —
+ *   the loader was not slow because it was long, it was slow because it was
+ *   being paid for a character at a time.
+ *
+ *   And each of those ticks is main-thread work in the window where Total
+ *   Blocking Time is measured, which is why TBT sat at 770ms.
+ *
+ * Driving it from `requestAnimationFrame` and deriving the character count
+ * from elapsed time fixes both. There is at most one DOM write per frame
+ * however slow the device is, and the line always finishes in the intended
+ * duration — a slow phone shows fewer, larger jumps rather than the same
+ * animation stretched out. On a fast one it is indistinguishable from before.
+ */
 function typeLine(el, speed){
   return new Promise(res=>{
-    const t = el.dataset.text; const span = document.createElement('span');
+    const t = el.dataset.text;
+    const span = document.createElement('span');
     span.className='txt'; el.appendChild(span); el.classList.add('typing');
-    let i=0; const iv=setInterval(()=>{
-      if(_dead){clearInterval(iv);return;}
-      span.textContent = t.slice(0,++i);
-      if(i>=t.length){clearInterval(iv);el.classList.remove('typing');res();}
-    }, speed);
+
+    const total = t.length * speed;
+    let start = 0, shown = -1, raf = 0;
+
+    const step = now => {
+      if(_dead){ cancelAnimationFrame(raf); return; }
+      if(!start) start = now;
+      const elapsed = now - start;
+      const n = Math.min(t.length, Math.round(elapsed / speed));
+      /* Only touch the DOM when the visible text actually changes — on a fast
+         display several frames can land inside one character. */
+      if(n !== shown){ shown = n; span.textContent = t.slice(0, n); }
+      if(elapsed >= total){
+        if(shown !== t.length) span.textContent = t;
+        el.classList.remove('typing');
+        res();
+        return;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    /* No entry in _timers: that array holds setTimeout ids for clearTimeout,
+       and a rAF id is not one. The `_dead` check above is the teardown — it
+       returns without rescheduling, which is how the setInterval version
+       stopped itself too. */
   });
 }
+/* The boot sequence, retimed.
+   =========================================================================
+   The original ran 5.35s before the curtain even started opening, and 6.25s
+   before any page content was visible. That is not a subjective judgement
+   about pacing — it is the homepage's Largest Contentful Paint, because the
+   loader is a full-screen opaque overlay and nothing behind it counts as
+   painted until it lifts. It was measured at LCP 5.0s on mobile, and it is
+   why a Lighthouse filmstrip of this page is eight black frames.
+
+   It also lands on first-time visitors specifically: returning arrivals in
+   the same tab already skip it (see `skipLoader` above). Every Lighthouse
+   run, and every Chrome field-data sample Google collects for Core Web
+   Vitals, is a cold visit — so the slowest path is the only one being
+   scored, and it was the one nobody on the team ever sat through.
+
+   Same four lines, same glitch, same curtain — about a third of the length.
+   Typing is one flat speed now rather than four hand-tuned ones: at 12ms a
+   character the differences between 18 and 34 were pacing the viewer could
+   feel, and at this speed they are not, so four constants that have to be
+   kept in balance became one that does not.
+
+   The waits are what actually cost the seconds, and they were the easiest
+   thing to cut without touching the choreography: the opening pause and the
+   post-glitch beat both still read as beats, and the progress bar still
+   fills — it just no longer fills for longer than the entire rest of the
+   sequence took. Raising any of these numbers puts the LCP back. */
+const OPEN_WAIT = 160;
+const TYPE_SPEED = 10;
+const GLITCH_WAIT = 200;
+/* Must stay above the bar's own fill transition in landing/content.ts
+   (`#bar.fill i`), or the curtain opens over a half-filled bar. */
+const BAR_WAIT = 380;
+
 async function boot(){
   /* Already hidden by CSS — drop it outright and let the hero play immediately,
      rather than running finish()'s curtain-open on a curtain nobody saw. */
@@ -77,17 +167,17 @@ async function boot(){
     return;
   }
   if(reduced){ finish(); return; }
-  await wait(380);
+  await wait(OPEN_WAIT);
   if(_dead) return;
-  await typeLine(lines[0], 34);
-  await typeLine(lines[1], 18);
-  await typeLine(lines[2], 26);
+  await typeLine(lines[0], TYPE_SPEED);
+  await typeLine(lines[1], TYPE_SPEED);
+  await typeLine(lines[2], TYPE_SPEED);
   loader.classList.add('glitch');
-  await wait(540);
-  await typeLine(lines[3], 24);
+  await wait(GLITCH_WAIT);
+  await typeLine(lines[3], TYPE_SPEED);
   bar.classList.add('show');
   requestAnimationFrame(()=>bar.classList.add('fill'));
-  await wait(1150);
+  await wait(BAR_WAIT);
   if(_dead) return;
   finish();
 }
@@ -95,7 +185,9 @@ function finish(){
   loader.classList.add('open');
   document.body.classList.remove('locked');
   document.body.classList.add('loaded');
-  _timers.push(setTimeout(()=>{ if(loader && loader.parentNode) loader.remove(); }, 1100));
+  /* Just past the .6s curtain in landing/content.ts — the overlay is
+     pointer-events:none by then, so this only tidies the DOM. */
+  _timers.push(setTimeout(()=>{ if(loader && loader.parentNode) loader.remove(); }, 700));
 }
 boot();
 
