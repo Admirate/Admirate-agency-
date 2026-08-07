@@ -63,10 +63,15 @@ export const getPricing = unstable_cache(
     };
   },
   ["pricing-payload"],
-  /* 60s, not an hour. A write through the dashboard purges the tag and is
-     live immediately, but a price corrected straight in the Supabase table
-     editor bypasses that — and an hour of a public page showing the old
-     figure is the kind of gap nobody notices until a client quotes it back.
-     The query is four small selects, so the floor costs little. */
-  { tags: [PRICING_TAG], revalidate: 60 },
+  /* 300s, not 60. A write through the dashboard purges the tag and is live
+     immediately, but a price corrected straight in the Supabase table editor
+     bypasses that — so this window is the worst-case staleness for that one
+     path, and five minutes is still far inside "nobody quotes it back".
+     60s was chosen as a safe floor, but it was measured against traffic this
+     page does not have: /pricing takes roughly six impressions a day, so
+     nearly every real visitor arrived after the entry had already expired and
+     paid for four fresh Supabase selects. Timed against production, a cold
+     hit costs ~1.20s to first byte and a warm one ~0.55s. Widening the window
+     is what moves the median visitor onto the warm path. */
+  { tags: [PRICING_TAG], revalidate: 300 },
 );

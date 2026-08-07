@@ -33,6 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Google Cloud credentials. These land in the project root by default when
+# downloaded from the console — they belong in ~/.config/claude-seo/, never here.
+client_secret_*.json
+service_account*.json
+
 # vercel
 .vercel
 

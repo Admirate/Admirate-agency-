@@ -4,8 +4,19 @@ import { SERVICE_LIST } from "@/components/service/registry";
 import { LEGAL_DOCS } from "@/components/legal/docs";
 import { SITE } from "@/lib/seo";
 
-/** Move this date only when the static public pages meaningfully change. */
-const PAGES_UPDATED = new Date("2026-07-27");
+/**
+ * Move this date only when the static public pages meaningfully change.
+ *
+ * It went stale once already: the tier 1 and tier 2 SEO fixes shipped on
+ * 2026-08-05/06 rewrote every title, meta description and service-page schema
+ * block, and this constant still read 2026-07-27. Search Console showed the
+ * consequence — Google's last crawl of the service pages was 2026-07-23, so
+ * none of that work had been seen, and the sitemap was actively reporting that
+ * nothing had changed since before it landed.
+ *
+ * If you change page copy, titles, descriptions or schema, this moves with it.
+ */
+const PAGES_UPDATED = new Date("2026-08-06");
 
 const sitemapEntries = (): MetadataRoute.Sitemap => [
   {
